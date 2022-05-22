@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "921965554952",
+    "project_id": "goldenager-ccb8d",
+    "storage_bucket": "goldenager-ccb8d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:921965554952:android:573367e7283355f6bb90bd",
+        "android_client_info": {
+          "package_name": "com.example.golden_ager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "921965554952-jia0d9eta77ovr58q640k2d50n2reg39.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.golden_ager",
+            "certificate_hash": "fe60308ece83f9cfe5e5e7efcc96dd520d06903c"
+          }
+        },
+        {
+          "client_id": "921965554952-stp24p2dp2gabv1fug99kunhlk8ptjrs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPurixZBchMgspXkzqEHyDSSWJ7wo5QeI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "921965554952-stp24p2dp2gabv1fug99kunhlk8ptjrs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
