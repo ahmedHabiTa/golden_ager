@@ -1,10 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/constant/constants.dart';
-import '../../../../core/util/shared_prefs_helper.dart';
+import '../core/constant/constants.dart';
 
 class AuthProvider extends ChangeNotifier {
   Future<void> login({
@@ -46,7 +44,7 @@ class AuthProvider extends ChangeNotifier {
       await FirebaseFirestore.instance.collection('users').doc().set({
         "name": name,
         "phone": phone,
-        "email" : email,
+        "email": email,
       });
       // Constants.navigateToRep(routeName: const TabsScreen(), context: context);
     } on FirebaseAuthException catch (error) {

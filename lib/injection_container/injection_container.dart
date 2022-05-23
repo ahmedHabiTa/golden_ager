@@ -1,11 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_container.dart';
-
 
 final sl = GetIt.instance;
 late final SharedPreferences sharedPreferences;
@@ -26,4 +24,3 @@ Future<void> init() async {
   // sl.registerLazySingleton(() => InputConverter());
   // sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 }
-
