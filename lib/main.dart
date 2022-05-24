@@ -8,7 +8,7 @@ import 'package:provider/provider.dart';
 
 import 'core/common_widget/loading_widget.dart';
 import 'core/util/shared_prefs_helper.dart';
-import 'features/home/home_provider.dart';
+import 'provider/home_provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

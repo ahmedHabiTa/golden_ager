@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/common_widget/loading_widget.dart';
 import 'package:golden_ager/core/constant/constants.dart';
-import 'package:golden_ager/features/home/home_provider.dart';
+import 'package:golden_ager/provider/home_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
