@@ -64,10 +64,10 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: BoxDecoration(
-        color:widget.backgroundColor ?? Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
+      // decoration: BoxDecoration(
+      //   color:widget.backgroundColor ?? Colors.white,
+      //   borderRadius: BorderRadius.circular(20),
+      // ),
       padding: const EdgeInsets.symmetric(vertical: 4),
       width: widget.width ?? MediaQuery.of(context).size.width * 0.9,
     //  height: widget.height ?? MediaQuery.of(context).size.height * 0.1,
@@ -92,37 +92,37 @@ class _CustomFormFieldState extends State<CustomFormField> {
           contentPadding: widget.contentPadding,
           hintText: widget.hintText,
           hintStyle:const TextStyle(
-            fontSize: 12,
+            fontSize: 15,
             color:  Color(0xFF4a4a4a),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Colors.blue,
+          // enabledBorder: OutlineInputBorder(
+          //
+          //   borderSide: const BorderSide(
+          //     color: Colors.black87,
+          //     width: 1,
+          //   ),
+          // ),
+          focusedBorder:const OutlineInputBorder(
+            borderSide:  BorderSide(
+              style: BorderStyle.solid,
+              color: Colors.black87,
               width: 1,
             ),
           ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Colors.blue,
-              width: 1,
-            ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Colors.blue,
-              width: 1,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide:const BorderSide(
-              color: Colors.red,
-              width: 1,
-            ),
-          ),
+          // border: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(50),
+          //   borderSide: const BorderSide(
+          //     color: Colors.blue,
+          //     width: 1,
+          //   ),
+          // ),
+          // errorBorder: OutlineInputBorder(
+          //   borderRadius: BorderRadius.circular(50),
+          //   borderSide:const BorderSide(
+          //     color: Colors.red,
+          //     width: 1,
+          //   ),
+          // ),
         ),
         validator: widget.validationFunction ??
                 (value) {

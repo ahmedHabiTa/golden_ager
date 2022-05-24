@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-import 'custom_text.dart';
+
 
 class CustomWideContainer extends StatelessWidget {
-  final String title;
+  final Widget child;
   final double height;
   final double width;
+  final double radius;
   final Color containerColor;
-  final Color textColor;
   final Function onTap;
 
   const CustomWideContainer({
     Key? key,
-    required this.title,
+    required this.child,
     required this.height,
     required this.width,
+    required this.radius,
     required this.containerColor,
-    required this.textColor,
     required this.onTap,
   }) : super(key: key);
 
@@ -31,17 +31,9 @@ class CustomWideContainer extends StatelessWidget {
         width: width,
         decoration: BoxDecoration(
           color: containerColor,
-          borderRadius: BorderRadius.circular(20.0),
-          border: Border.all(color: const Color(0xFF003473), width: 1.0),
+          borderRadius: BorderRadius.circular(radius),
         ),
-        child: Center(
-          child: CustomText(
-            text: title,
-            fontSize: 16,
-            color: textColor,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        child: child,
       ),
     );
   }

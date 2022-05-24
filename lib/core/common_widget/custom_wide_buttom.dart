@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class CustomWideButton extends StatelessWidget {
   double height;
   double width;
+  double radius;
   Color color;
   Function onTap;
   Widget child;
@@ -12,6 +13,7 @@ class CustomWideButton extends StatelessWidget {
     Key? key,
     required this.height,
     required this.width,
+    required this.radius,
     required this.color,
     required this.onTap,
     required this.child,
@@ -27,7 +29,7 @@ class CustomWideButton extends StatelessWidget {
         height: height,
         width: width,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10.0),
+          borderRadius: BorderRadius.circular(radius),
           color: color,
         ),
         child: child,
