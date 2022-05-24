@@ -3,7 +3,7 @@ import 'package:golden_ager/core/constant/constants.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
-import '../../auth/presentation/provider/auth_provider.dart';
+import '../../../provider/auth_provider.dart';
 import 'home_screen.dart';
 
 class TabsScreen extends StatefulWidget {

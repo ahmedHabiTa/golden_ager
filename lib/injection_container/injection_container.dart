@@ -5,7 +5,6 @@ import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'auth_container.dart';
 
-
 final sl = GetIt.instance;
 late final SharedPreferences sharedPreferences;
 Future<void> init() async {
@@ -25,4 +24,3 @@ Future<void> init() async {
   // sl.registerLazySingleton(() => InputConverter());
   // sl.registerLazySingleton<NetworkInfo>(() => NetworkInfoImpl(sl()));
 }
-

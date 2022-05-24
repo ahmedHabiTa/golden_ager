@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constants.dart';
-import 'package:golden_ager/features/auth/presentation/pages/login_screen.dart';
+
+import '../../../pages/login_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);

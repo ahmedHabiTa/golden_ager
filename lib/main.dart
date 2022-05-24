@@ -1,10 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:golden_ager/features/auth/presentation/pages/login_screen.dart';
-import 'package:golden_ager/features/auth/presentation/provider/auth_provider.dart';
 import 'package:golden_ager/features/home/presentaion/splash_screen.dart';
 import 'package:golden_ager/features/home/presentaion/tabs_screen.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
 
 import 'core/common_widget/loading_widget.dart';

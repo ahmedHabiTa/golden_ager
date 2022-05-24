@@ -1,9 +1,8 @@
 import 'dart:convert';
 
-
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../features/auth/domain/entities/user.dart';
+import '../../models/user.dart';
 import '../error/exceptions.dart';
 
 const userCacheConst = "user_cache";
@@ -15,7 +14,6 @@ abstract class AuthLocalDataSource {
   Future<User> getcachedUserData();
 
   Future<void> clearCachedUser();
-
 
   Future<void> cacheUserLoginInfo(
       {required String password, required String email});

@@ -69,7 +69,7 @@ class FeelingsContainer extends StatelessWidget {
                     onTap: () {
                       //todo:navigator to feelings screen
                       Constants.navigateTo(
-                          routeName:  CheckInScreen(), context: context);
+                          routeName:const  CheckInScreen(), context: context);
                     },
                   ),
                 ],

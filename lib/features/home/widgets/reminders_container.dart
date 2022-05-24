@@ -14,7 +14,7 @@ class ReminderContainer extends StatelessWidget {
       'assets/images/reminderrrrr.png'
     ];
     List<String> titles = ['Medications', 'Other reminders'];
-    return Container(
+    return SizedBox(
       width: Constants.width(context) * 0.9,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,

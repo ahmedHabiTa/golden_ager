@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:golden_ager/core/constant/constants.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 import 'package:golden_ager/features/home/widgets/help_container.dart';
 import 'package:golden_ager/features/home/widgets/reminders_container.dart';

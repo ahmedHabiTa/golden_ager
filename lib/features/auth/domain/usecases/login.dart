@@ -2,7 +2,7 @@ import 'package:dartz/dartz.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecases.dart';
-import '../entities/user.dart';
+import '../../../../models/user.dart';
 import '../repo/auth_repository.dart';
 
 class Login extends UseCase<User, LoginParams> {
