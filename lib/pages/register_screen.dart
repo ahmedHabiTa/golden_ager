@@ -7,7 +7,7 @@ import '../../../../core/common_widget/custom_text.dart';
 import '../../../../core/common_widget/custom_text_form_field.dart';
 import '../../../../core/common_widget/custom_wide_buttom.dart';
 import '../../../../core/common_widget/loading_widget.dart';
-import '../../../../core/constant/constants.dart';
+import '../core/constant/constant.dart';
 import '../provider/auth_provider.dart';
 import 'login_screen.dart';
 
@@ -80,34 +80,35 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   return SizedBox(
                                     height: 120,
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
                                       mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
+                                          MainAxisAlignment.spaceEvenly,
                                       children: [
                                         GestureDetector(
                                           onTap: () {
                                             Provider.of<AuthProvider>(context,
-                                                listen: false)
+                                                    listen: false)
                                                 .pickImage(
-                                                imageSource:
-                                                ImageSource.camera);
+                                                    imageSource:
+                                                        ImageSource.camera);
                                           },
                                           child: CustomText(
                                             text: 'Camera',
-                                            color: Constants.primaryColor,
+                                            color: Constant.primaryColor,
                                           ),
                                         ),
                                         GestureDetector(
                                           onTap: () {
                                             Provider.of<AuthProvider>(context,
-                                                listen: false)
+                                                    listen: false)
                                                 .pickImage(
-                                                imageSource:
-                                                ImageSource.gallery);
+                                                    imageSource:
+                                                        ImageSource.gallery);
                                           },
                                           child: CustomText(
                                             text: 'Gallery',
-                                            color: Constants.primaryColor,
+                                            color: Constant.primaryColor,
                                           ),
                                         ),
                                       ],
@@ -115,31 +116,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   );
                                 });
                           },
-                          child:authProvider.image == null ? Container(
-                            width: Constants.width(context)*0.7,
-                            height: Constants.height(context)*0.3,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Constants.primaryDarkColor,
-                            ),
-                            child:const Center(
-                              child: Icon(
-                                Icons.person_outline,
-                                color: Colors.white,
-                                size: 80,
-                              ),
-                            ),
-                          ) : Container(
-                            width: Constants.width(context)*0.7,
-                            height: Constants.height(context)*0.5,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              image: DecorationImage(
-                                fit: BoxFit.fill,
-                                image: FileImage(authProvider.image!)
-                              )
-                            ),
-                          ),
+                          child: authProvider.image == null
+                              ? Container(
+                                  width: Constant.width(context) * 0.7,
+                                  height: Constant.height(context) * 0.3,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: Constant.primaryDarkColor,
+                                  ),
+                                  child: const Center(
+                                    child: Icon(
+                                      Icons.person_outline,
+                                      color: Colors.white,
+                                      size: 80,
+                                    ),
+                                  ),
+                                )
+                              : Container(
+                                  width: Constant.width(context) * 0.7,
+                                  height: Constant.height(context) * 0.5,
+                                  decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                          fit: BoxFit.fill,
+                                          image:
+                                              FileImage(authProvider.image!))),
+                                ),
                         );
                       },
                     ),
@@ -152,7 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                       validation: 'field is required',
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'Name',
                     ),
@@ -166,7 +168,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                       validation: 'Phone number is required',
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'Phone number',
                     ),
@@ -179,7 +181,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                       validation: 'E-mail is required',
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'Email',
                     ),
@@ -192,7 +194,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                       validation: 'Age is required',
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'Age',
                     ),
@@ -206,7 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       validation: 'password is required',
                       suffixBool: true,
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'Password',
                     ),
@@ -220,7 +222,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                       validation: 'confirm password is required',
                       suffixBool: true,
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'Confirm Password',
                     ),
@@ -277,7 +279,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         });
                       },
                       validation: 'description is required',
-                      width: Constants.width(context) * 0.9,
+                      width: Constant.width(context) * 0.9,
                       height: 50,
                       hintText: 'description about you',
                     ),
@@ -290,14 +292,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 radius: 10.0,
                                 height: 40,
                                 width: 130,
-                                color: Constants.primaryDarkColor,
+                                color: Constant.primaryDarkColor,
                                 onTap: () async {
                                   if (!formKey.currentState!.validate()) {
                                     return;
                                   } else if (passwordConfirmController.text
                                           .toString() !=
                                       passwordController.text.toString()) {
-                                    Constants.showToast(
+                                    Constant.showToast(
                                       message: 'password doesn\'t match',
                                       color: Colors.red,
                                     );
@@ -341,7 +343,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                           GestureDetector(
                             onTap: () {
-                              Constants.navigateTo(
+                              Constant.navigateTo(
                                   routeName: const LoginScreen(),
                                   context: context);
                             },

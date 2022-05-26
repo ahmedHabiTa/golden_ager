@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/custom_wide_container.dart';
-import '../../../core/constant/constants.dart';
+import '../../../core/constant/Constant.dart';
 import '../presentaion/check_in_screen.dart';
 
 class FeelingsContainer extends StatelessWidget {
   final String feeling;
-  const FeelingsContainer({Key? key,required this.feeling}) : super(key: key);
+  const FeelingsContainer({Key? key, required this.feeling}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return CustomWideContainer(
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: CustomWideContainer(
         child: Stack(
           children: [
             Positioned(
@@ -21,7 +21,7 @@ class FeelingsContainer extends StatelessWidget {
               top: 15.0,
               bottom: 15.0,
               child: Container(
-                width: Constants.width(context) * 0.3,
+                width: Constant.width(context) * 0.3,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.fill,
@@ -37,7 +37,7 @@ class FeelingsContainer extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                   CustomText(
+                  CustomText(
                     text: feeling == '' ? 'How do you feel \n today?' : feeling,
                     color: Colors.white,
                     fontSize: 24,
@@ -62,14 +62,14 @@ class FeelingsContainer extends StatelessWidget {
                         SizedBox(width: 10),
                       ],
                     ),
-                    height: Constants.height(context) * 0.11,
-                    width: Constants.width(context) * 0.35,
+                    height: Constant.height(context) * 0.11,
+                    width: Constant.width(context) * 0.35,
                     radius: 20.0,
                     containerColor: const Color(0xFF00b4d8),
                     onTap: () {
                       //todo:navigator to feelings screen
-                      Constants.navigateTo(
-                          routeName:const  CheckInScreen(), context: context);
+                      Constant.navigateTo(
+                          routeName: const CheckInScreen(), context: context);
                     },
                   ),
                 ],
@@ -77,12 +77,12 @@ class FeelingsContainer extends StatelessWidget {
             ),
           ],
         ),
+        height: Constant.height(context) * 0.4,
+        width: Constant.width(context),
+        radius: 15.0,
+        containerColor: Constant.primaryColor,
+        onTap: () {},
       ),
-      height: Constants.height(context) * 0.4,
-      width: Constants.width(context),
-      radius: 15.0,
-      containerColor: Constants.primaryColor,
-      onTap: () {},
     );
   }
 }

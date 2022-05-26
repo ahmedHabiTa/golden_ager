@@ -43,12 +43,9 @@ dependencies:
   provider: null
   shared_preferences: null
   url_launcher: ^6.0.17
-<<<<<<< HEAD
   percent_indicator: ^4.2.1
   flutter_svg: ^1.0.3
-=======
   image_picker:
->>>>>>> 2a33480485c5115cb74505fdbb1f7f7a29cf24d2
 
 dev_dependencies:
   flutter_lints: ^1.0.0

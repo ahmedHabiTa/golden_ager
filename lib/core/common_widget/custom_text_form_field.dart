@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-import '../constant/constant.dart';
-
 class CustomFormField extends StatefulWidget {
   final String? hintText;
   final String? initialValue;
@@ -64,18 +62,10 @@ class _CustomFormFieldState extends State<CustomFormField> {
   @override
   Widget build(BuildContext context) {
     return Container(
-<<<<<<< HEAD
-      decoration: BoxDecoration(
-        color: widget.backgroundColor ?? Colors.white,
-        borderRadius: BorderRadius.circular(20),
-      ),
-      alignment: Alignment.center,
-=======
       // decoration: BoxDecoration(
       //   color:widget.backgroundColor ?? Colors.white,
       //   borderRadius: BorderRadius.circular(20),
       // ),
->>>>>>> 2a33480485c5115cb74505fdbb1f7f7a29cf24d2
       padding: const EdgeInsets.symmetric(vertical: 4),
       //  height: widget.height ?? MediaQuery.of(context).size.height * 0.1,
       child: TextFormField(
@@ -98,40 +88,9 @@ class _CustomFormFieldState extends State<CustomFormField> {
               : null,
           contentPadding: widget.contentPadding,
           hintText: widget.hintText,
-<<<<<<< HEAD
           hintStyle: const TextStyle(
-            fontSize: 12,
-            color: Color(0xFF4a4a4a),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Constant.primaryColor,
-              width: 1,
-            ),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Constant.primaryColor,
-              width: 1,
-            ),
-          ),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Constant.primaryColor,
-              width: 1,
-            ),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(50),
-            borderSide: const BorderSide(
-              color: Colors.red,
-=======
-          hintStyle:const TextStyle(
             fontSize: 15,
-            color:  Color(0xFF4a4a4a),
+            color: Color(0xFF4a4a4a),
           ),
           // enabledBorder: OutlineInputBorder(
           //
@@ -140,11 +99,10 @@ class _CustomFormFieldState extends State<CustomFormField> {
           //     width: 1,
           //   ),
           // ),
-          focusedBorder:const OutlineInputBorder(
-            borderSide:  BorderSide(
+          focusedBorder: const OutlineInputBorder(
+            borderSide: BorderSide(
               style: BorderStyle.solid,
               color: Colors.black87,
->>>>>>> 2a33480485c5115cb74505fdbb1f7f7a29cf24d2
               width: 1,
             ),
           ),

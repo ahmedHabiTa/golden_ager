@@ -239,7 +239,6 @@ class _WeekDaysState extends State<WeekDays> {
   int? empIndex;
   int? timeIndex;
   String? displayTime;
-  DateTime? _selectedDay;
   List<Map<String, Object>> get commingWeekDays {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().add(
@@ -253,7 +252,6 @@ class _WeekDaysState extends State<WeekDays> {
   @override
   void initState() {
     _index = 0;
-    _selectedDay = commingWeekDays[0]['day'] as DateTime?;
 
     super.initState();
   }

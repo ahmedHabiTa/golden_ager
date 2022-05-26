@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../../core/common_widget/custom_text.dart';
 import '../../../../core/common_widget/custom_text_form_field.dart';
 import '../../../../core/common_widget/custom_wide_buttom.dart';
-import '../../../../core/constant/constants.dart';
+import '../core/constant/constant.dart';
 import '../provider/auth_provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -124,11 +124,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     builder: (context, authProvider, _) {
                       return isLoading == true
                           ? CircularProgressIndicator(
-                              color: Constants.primaryDarkColor,
+                              color: Constant.primaryDarkColor,
                             )
                           : CustomWideButton(
-                              height: Constants.height(context) * 0.1,
-                              width: Constants.width(context) * 0.8,
+                              height: Constant.height(context) * 0.1,
+                              width: Constant.width(context) * 0.8,
                               radius: 20.0,
                               color: const Color(0xFF003473),
                               onTap: () async {
@@ -179,7 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Constants.navigateTo(
+                            Constant.navigateTo(
                                 routeName: const RegisterScreen(),
                                 context: context);
                           },

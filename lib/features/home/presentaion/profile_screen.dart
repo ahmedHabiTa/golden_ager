@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/loading_widget.dart';
-import '../../../core/constant/constants.dart';
+import '../../../core/constant/Constant.dart';
 import '../../../provider/auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -50,16 +50,16 @@ class ProfileScreen extends StatelessWidget {
                       alignment: Alignment.bottomCenter,
                       children: [
                         SizedBox(
-                          height: Constants.height(context) * 0.55,
-                          width: Constants.width(context),
+                          height: Constant.height(context) * 0.55,
+                          width: Constant.width(context),
                         ),
                         Positioned(
                           top: 0,
                           child: Container(
-                            height: Constants.height(context) * 0.4,
-                            width: Constants.width(context),
+                            height: Constant.height(context) * 0.4,
+                            width: Constant.width(context),
                             decoration: BoxDecoration(
-                              color: Constants.primaryColor,
+                              color: Constant.primaryColor,
                               borderRadius: const BorderRadius.only(
                                 bottomRight: Radius.circular(1000),
                                 bottomLeft: Radius.circular(1000),
@@ -70,13 +70,14 @@ class ProfileScreen extends StatelessWidget {
                         Positioned(
                           bottom: 0,
                           child: Container(
-                            height: Constants.height(context) * 0.4,
-                            width: Constants.width(context) * 0.4,
+                            height: Constant.height(context) * 0.4,
+                            width: Constant.width(context) * 0.4,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
                               image: DecorationImage(
                                 fit: BoxFit.fill,
-                                image: NetworkImage(snapshot.data!['image'] ?? 'https://browsecat.net/sites/default/files/joker-wallpapers-51569-212800-859598.png'),
+                                image: NetworkImage(snapshot.data!['image'] ??
+                                    'https://browsecat.net/sites/default/files/joker-wallpapers-51569-212800-859598.png'),
                               ),
                             ),
                           ),
@@ -84,7 +85,9 @@ class ProfileScreen extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Center(child: _customDynamicText(text: snapshot.data!['name'])),
+                    Center(
+                        child:
+                            _customDynamicText(text: snapshot.data!['name'])),
                     _customFixedText(text: 'Email :'),
                     _customDynamicText(text: snapshot.data!['email']),
                     _customDivider(),
@@ -117,10 +120,10 @@ class ProfileScreen extends StatelessWidget {
                                   color: Colors.white,
                                 ),
                               ),
-                              height: Constants.height(context) * 0.12,
-                              width: Constants.width(context) * 0.8,
+                              height: Constant.height(context) * 0.12,
+                              width: Constant.width(context) * 0.8,
                               radius: 20.0,
-                              containerColor: Constants.primaryColor,
+                              containerColor: Constant.primaryColor,
                               onTap: () async {
                                 await authProvider.logOut(context);
                               }),
@@ -157,7 +160,7 @@ class ProfileScreen extends StatelessWidget {
       child: CustomText(
         text: text,
         fontSize: 13,
-        color: Constants.primaryDarkColor,
+        color: Constant.primaryDarkColor,
         fontWeight: FontWeight.w300,
       ),
     );
@@ -173,7 +176,7 @@ class ProfileScreen extends StatelessWidget {
       child: CustomText(
         text: text,
         fontSize: 20,
-        color: Constants.primaryColor,
+        color: Constant.primaryColor,
         fontWeight: FontWeight.bold,
       ),
     );

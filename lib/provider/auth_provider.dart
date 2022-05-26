@@ -1,5 +1,8 @@
 import 'dart:io';
 
+import 'package:image_picker/image_picker.dart';
+
+import '../../core/constant/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -7,15 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 import 'package:golden_ager/features/home/presentaion/splash_screen.dart';
-import 'package:image_picker/image_picker.dart';
-
-<<<<<<< HEAD
-import '../core/constant/constant.dart';
-=======
-import '../../../../core/constant/constants.dart';
-import '../core/constant/constants.dart';
 import '../features/home/presentaion/tabs_screen.dart';
->>>>>>> 2a33480485c5115cb74505fdbb1f7f7a29cf24d2
 
 class AuthProvider extends ChangeNotifier {
   Future<void> login({
@@ -28,7 +23,7 @@ class AuthProvider extends ChangeNotifier {
           .signInWithEmailAndPassword(email: email, password: password);
       final userUUID = FirebaseAuth.instance.currentUser!.uid.toString();
       await SharedPrefsHelper.saveData(key: 'userUUID', value: userUUID);
-       Constants.navigateToRep(routeName: const TabsScreen(), context: context);
+      Constant.navigateToRep(routeName: const TabsScreen(), context: context);
     } on FirebaseAuthException catch (error) {
       Constant.showToast(
         message: error.message.toString(),
@@ -51,7 +46,7 @@ class AuthProvider extends ChangeNotifier {
       final imageTemporary = File(image.path);
       this.image = imageTemporary;
       notifyListeners();
-    } on PlatformException catch (e) {
+    } on PlatformException {
       print('failed to pick image');
     }
     notifyListeners();
@@ -68,12 +63,12 @@ class AuthProvider extends ChangeNotifier {
     required String userType,
     required BuildContext context,
   }) async {
-    if(image == null){
-      Constants.showToast(
+    if (image == null) {
+      Constant.showToast(
         message: 'Please select an image',
         color: Colors.red,
       );
-    }else{
+    } else {
       try {
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
@@ -82,28 +77,28 @@ class AuthProvider extends ChangeNotifier {
         String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
         Reference ref = FirebaseStorage.instance.ref().child(imageFileName);
         UploadTask uploadTask = ref.putFile(image!);
-       await uploadTask.then((res)async {
-          await  res.ref.getDownloadURL().then((url) {
+        await uploadTask.then((res) async {
+          await res.ref.getDownloadURL().then((url) {
             imageUrl = url;
           });
         });
         print(userUUID);
         await FirebaseFirestore.instance.collection('users').doc(userUUID).set({
-          "image":imageUrl,
+          "image": imageUrl,
           "age": age,
-          "description" : desc,
-          "email" : email,
-          "feeling" : '',
-          "gender" : gender,
-          "name" : name,
-          "notification" : [],
+          "description": desc,
+          "email": email,
+          "feeling": '',
+          "gender": gender,
+          "name": name,
+          "notification": [],
           "phone": phone,
-          'reports' : [],
-          'user_type':userType,
+          'reports': [],
+          'user_type': userType,
         });
-        Constants.navigateToRep(routeName: const TabsScreen(), context: context);
+        Constant.navigateToRep(routeName: const TabsScreen(), context: context);
       } on FirebaseAuthException catch (error) {
-        Constants.showToast(
+        Constant.showToast(
           message: error.message.toString(),
           color: Colors.red,
         );
@@ -114,10 +109,7 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logOut(context) async {
     await FirebaseAuth.instance.signOut();
-    Constants.navigateToRep(routeName:const SplashScreen(), context: context);
+    Constant.navigateToRep(routeName: const SplashScreen(), context: context);
     notifyListeners();
   }
-
-
-
 }

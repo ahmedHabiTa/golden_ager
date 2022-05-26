@@ -1,16 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/common_widget/loading_widget.dart';
-import 'package:golden_ager/core/constant/constants.dart';
+
 import 'package:golden_ager/provider/home_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
+import '../../../core/constant/constant.dart';
 
 class CheckInScreen extends StatefulWidget {
-
-
-const  CheckInScreen({
+  const CheckInScreen({
     Key? key,
   }) : super(key: key);
 
@@ -27,6 +26,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
       isLoading = !isLoading;
     });
   }
+
   Map<String, bool> feelingGroup = {
     "Good": false,
     "Dizzy": false,
@@ -46,7 +46,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: IconThemeData(
-          color: Constants.primaryDarkColor,
+          color: Constant.primaryDarkColor,
         ),
       ),
       body: Padding(
@@ -57,7 +57,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
             children: [
               CustomText(
                 text: 'How are you feeling today?',
-                color: Constants.primaryDarkColor,
+                color: Constant.primaryDarkColor,
                 fontSize: 34,
                 fontWeight: FontWeight.w400,
               ),
@@ -100,30 +100,30 @@ class _CheckInScreenState extends State<CheckInScreen> {
                 builder: (context, homeProvider, _) {
                   return isLoading == true
                       ? const Center(
-                    child: LoadingWidget(),
-                  )
+                          child: LoadingWidget(),
+                        )
                       : Center(
-                    child: CustomWideContainer(
-                      child: const Center(
-                        child: CustomText(
-                          text: 'Done',
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      height: Constants.height(context) * 0.1,
-                      width: Constants.width(context) * 0.8,
-                      radius: 1000.0,
-                      containerColor: Constants.primaryColor,
-                      onTap: () {
-                        toggleLoading();
-                        homeProvider.changeFeeling(feeling: feeling,
-                            context: context);
-                        toggleLoading();
-                      },
-                    ),
-                  );
+                          child: CustomWideContainer(
+                            child: const Center(
+                              child: CustomText(
+                                text: 'Done',
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            height: Constant.height(context) * 0.1,
+                            width: Constant.width(context) * 0.8,
+                            radius: 1000.0,
+                            containerColor: Constant.primaryColor,
+                            onTap: () {
+                              toggleLoading();
+                              homeProvider.changeFeeling(
+                                  feeling: feeling, context: context);
+                              toggleLoading();
+                            },
+                          ),
+                        );
                 },
               ),
               const SizedBox(height: 15),

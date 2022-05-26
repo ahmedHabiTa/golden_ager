@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/common_widget/custom_text.dart';
-import '../../../core/constant/constants.dart';
+import '../../../core/constant/Constant.dart';
 
 class TipsScreen extends StatelessWidget {
   const TipsScreen({Key? key}) : super(key: key);
@@ -33,8 +33,8 @@ class TipsScreen extends StatelessWidget {
                   title: titles[index],
                   onTap: () {},
                   context: context,
-                  width: Constants.width(context) * 0.9,
-                  height: Constants.height(context) * 0.5,
+                  width: Constant.width(context) * 0.9,
+                  height: Constant.height(context) * 0.5,
                   color: Colors.white),
             ),
           );
@@ -69,8 +69,8 @@ class TipsScreen extends StatelessWidget {
             children: [
               const SizedBox(height: 5),
               Container(
-                height: Constants.height(context) * 0.35,
-                width: Constants.width(context) * 0.9,
+                height: Constant.height(context) * 0.35,
+                width: Constant.width(context) * 0.9,
                 decoration: BoxDecoration(
                   image: DecorationImage(
                     fit: BoxFit.fill,
@@ -81,7 +81,7 @@ class TipsScreen extends StatelessWidget {
               const SizedBox(height: 5),
               CustomText(
                 text: title,
-                color: Constants.primaryDarkColor,
+                color: Constant.primaryDarkColor,
                 fontWeight: FontWeight.w400,
                 fontSize: 20,
               )
