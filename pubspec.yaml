@@ -36,20 +36,17 @@ dependencies:
   firebase_storage: null
   flutter:
     sdk: flutter
+  flutter_screenutil: null
   fluttertoast: null
   get_it: ^7.2.0
+  intl: ^0.17.0
   provider: null
-  flutter_screenutil:
   shared_preferences: null
   url_launcher: ^6.0.17
+  percent_indicator: ^4.2.1
+  flutter_svg: ^1.0.3
 
 dev_dependencies:
-
-  # The "flutter_lints" package below contains a set of recommended lints to
-  # encourage good coding practices. The lint set provided by the package is
-  # activated in the `analysis_options.yaml` file located at the root of your
-  # package. See that file for information about deactivating specific lint
-  # rules and activating additional ones.
   flutter_lints: ^1.0.0
   flutter_test:
     sdk: flutter
@@ -80,9 +77,10 @@ flutter:
     - family: Montserrat
       fonts:
         - asset: assets/fonts/Montserrat-Regular.ttf
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
+
+    - family: AgeIcon
+      fonts:
+        - asset: assets/fonts/AgeIcon.ttf
   #         weight: 700
   #
   # For details regarding fonts from package dependencies,

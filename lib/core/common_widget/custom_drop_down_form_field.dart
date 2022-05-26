@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:golden_ager/core/constant/constant.dart';
 
 class CustomDropDownFormField extends StatelessWidget {
   final String title;
   final List<DropdownMenuItem<String>> items;
   final Function(String)? onChanged;
   final double? iconSize;
-
+  final Widget? prefixIcon;
   const CustomDropDownFormField({
     Key? key,
     required this.title,
     required this.items,
+    this.prefixIcon,
     this.onChanged,
     this.iconSize,
   }) : super(key: key);
@@ -18,32 +20,50 @@ class CustomDropDownFormField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      width: 200,
-      height: 50,
+      width: double.infinity,
+      height: 60,
       child: DropdownButtonFormField<String>(
+        alignment: Alignment.center,
         iconSize: iconSize ?? 0,
         onTap: () => FocusScope.of(context).unfocus(),
         validator: (value) {
           return null;
         },
-       // isExpanded: true,
+        // isExpanded: true,
         decoration: InputDecoration(
-          filled: true,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8),
-            borderSide: const BorderSide(
-              color: Color(0xFF262D34),
-              width: 2.0,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                color: Constant.primaryColor,
+                width: 1,
+              ),
             ),
-          ),
-          //hintText: title,
-          labelText: title,
-          iconColor: Colors.black87,
-          labelStyle: const TextStyle(
-            fontSize: 12,
-            color: Colors.blue,
-          ),
-        ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                color: Constant.primaryColor,
+                width: 1,
+              ),
+            ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                color: Constant.primaryColor,
+                width: 1,
+              ),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(50),
+              borderSide: const BorderSide(
+                color: Colors.red,
+                width: 1,
+              ),
+            ),
+            //hintText: title,
+            prefixIcon: prefixIcon,
+            hintText: title,
+            iconColor: Constant.primaryDarkColor,
+            hintStyle: Constant.normalTextStyle),
         items: items,
         onSaved: (value) {},
         onChanged: (value) => onChanged!(value!),

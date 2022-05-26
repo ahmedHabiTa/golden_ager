@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-
+import '../constant/constant.dart';
 
 class CustomFormField extends StatefulWidget {
   final String? hintText;
@@ -26,26 +26,26 @@ class CustomFormField extends StatefulWidget {
 
   const CustomFormField(
       {Key? key,
-        required this.hintText,
-        this.initialValue,
-        this.labelText,
-        this.validationFunction,
-        this.width,
-        this.height,
-        this.security = false,
-        this.controller,
-        this.inputType = TextInputType.text,
-        this.validation = 'الحقل مطلوب',
-        this.saved,
-        this.maxLine = 1,
-        this.prefix,
-        this.suffixBool = false,
-        this.suffix,
-        this.onChanged,
-        this.contentPadding,
-        this.backgroundColor,
-        this.readOnly,
-        this.number = 0})
+      required this.hintText,
+      this.initialValue,
+      this.labelText,
+      this.validationFunction,
+      this.width,
+      this.height,
+      this.security = false,
+      this.controller,
+      this.inputType = TextInputType.text,
+      this.validation = 'الحقل مطلوب',
+      this.saved,
+      this.maxLine = 1,
+      this.prefix,
+      this.suffixBool = false,
+      this.suffix,
+      this.onChanged,
+      this.contentPadding,
+      this.backgroundColor,
+      this.readOnly,
+      this.number = 0})
       : super(key: key);
 
   @override
@@ -65,12 +65,12 @@ class _CustomFormFieldState extends State<CustomFormField> {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color:widget.backgroundColor ?? Colors.white,
+        color: widget.backgroundColor ?? Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
+      alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(vertical: 4),
-      width: widget.width ?? MediaQuery.of(context).size.width * 0.9,
-    //  height: widget.height ?? MediaQuery.of(context).size.height * 0.1,
+      //  height: widget.height ?? MediaQuery.of(context).size.height * 0.1,
       child: TextFormField(
         readOnly: widget.readOnly ?? false,
         initialValue: widget.initialValue,
@@ -82,50 +82,50 @@ class _CustomFormFieldState extends State<CustomFormField> {
           prefixIcon: widget.prefix,
           suffixIcon: widget.suffixBool
               ? IconButton(
-              onPressed: () {
-                setState(() {
-                  security = !security;
-                });
-              },
-              icon: const Icon(Icons.remove_red_eye, color: Colors.black))
+                  onPressed: () {
+                    setState(() {
+                      security = !security;
+                    });
+                  },
+                  icon: const Icon(Icons.remove_red_eye, color: Colors.black))
               : null,
           contentPadding: widget.contentPadding,
           hintText: widget.hintText,
-          hintStyle:const TextStyle(
+          hintStyle: const TextStyle(
             fontSize: 12,
-            color:  Color(0xFF4a4a4a),
+            color: Color(0xFF4a4a4a),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide: const BorderSide(
-              color: Colors.blue,
+              color: Constant.primaryColor,
               width: 1,
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide: const BorderSide(
-              color: Colors.blue,
+              color: Constant.primaryColor,
               width: 1,
             ),
           ),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
             borderSide: const BorderSide(
-              color: Colors.blue,
+              color: Constant.primaryColor,
               width: 1,
             ),
           ),
           errorBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(50),
-            borderSide:const BorderSide(
+            borderSide: const BorderSide(
               color: Colors.red,
               width: 1,
             ),
           ),
         ),
         validator: widget.validationFunction ??
-                (value) {
+            (value) {
               if (value!.isEmpty || value.length < widget.number!) {
                 return widget.validation;
               }

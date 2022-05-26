@@ -1,26 +1,34 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
+
 class Medicine {
   final String name;
   final String pillDosage;
   final String shape;
   final int color;
   final int dose;
-  final DateTime programDays;
   final DateTime startAt;
   final DateTime endAt;
-  final int quantity;
+  Map<String, Map<String, bool>>? isDone;
   Medicine({
     required this.name,
     required this.pillDosage,
     required this.shape,
     required this.color,
     required this.dose,
-    required this.programDays,
     required this.startAt,
     required this.endAt,
-    required this.quantity,
+    this.isDone,
   });
+  int get quantity => startAt.difference(endAt).inDays * dose;
+  int get residualQantity =>
+      quantity -
+      (startAt
+              .difference(
+                  DateTime.now().isBefore(endAt) ? DateTime.now() : endAt)
+              .inDays *
+          dose);
 
   Medicine copyWith({
     String? name,
@@ -28,10 +36,9 @@ class Medicine {
     String? shape,
     int? color,
     int? dose,
-    DateTime? programDays,
     DateTime? startAt,
     DateTime? endAt,
-    int? quantity,
+    Map<String, Map<String, bool>>? isDone,
   }) {
     return Medicine(
       name: name ?? this.name,
@@ -39,10 +46,9 @@ class Medicine {
       shape: shape ?? this.shape,
       color: color ?? this.color,
       dose: dose ?? this.dose,
-      programDays: programDays ?? this.programDays,
       startAt: startAt ?? this.startAt,
       endAt: endAt ?? this.endAt,
-      quantity: quantity ?? this.quantity,
+      isDone: isDone ?? this.isDone,
     );
   }
 
@@ -53,10 +59,9 @@ class Medicine {
       'shape': shape,
       'color': color,
       'dose': dose,
-      'programDays': programDays.millisecondsSinceEpoch,
       'startAt': startAt.millisecondsSinceEpoch,
       'endAt': endAt.millisecondsSinceEpoch,
-      'quantity': quantity,
+      'isDone': isDone,
     };
   }
 
@@ -67,10 +72,9 @@ class Medicine {
       shape: map['shape'] ?? '',
       color: map['color']?.toInt() ?? 0,
       dose: map['dose']?.toInt() ?? 0,
-      programDays: DateTime.fromMillisecondsSinceEpoch(map['programDays']),
       startAt: DateTime.fromMillisecondsSinceEpoch(map['startAt']),
       endAt: DateTime.fromMillisecondsSinceEpoch(map['endAt']),
-      quantity: map['quantity']?.toInt() ?? 0,
+      isDone: Map<String, Map<String, bool>>.from(map['isDone']),
     );
   }
 
@@ -81,7 +85,7 @@ class Medicine {
 
   @override
   String toString() {
-    return 'Medicine(name: $name, pillDosage: $pillDosage, shape: $shape, color: $color, dose: $dose, programDays: $programDays, startAt: $startAt, endAt: $endAt, quantity: $quantity)';
+    return 'Medicine(name: $name, pillDosage: $pillDosage, shape: $shape, color: $color, dose: $dose, startAt: $startAt, endAt: $endAt, isDone: $isDone)';
   }
 
   @override
@@ -94,10 +98,9 @@ class Medicine {
         other.shape == shape &&
         other.color == color &&
         other.dose == dose &&
-        other.programDays == programDays &&
         other.startAt == startAt &&
         other.endAt == endAt &&
-        other.quantity == quantity;
+        mapEquals(other.isDone, isDone);
   }
 
   @override
@@ -107,9 +110,8 @@ class Medicine {
         shape.hashCode ^
         color.hashCode ^
         dose.hashCode ^
-        programDays.hashCode ^
         startAt.hashCode ^
         endAt.hashCode ^
-        quantity.hashCode;
+        isDone.hashCode;
   }
 }

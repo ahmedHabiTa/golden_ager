@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../core/constant/constants.dart';
+import '../core/constant/constant.dart';
 
 class AuthProvider extends ChangeNotifier {
   Future<void> login({
@@ -16,7 +16,7 @@ class AuthProvider extends ChangeNotifier {
 
       // Constants.navigateToRep(routeName: const TabsScreen(), context: context);
     } on FirebaseAuthException catch (error) {
-      Constants.showToast(
+      Constant.showToast(
         message: error.message.toString(),
         color: Colors.red,
       );
