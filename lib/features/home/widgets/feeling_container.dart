@@ -38,9 +38,11 @@ class FeelingsContainer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CustomText(
-                    text: feeling == '' ? 'How do you feel \n today?' : feeling,
+                    text: feeling == ''
+                        ? 'How do you feel \n today?'
+                        : "you fell\n" + feeling + "\ntoday",
                     color: Colors.white,
-                    fontSize: 24,
+                    fontSize: 20,
                     fontWeight: FontWeight.w400,
                   ),
                   CustomWideContainer(

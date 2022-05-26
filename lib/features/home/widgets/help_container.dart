@@ -9,7 +9,8 @@ class HelpContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
       width: Constant.width(context),
       child: Row(
         children: [

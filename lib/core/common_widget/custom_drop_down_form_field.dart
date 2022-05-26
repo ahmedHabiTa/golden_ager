@@ -34,22 +34,22 @@ class CustomDropDownFormField extends StatelessWidget {
         },
         // isExpanded: true,
         decoration: InputDecoration(
-          filled: true,
-          // border: OutlineInputBorder(
-          //   borderRadius: BorderRadius.circular(8),
-          //   borderSide: const BorderSide(
-          //     color: Color(0xFF262D34),
-          //     width: 2.0,
-          //   ),
-          // ),
-          //hintText: title,
-          labelText: title,
-          iconColor: Colors.black87,
-          labelStyle: const TextStyle(
-            fontSize: 16,
-            color: Colors.black87,
-          ),
-        ),
+            // filled: true,
+            // border: OutlineInputBorder(
+            //   borderRadius: BorderRadius.circular(8),
+            //   borderSide: const BorderSide(
+            //     color: Color(0xFF262D34),
+            //     width: 2.0,
+            //   ),
+            // ),
+            //hintText: title,
+            hintText: title,
+            iconColor: Colors.black87,
+            hintStyle: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+            ),
+            prefixIcon: prefixIcon),
         items: items,
         onSaved: (value) {},
         onChanged: (value) => onChanged!(value!),

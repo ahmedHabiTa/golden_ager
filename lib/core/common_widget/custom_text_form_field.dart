@@ -33,7 +33,7 @@ class CustomFormField extends StatefulWidget {
       this.security = false,
       this.controller,
       this.inputType = TextInputType.text,
-      this.validation = 'الحقل مطلوب',
+      this.validation = 'this field is required',
       this.saved,
       this.maxLine = 1,
       this.prefix,
@@ -99,13 +99,13 @@ class _CustomFormFieldState extends State<CustomFormField> {
           //     width: 1,
           //   ),
           // ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              style: BorderStyle.solid,
-              color: Colors.black87,
-              width: 1,
-            ),
-          ),
+          // focusedBorder: const OutlineInputBorder(
+          //   borderSide: BorderSide(
+          //     style: BorderStyle.solid,
+          //     color: Colors.black87,
+          //     width: 1,
+          //   ),
+          // ),
           // border: OutlineInputBorder(
           //   borderRadius: BorderRadius.circular(50),
           //   borderSide: const BorderSide(

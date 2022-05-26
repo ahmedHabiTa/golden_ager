@@ -5,13 +5,13 @@ import '../../../../core/usecases/usecases.dart';
 import '../../../../models/user.dart';
 import '../repo/auth_repository.dart';
 
-class Login extends UseCase<User, LoginParams> {
+class Login extends UseCase<AppUser, LoginParams> {
   final AuthRepository repository;
 
   Login({required this.repository});
 
   @override
-  Future<Either<Failure, User>> call(LoginParams params) async {
+  Future<Either<Failure, AppUser>> call(LoginParams params) async {
     return await repository.login(params: params);
   }
 }

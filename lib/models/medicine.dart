@@ -5,7 +5,7 @@ import 'package:flutter/foundation.dart';
 class Medicine {
   final String name;
   final String pillDosage;
-  final String shape;
+  final int shape;
   final int color;
   final int dose;
   final DateTime startAt;
@@ -33,7 +33,7 @@ class Medicine {
   Medicine copyWith({
     String? name,
     String? pillDosage,
-    String? shape,
+    int? shape,
     int? color,
     int? dose,
     DateTime? startAt,
@@ -61,7 +61,8 @@ class Medicine {
       'dose': dose,
       'startAt': startAt.millisecondsSinceEpoch,
       'endAt': endAt.millisecondsSinceEpoch,
-      'isDone': isDone,
+      "isDone": Map.from(isDone!).map((k, v) => MapEntry<String, dynamic>(
+          k, Map.from(v).map((k, v) => MapEntry<String, dynamic>(k, v)))),
     };
   }
 
@@ -74,7 +75,9 @@ class Medicine {
       dose: map['dose']?.toInt() ?? 0,
       startAt: DateTime.fromMillisecondsSinceEpoch(map['startAt']),
       endAt: DateTime.fromMillisecondsSinceEpoch(map['endAt']),
-      isDone: Map<String, Map<String, bool>>.from(map['isDone']),
+      isDone: Map.from(map["isDone"]).map((k, v) =>
+          MapEntry<String, Map<String, bool>>(
+              k, Map.from(v).map((k, v) => MapEntry<String, bool>(k, v)))),
     );
   }
 

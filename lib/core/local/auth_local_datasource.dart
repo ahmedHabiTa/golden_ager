@@ -10,8 +10,8 @@ const cacheTokenConst = "cache_token";
 const loginInfoConst = "login_info";
 
 abstract class AuthLocalDataSource {
-  Future<void> cacheUserData({required User user});
-  Future<User> getcachedUserData();
+  Future<void> cacheUserData({required AppUser user});
+  Future<AppUser> getcachedUserData();
 
   Future<void> clearCachedUser();
 
@@ -27,7 +27,7 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
 
   AuthLocalDataSourceImpl({required this.sharedPreference});
   @override
-  Future<void> cacheUserData({required User user}) async {
+  Future<void> cacheUserData({required AppUser user}) async {
     try {
       sharedPreference.setString(userCacheConst, user.toJson());
     } catch (e) {
@@ -36,11 +36,11 @@ class AuthLocalDataSourceImpl extends AuthLocalDataSource {
   }
 
   @override
-  Future<User> getcachedUserData() async {
+  Future<AppUser> getcachedUserData() async {
     try {
       final usershared = sharedPreference.getString(userCacheConst);
       if (usershared != null) {
-        return User.fromMap(
+        return AppUser.fromMap(
             json.decode(sharedPreference.getString(userCacheConst)!));
       } else {
         throw NoCachedUserException();

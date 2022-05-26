@@ -62,15 +62,15 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 15),
                   const ReminderContainer(),
                   const SizedBox(height: 15),
-                  const Align(
-                    alignment: Alignment.centerLeft,
-                    child: CustomText(
-                      text: 'How can I help you?',
-                      color: Color(0xFF0d2137),
-                      fontSize: 28,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
+                  Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      alignment: Alignment.centerLeft,
+                      child: CustomText(
+                        text: 'How can I help you?',
+                        color: Color(0xFF0d2137),
+                        fontSize: 28,
+                        fontWeight: FontWeight.w400,
+                      )),
                   const SizedBox(height: 15),
                   const HelpContainer(),
                   const SizedBox(height: 20),

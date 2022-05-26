@@ -27,13 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final ageController = TextEditingController();
   final descController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  bool isLoading = false;
-
-  toggleLoading() {
-    setState(() {
-      isLoading = !isLoading;
-    });
-  }
 
   String? userType;
   String? gender;
@@ -286,7 +279,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     const SizedBox(height: 40),
                     Consumer<AuthProvider>(
                       builder: (context, authProvider, _) {
-                        return isLoading == true
+                        return authProvider.isLoadingSignUp == true
                             ? const LoadingWidget()
                             : CustomWideButton(
                                 radius: 10.0,
@@ -304,7 +297,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.red,
                                     );
                                   } else {
-                                    toggleLoading();
                                     authProvider.signUp(
                                       name: nameController.text,
                                       phone: phoneController.text,
@@ -316,7 +308,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       userType: userType!,
                                       context: context,
                                     );
-                                    toggleLoading();
                                   }
                                 },
                                 child: const Center(

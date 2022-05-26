@@ -8,14 +8,28 @@ import 'package:golden_ager/core/common_widget/custom_drop_down_form_field.dart'
 import 'package:golden_ager/core/common_widget/custom_text_form_field.dart';
 import 'package:golden_ager/core/constant/age_icon_icons.dart';
 import 'package:golden_ager/core/constant/constant.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-class NewMedicineScreen extends StatelessWidget {
-  NewMedicineScreen({Key? key}) : super(key: key);
+import '../core/common_widget/custom_text.dart';
+import '../core/common_widget/custom_wide_buttom.dart';
+
+class NewMedicineScreen extends StatefulWidget {
+  const NewMedicineScreen({Key? key}) : super(key: key);
+
+  @override
+  State<NewMedicineScreen> createState() => _NewMedicineScreenState();
+}
+
+class _NewMedicineScreenState extends State<NewMedicineScreen> {
   final GlobalKey<FormState> form = GlobalKey<FormState>();
 
-  final startController = TextEditingController();
-  final endController = TextEditingController();
+  String? name, dose, pillDosage;
+
+  int? shape = 1, color = 0xffD1325E;
+  DateTime? startAt, endAt;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,62 +39,136 @@ class NewMedicineScreen extends StatelessWidget {
         key: form,
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CustomFormField(
-                  hintText: 'name',
-                  prefix: Icon(Icons.person, color: Constant.primaryDarkColor)),
-              CustomFormField(
-                hintText: 'Pill Dosage',
-                prefix: Transform.rotate(
-                  angle: -pi / 4,
-                  child: Container(
-                      padding: EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100)),
-                      child: SvgPicture.asset('assets/images/bill1.svg',
-                          width: 5,
-                          height: 5,
-                          color: Constant.primaryDarkColor)),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                CustomFormField(
+                    onChanged: (value) {
+                      name = value;
+                    },
+                    hintText: 'name',
+                    prefix:
+                        Icon(Icons.person, color: Constant.primaryDarkColor)),
+                CustomFormField(
+                  hintText: 'Pill Dosage',
+                  onChanged: (value) {
+                    pillDosage = value;
+                  },
+                  prefix: Transform.rotate(
+                    angle: -pi / 4,
+                    child: Container(
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(100)),
+                        child: SvgPicture.asset('assets/images/bill1.svg',
+                            width: 5,
+                            height: 5,
+                            color: Constant.primaryDarkColor)),
+                  ),
                 ),
-              ),
-              CustomDropDownFormField(
-                  prefixIcon: Icon(AgeIcon.liquidMedical,
-                      color: Constant.primaryDarkColor),
-                  title: 'Dose',
-                  items: const [
-                    DropdownMenuItem(
-                      child: Center(
-                          child: Text(
-                        '1 time',
-                        style: Constant.mediumTextStyle,
-                      )),
-                      value: '1',
-                    ),
-                    DropdownMenuItem(
-                      child: Center(
-                          child: Center(
-                        child: Text(
-                          '2 times',
+                CustomDropDownFormField(
+                    onChanged: (value) {
+                      dose = value;
+                    },
+                    prefixIcon: Icon(AgeIcon.liquidMedical,
+                        color: Constant.primaryDarkColor),
+                    title: 'Dose',
+                    items: const [
+                      DropdownMenuItem(
+                        child: Center(
+                            child: Text(
+                          '1 time',
                           style: Constant.mediumTextStyle,
-                        ),
-                      )),
-                      value: '2',
-                    ),
-                    DropdownMenuItem(
-                      child: Center(
+                        )),
+                        value: '1',
+                      ),
+                      DropdownMenuItem(
+                        child: Center(
+                            child: Center(
                           child: Text(
-                        '3 times',
-                        style: Constant.mediumTextStyle,
-                      )),
-                      value: '3',
-                    )
-                  ]),
-              DateSelectWidget(),
-              ShapeSelectWidget(),
-              ColorSelectWidget()
-            ],
+                            '2 times',
+                            style: Constant.mediumTextStyle,
+                          ),
+                        )),
+                        value: '2',
+                      ),
+                      DropdownMenuItem(
+                        child: Center(
+                            child: Text(
+                          '3 times',
+                          style: Constant.mediumTextStyle,
+                        )),
+                        value: '3',
+                      )
+                    ]),
+                DateSelectWidget(
+                  startOnChanged: (DateTime value) {
+                    startAt = value;
+                  },
+                  endOnChanged: (DateTime value) {
+                    endAt = value;
+                  },
+                ),
+                ShapeSelectWidget(onChanged: (int value) {
+                  shape = value;
+                }),
+                ColorSelectWidget(onChanged: (int value) {
+                  color = value;
+                }),
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: Consumer<AuthProvider>(
+                    builder: (context, auth, child) => auth.isLoadingAddMedicine
+                        ? Center(child: CircularProgressIndicator())
+                        : CustomWideButton(
+                            child: const Center(
+                              child: CustomText(
+                                text: 'Add medicine',
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            radius: 10.0,
+                            height: 40,
+                            width: 130,
+                            color: Constant.primaryDarkColor,
+                            onTap: () async {
+                              if (!form.currentState!.validate()) {
+                                Constant.showToast(
+                                  message: 'all field are required',
+                                  color: Colors.red,
+                                );
+                              } else {
+                                final bool status = await auth.addMedicine(
+                                    name: name!,
+                                    pillDosage: pillDosage!,
+                                    shape: shape ?? 1,
+                                    color: color!,
+                                    dose: int.parse(dose!),
+                                    startAt: startAt!,
+                                    endAt: endAt!);
+                                if (status) {
+                                  Constant.showToast(
+                                    message:
+                                        'medicine has been added successfully',
+                                    color: Colors.green,
+                                  );
+                                  Navigator.pop(context);
+                                } else {
+                                  Constant.showToast(
+                                    message: 'Error happend',
+                                    color: Colors.red,
+                                  );
+                                }
+                              }
+                            }),
+                  ),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -89,8 +177,9 @@ class NewMedicineScreen extends StatelessWidget {
 }
 
 class ShapeSelectWidget extends StatefulWidget {
-  const ShapeSelectWidget({Key? key}) : super(key: key);
-
+  const ShapeSelectWidget({Key? key, required this.onChanged})
+      : super(key: key);
+  final Function onChanged;
   @override
   State<ShapeSelectWidget> createState() => _ShapeSelectWidgetState();
 }
@@ -116,6 +205,7 @@ class _ShapeSelectWidgetState extends State<ShapeSelectWidget> {
                       (e) => GestureDetector(
                         onTap: () => setState(() {
                           index = e;
+                          widget.onChanged(e);
                         }),
                         child: Container(
                             padding: EdgeInsets.all(8),
@@ -135,8 +225,9 @@ class _ShapeSelectWidgetState extends State<ShapeSelectWidget> {
 }
 
 class ColorSelectWidget extends StatefulWidget {
-  const ColorSelectWidget({Key? key}) : super(key: key);
-
+  const ColorSelectWidget({Key? key, required this.onChanged})
+      : super(key: key);
+  final Function onChanged;
   @override
   State<ColorSelectWidget> createState() => _ColorSelectWidgetState();
 }
@@ -150,7 +241,7 @@ class _ColorSelectWidgetState extends State<ColorSelectWidget> {
     0xffC472C1,
     0xffEA8877
   ];
-  int color = 0;
+  int color = 0xffD1325E;
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -179,6 +270,7 @@ class _ColorSelectWidgetState extends State<ColorSelectWidget> {
                     itemBuilder: (contrxt, i) => GestureDetector(
                           onTap: () {
                             setState(() => color = colors[i]);
+                            widget.onChanged(colors[i]);
                           },
                           child: Container(
                               height: 75,
@@ -197,15 +289,21 @@ class _ColorSelectWidgetState extends State<ColorSelectWidget> {
 }
 
 class DateSelectWidget extends StatefulWidget {
-  const DateSelectWidget({Key? key}) : super(key: key);
+  const DateSelectWidget(
+      {Key? key, required this.startOnChanged, required this.endOnChanged})
+      : super(key: key);
 
+  final Function startOnChanged;
+
+  final Function endOnChanged;
   @override
   State<DateSelectWidget> createState() => _DateSelectWidgetState();
 }
 
 class _DateSelectWidgetState extends State<DateSelectWidget> {
-  DateTime? startSelectedDay;
-  DateTime? endSelectedDay;
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
+
   Future<void> _selectDate(bool isStart) async {
     if (Platform.isIOS) {
       showModalBottomSheet(
@@ -215,24 +313,32 @@ class _DateSelectWidgetState extends State<DateSelectWidget> {
                   topLeft: Radius.circular(15), topRight: Radius.circular(15))),
           builder: (BuildContext context) {
             return CupertinoDatePicker(
-              initialDateTime: DateTime.now(),
+              initialDateTime: isStart
+                  ? DateTime.now()
+                  : DateTime.now().add(Duration(days: 1)),
               maximumDate: DateTime.now().add(Duration(days: 7)),
-              minimumDate: DateTime.now(),
+              minimumDate: isStart
+                  ? DateTime.now()
+                  : DateTime.now().add(Duration(days: 1)),
               mode: CupertinoDatePickerMode.date,
               // backgroundColor: Colors.white,
               onDateTimeChanged: (picked) {
                 setState(() {
                   if (isStart) {
-                    startSelectedDay = picked;
+                    widget.startOnChanged(picked);
+                    startDateController.text =
+                        " ${DateFormat('dd/MM/yyyy').format(picked)}";
                   } else {
-                    endSelectedDay = picked;
+                    widget.endOnChanged(picked);
+                    endDateController.text =
+                        " ${DateFormat('dd/MM/yyyy').format(picked)}";
                   }
                 });
               },
             );
           });
     } else {
-      await showDatePicker(
+      final picked = await showDatePicker(
           useRootNavigator: false,
           context: context,
           initialDate: DateTime.now(),
@@ -251,17 +357,21 @@ class _DateSelectWidgetState extends State<DateSelectWidget> {
               ),
               child: child!,
             );
-          }).then((picked) {
-        if (picked != null) {
-          setState(() {
-            if (isStart) {
-              startSelectedDay = picked;
-            } else {
-              endSelectedDay = picked;
-            }
           });
-        }
-      });
+
+      if (picked != null) {
+        setState(() {
+          if (isStart) {
+            widget.startOnChanged(picked);
+            startDateController.text =
+                " ${DateFormat('dd/MM/yyyy').format(picked)}";
+          } else {
+            widget.endOnChanged(picked);
+            endDateController.text =
+                " ${DateFormat('dd/MM/yyyy').format(picked)}";
+          }
+        });
+      }
     }
   }
 
@@ -272,31 +382,33 @@ class _DateSelectWidgetState extends State<DateSelectWidget> {
       child: Row(
         children: [
           Expanded(
-            child: GestureDetector(
-              onTap: () async {
-                await _selectDate(true);
-              },
-              child: Text(
-                startSelectedDay == null
-                    ? "start date"
-                    : "start date : ${DateFormat('dd/MM/yyyy').format(startSelectedDay!)}",
-                style: Constant.normalTextStyle,
-              ),
+            child: CustomFormField(
+              prefix: GestureDetector(
+                  onTap: () async => await _selectDate(true),
+                  child: Icon(
+                    Icons.calendar_month_rounded,
+                    color: Constant.primaryColor,
+                  )),
+              readOnly: true,
+              hintText: "start date",
+              controller: startDateController,
             ),
           ),
           SizedBox(
             width: 20,
           ),
           Expanded(
-              child: GestureDetector(
-            onTap: () async => await _selectDate(false),
-            child: Text(
-              endSelectedDay == null
-                  ? "end date"
-                  : "end date : ${DateFormat('dd/MM/yyyy').format(endSelectedDay!)}",
-              style: Constant.normalTextStyle,
-            ),
-          ))
+            child: CustomFormField(
+                prefix: GestureDetector(
+                    onTap: () async => await _selectDate(false),
+                    child: Icon(
+                      Icons.calendar_month_rounded,
+                      color: Constant.primaryColor,
+                    )),
+                readOnly: true,
+                hintText: "end date",
+                controller: endDateController),
+          )
         ],
       ),
     );

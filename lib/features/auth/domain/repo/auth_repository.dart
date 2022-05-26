@@ -5,5 +5,5 @@ import '../../../../models/user.dart';
 import '../usecases/login.dart';
 
 abstract class AuthRepository {
-  Future<Either<Failure, User>> login({required LoginParams params});
+  Future<Either<Failure, AppUser>> login({required LoginParams params});
 }

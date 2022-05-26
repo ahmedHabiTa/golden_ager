@@ -32,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
               } else if (snapshot.hasError) {
                 return const Center(
                   child: CustomText(
-                    text: 'حدث خطأ',
+                    text: 'Error happen',
                     color: Colors.red,
                     fontSize: 30,
                   ),
@@ -106,7 +106,7 @@ class ProfileScreen extends StatelessWidget {
                     _customFixedText(text: 'Age :'),
                     _customDynamicText(text: snapshot.data!['age']),
                     _customDivider(),
-                    _customFixedText(text: 'Condition :'),
+                    _customFixedText(text: 'Bio :'),
                     _customDynamicText(text: snapshot.data!['description']),
                     _customDivider(),
                     Consumer<AuthProvider>(
@@ -169,7 +169,8 @@ class ProfileScreen extends StatelessWidget {
   Widget _customDynamicText({
     required String text,
   }) {
-    return Padding(
+    return Container(
+      alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(
         horizontal: 15.0,
       ),

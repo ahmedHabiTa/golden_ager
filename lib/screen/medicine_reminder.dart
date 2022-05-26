@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/models/medicine.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:golden_ager/screen/new_medicine.dart';
 
 import 'package:intl/intl.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 
 class MedicineReminderScreen extends StatefulWidget {
   const MedicineReminderScreen({Key? key}) : super(key: key);
@@ -15,39 +17,18 @@ class MedicineReminderScreen extends StatefulWidget {
 }
 
 class _MedicineReminderScreenState extends State<MedicineReminderScreen> {
-  final Medicine medicine = Medicine(
-      name: 'Lisinopril',
-      pillDosage: '150 mg',
-      shape: '1',
-      color: 0xffD1325E,
-      dose: 3,
-      startAt: DateTime.now(),
-      endAt: DateTime.now().add(Duration(days: 7)));
-  void createMedicine() {
-    Map<String, Map<String, bool>> isDone = {};
-    int condition = medicine.endAt.difference(medicine.startAt).inDays;
-    final int hours = 24 ~/ medicine.dose;
-    for (var i = 0; i < condition; i++) {
-      isDone[DateFormat('yMd')
-          .format(medicine.startAt.add(Duration(days: i)))] = {};
-      for (var j = 0; j < medicine.dose; j++) {
-        isDone[DateFormat('yMd')
-                .format(medicine.startAt.add(Duration(days: i)))]!
-            .addAll({(hours * j).toString(): false});
-      }
-    }
-    medicine.isDone = isDone;
-    print(medicine);
-  }
-
   @override
   void initState() {
     super.initState();
-    createMedicine();
+    Future.delayed(Duration.zero, () {
+      context.read<AuthProvider>().getDisplayMedcines(DateTime.now());
+      context.read<AuthProvider>().getTodayActivity();
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    final medicines = context.watch<AuthProvider>().displayMedcines;
     return Scaffold(
       appBar: AppBar(
           title: const Text(
@@ -68,9 +49,9 @@ class _MedicineReminderScreenState extends State<MedicineReminderScreen> {
           ProgresBar(),
           Expanded(
               child: ListView.builder(
-                  itemCount: 2,
+                  itemCount: medicines.length,
                   itemBuilder: (context, index) =>
-                      MedicineItem(medicine: medicine)))
+                      MedicineItem(medicine: medicines[index])))
         ],
       ),
     );
@@ -88,18 +69,34 @@ class MedicineItem extends StatefulWidget {
 }
 
 class _MedicineItemState extends State<MedicineItem> {
+  String getDisplayTime(String time) {
+    String timeResult = '';
+    int timeInt = int.parse(time);
+    if (timeInt == 0) {
+      timeResult = "12 am";
+    } else if (timeInt < 12) {
+      timeResult = time + " am";
+    } else if (timeInt == 12) {
+      timeResult = time + " pm";
+    } else {
+      int replace = timeInt - 12;
+      timeResult = time.replaceRange(0, 2, replace.toString()) + " pm";
+    }
+    return timeResult;
+  }
+
   late Map<String, bool> isdoneDay;
   late Medicine medicine;
   @override
   void initState() {
     super.initState();
     medicine = widget.medicine;
-    isdoneDay =
-        widget.medicine.isDone![DateFormat('yMd').format(DateTime.now())]!;
   }
 
   @override
   Widget build(BuildContext context) {
+    isdoneDay = widget.medicine.isDone![
+        DateFormat('yMd').format(context.read<AuthProvider>().selectedDate)]!;
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       padding: EdgeInsets.all(12),
@@ -122,6 +119,7 @@ class _MedicineItemState extends State<MedicineItem> {
                         'assets/images/bill${widget.medicine.shape}.svg',
                         color: Colors.white)),
               ),
+              Spacer(),
               Column(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
@@ -129,10 +127,9 @@ class _MedicineItemState extends State<MedicineItem> {
                   Text(widget.medicine.pillDosage,
                       style: Constant.normalTextStyle
                           .copyWith(color: Constant.primaryDarkColor)),
-                  Text('9:00 am',
-                      style: Constant.headLineTextStyle.copyWith(fontSize: 18))
                 ],
               ),
+              Spacer(),
               Container(
                   decoration: BoxDecoration(
                       border:
@@ -141,13 +138,17 @@ class _MedicineItemState extends State<MedicineItem> {
                               : Border.all(color: Colors.transparent, width: 3),
                       borderRadius: BorderRadius.circular(100)),
                   child: isdoneDay.values.every(((element) => element == true))
-                      ? Icon(Icons.done, size: 50, color: Colors.green)
-                      : SizedBox(width: 50))
+                      ? Icon(Icons.done, size: 40, color: Colors.green)
+                      : SizedBox(width: 40))
             ],
           ),
-          if (!isdoneDay.values.every(((element) => element == true)))
+          if (!isdoneDay.values.every(((element) => element == true)) &&
+              context.read<AuthProvider>().selectedDate.day ==
+                  DateTime.now().day)
             Divider(),
-          if (!isdoneDay.values.every(((element) => element == true)))
+          if (!isdoneDay.values.every(((element) => element == true)) &&
+              context.read<AuthProvider>().selectedDate.day ==
+                  DateTime.now().day)
             SizedBox(
                 height: 50,
                 child: Column(
@@ -162,18 +163,23 @@ class _MedicineItemState extends State<MedicineItem> {
                                     });
                                   },
                                   child: Text(
-                                    key,
+                                    getDisplayTime(key),
                                     style: Constant.mediumTextStyle,
                                   ),
                                 ))
                             .toList()),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: isdoneDay.values
-                            .map((val) => GestureDetector(
+                        children: isdoneDay.keys
+                            .map((key) => GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      isdoneDay[key] = true;
+                                    });
+                                  },
                                   child: Text(
-                                    val ? "done" : "take",
-                                    style: val
+                                    isdoneDay[key]! ? "done" : "take",
+                                    style: isdoneDay[key]!
                                         ? Constant.mediumTextStyle
                                             .copyWith(color: Colors.green)
                                         : Constant.mediumTextStyle,
@@ -195,6 +201,7 @@ class ProgresBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ratio = context.read<AuthProvider>().todayActivity;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -209,14 +216,14 @@ class ProgresBar extends StatelessWidget {
               Expanded(
                 child: LinearPercentIndicator(
                   lineHeight: 10.0,
-                  percent: 2 / 3,
+                  percent: ratio[0],
                   barRadius: Radius.circular(20),
                   backgroundColor: Constant.accentColorLight,
                   progressColor: Constant.primaryColor,
                 ),
               ),
               Text(
-                "2/3 Med",
+                "${ratio[1]} / ${ratio[2]} Med",
                 style: Constant.normalTextStyle,
               ),
             ],
@@ -239,20 +246,19 @@ class _WeekDaysState extends State<WeekDays> {
   int? empIndex;
   int? timeIndex;
   String? displayTime;
-  List<Map<String, Object>> get commingWeekDays {
+  List<DateTime> get commingWeekDays {
     return List.generate(7, (index) {
       final weekDay = DateTime.now().add(
         Duration(days: index),
       );
 
-      return {'day': weekDay};
+      return weekDay;
     }).toList();
   }
 
   @override
   void initState() {
     _index = 0;
-
     super.initState();
   }
 
@@ -266,11 +272,14 @@ class _WeekDaysState extends State<WeekDays> {
                 mainAxisSpacing: 8, childAspectRatio: 2 / 1, crossAxisCount: 1),
             scrollDirection: Axis.horizontal,
             itemCount: commingWeekDays.length,
-            itemBuilder: (contrxt, i) => GestureDetector(
+            itemBuilder: (context, i) => GestureDetector(
                   onTap: () {
                     setState(() {
                       _index = i;
                     });
+                    context
+                        .read<AuthProvider>()
+                        .getDisplayMedcines(commingWeekDays[i]);
                   },
                   child: Container(
                       alignment: Alignment.center,
@@ -283,8 +292,7 @@ class _WeekDaysState extends State<WeekDays> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
-                            DateFormat.d()
-                                .format(commingWeekDays[i]['day'] as DateTime),
+                            DateFormat.d().format(commingWeekDays[i]),
                             textAlign: TextAlign.center,
                             style: Constant.normalTextStyle.copyWith(
                                 fontWeight: FontWeight.bold,
@@ -293,8 +301,7 @@ class _WeekDaysState extends State<WeekDays> {
                                     _index == i ? Colors.white : Colors.black),
                           ),
                           Text(
-                            DateFormat.E()
-                                .format(commingWeekDays[i]['day'] as DateTime),
+                            DateFormat.E().format(commingWeekDays[i]),
                             textAlign: TextAlign.center,
                             style: Constant.normalTextStyle.copyWith(
                                 color:

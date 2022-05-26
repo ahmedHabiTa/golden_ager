@@ -1,11 +1,12 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:golden_ager/models/medicine.dart';
 
 import 'package:golden_ager/models/notification.dart';
 import 'package:golden_ager/models/report.dart';
 
-class User {
+class AppUser {
   final String uid;
   final String name;
   final String email;
@@ -15,7 +16,7 @@ class User {
   final String image;
   final String gender;
   final List<Notification> notifications;
-  User({
+  AppUser({
     required this.uid,
     required this.name,
     required this.email,
@@ -27,7 +28,7 @@ class User {
     required this.notifications,
   });
 
-  User copyWith({
+  AppUser copyWith({
     String? uid,
     String? name,
     String? email,
@@ -38,7 +39,7 @@ class User {
     String? gender,
     List<Notification>? notifications,
   }) {
-    return User(
+    return AppUser(
       uid: uid ?? this.uid,
       name: name ?? this.name,
       email: email ?? this.email,
@@ -57,7 +58,7 @@ class User {
       'name': name,
       'email': email,
       'phone': phone,
-      'userType': userType,
+      'user_type': userType,
       'age': age,
       'image': image,
       'gender': gender,
@@ -65,13 +66,13 @@ class User {
     };
   }
 
-  factory User.fromMap(Map<String, dynamic> map) {
-    return User(
+  factory AppUser.fromMap(Map<String, dynamic> map) {
+    return AppUser(
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      userType: map['userType'] ?? '',
+      userType: map['user_type'] ?? '',
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
@@ -82,7 +83,8 @@ class User {
 
   String toJson() => json.encode(toMap());
 
-  factory User.fromJson(String source) => User.fromMap(json.decode(source));
+  factory AppUser.fromJson(String source) =>
+      AppUser.fromMap(json.decode(source));
 
   @override
   String toString() {
@@ -93,7 +95,7 @@ class User {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is User &&
+    return other is AppUser &&
         other.uid == uid &&
         other.name == name &&
         other.email == email &&
@@ -119,12 +121,13 @@ class User {
   }
 }
 
-class Patient extends User {
+class Patient extends AppUser {
   final String description;
   final String feeling;
-  final Mentor mentor;
+  final Mentor? mentor;
   final List<Doctor> doctors;
   final List<Report> reports;
+  final List<Medicine> medicines;
   Patient({
     required String uid,
     required String name,
@@ -135,6 +138,7 @@ class Patient extends User {
     required String image,
     required String gender,
     required List<Notification> notifications,
+    required this.medicines,
     required this.description,
     required this.feeling,
     required this.mentor,
@@ -165,6 +169,7 @@ class Patient extends User {
     String? description,
     String? feeling,
     Mentor? mentor,
+    List<Medicine>? medicine,
     List<Report>? reports,
     List<Doctor>? doctors,
   }) {
@@ -178,6 +183,7 @@ class Patient extends User {
         image: image ?? this.image,
         gender: gender ?? this.gender,
         notifications: notifications ?? this.notifications,
+        medicines: medicine ?? medicines,
         description: description ?? this.description,
         feeling: feeling ?? this.feeling,
         mentor: mentor ?? this.mentor,
@@ -188,9 +194,18 @@ class Patient extends User {
   @override
   Map<String, dynamic> toMap() {
     return {
+      'uid': uid,
+      'name': name,
+      'email': email,
+      'phone': phone,
+      'user_type': userType,
+      'age': age,
+      'image': image,
+      'gender': gender,
       'description': description,
       'feeling': feeling,
-      'mentor': mentor.toMap(),
+      'mentor': mentor?.toMap(),
+      'medicines': medicines.map((e) => e.toMap()).toList(),
       'doctors': doctors.map((x) => x.toMap()).toList(),
       'reports': reports.map((e) => e.toMap()).toList()
     };
@@ -202,7 +217,7 @@ class Patient extends User {
         name: map['name'] ?? '',
         email: map['email'] ?? '',
         phone: map['phone'] ?? '',
-        userType: map['userType'] ?? '',
+        userType: map['user_type'] ?? '',
         age: map['age'] ?? '',
         image: map['image'] ?? '',
         gender: map['gender'] ?? '',
@@ -210,7 +225,9 @@ class Patient extends User {
             map['notifications']?.map((x) => Notification.fromMap(x))),
         description: map['description'] ?? '',
         feeling: map['feeling'] ?? '',
-        mentor: Mentor.fromMap(map['mentor']),
+        mentor: map['mentor'] == null ? null : Mentor.fromMap(map['mentor']),
+        medicines: List<Medicine>.from(
+            map['medicines']?.map((x) => Medicine.fromMap(x))),
         doctors:
             List<Doctor>.from(map['doctors']?.map((x) => Doctor.fromMap(x))),
         reports:
@@ -248,7 +265,7 @@ class Patient extends User {
   }
 }
 
-class Mentor extends User {
+class Mentor extends AppUser {
   final Patient patient;
   Mentor({
     required String uid,
@@ -306,7 +323,7 @@ class Mentor extends User {
       'name': name,
       'email': email,
       'phone': phone,
-      'userType': userType,
+      'user_type': userType,
       'age': age,
       'image': image,
       'gender': gender,
@@ -321,7 +338,7 @@ class Mentor extends User {
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      userType: map['userType'] ?? '',
+      userType: map['user_type'] ?? '',
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
@@ -350,7 +367,7 @@ class Mentor extends User {
   int get hashCode => patient.hashCode;
 }
 
-class Doctor extends User {
+class Doctor extends AppUser {
   final List<Patient> patients;
   Doctor({
     required String uid,
@@ -408,7 +425,7 @@ class Doctor extends User {
       'name': name,
       'email': email,
       'phone': phone,
-      'userType': userType,
+      'user_type': userType,
       'age': age,
       'image': image,
       'gender': gender,
@@ -423,7 +440,7 @@ class Doctor extends User {
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      userType: map['userType'] ?? '',
+      userType: map['user_type'] ?? '',
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
