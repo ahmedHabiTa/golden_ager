@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_drop_down_form_field.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/common_widget/custom_text.dart';
@@ -67,6 +68,80 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       color: Color(0xFF091249),
                       fontSize: 24,
                       fontWeight: FontWeight.w600,
+                    ),
+                    const SizedBox(height: 10),
+                    Consumer<AuthProvider>(
+                      builder: (context, authProvider, _) {
+                        return GestureDetector(
+                          onTap: () {
+                            showModalBottomSheet(
+                                context: context,
+                                builder: (_) {
+                                  return SizedBox(
+                                    height: 120,
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            Provider.of<AuthProvider>(context,
+                                                listen: false)
+                                                .pickImage(
+                                                imageSource:
+                                                ImageSource.camera);
+                                          },
+                                          child: CustomText(
+                                            text: 'Camera',
+                                            color: Constants.primaryColor,
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Provider.of<AuthProvider>(context,
+                                                listen: false)
+                                                .pickImage(
+                                                imageSource:
+                                                ImageSource.gallery);
+                                          },
+                                          child: CustomText(
+                                            text: 'Gallery',
+                                            color: Constants.primaryColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                });
+                          },
+                          child:authProvider.image == null ? Container(
+                            width: Constants.width(context)*0.7,
+                            height: Constants.height(context)*0.3,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Constants.primaryDarkColor,
+                            ),
+                            child:const Center(
+                              child: Icon(
+                                Icons.person_outline,
+                                color: Colors.white,
+                                size: 80,
+                              ),
+                            ),
+                          ) : Container(
+                            width: Constants.width(context)*0.7,
+                            height: Constants.height(context)*0.5,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              image: DecorationImage(
+                                fit: BoxFit.fill,
+                                image: FileImage(authProvider.image!)
+                              )
+                            ),
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(height: 10),
                     CustomFormField(
@@ -169,7 +244,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         );
                       }),
-                      iconSize: 30,
+                      iconSize: 0,
                     ),
                     const SizedBox(height: 10),
                     CustomDropDownFormField(
@@ -191,7 +266,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         );
                       }),
-                      iconSize: 30,
+                      iconSize: 0,
                     ),
                     const SizedBox(height: 10),
                     CustomFormField(

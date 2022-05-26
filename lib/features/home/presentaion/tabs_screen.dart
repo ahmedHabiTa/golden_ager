@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constants.dart';
+import 'package:golden_ager/features/home/presentaion/profile_screen.dart';
+import 'package:golden_ager/features/home/presentaion/tips_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
@@ -18,29 +20,9 @@ class _TabsScreenState extends State<TabsScreen> {
 
   List<Map<String, dynamic>> pages = [
     {"index": 0, "page": const HomeScreen()},
-    {"index": 1, "page": const Scaffold()},
+    {"index": 1, "page": const TipsScreen()},
     {"index": 2, "page": const Scaffold()},
-    {"index": 3, "page":  Scaffold(
-      body: Center(
-        child:
-        Consumer<AuthProvider>(
-          builder: (context, authProvider, _) {
-            return Center(
-              child: GestureDetector(
-                onTap: () async {
-                  await authProvider.logOut(context);
-                },
-                child:  CustomText(
-                  text: 'LogOut',
-                  fontSize: 30,
-                  color: Constants.primaryDarkColor,
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    )},
+    {"index": 3, "page":  const ProfileScreen()},
   ];
 
   @override

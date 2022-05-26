@@ -31,7 +31,8 @@ class HomeScreen extends StatelessWidget {
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              } else if (snapshot.hasError) {
+              }
+              else if (snapshot.hasError) {
                 return const Center(
                   child: CustomText(
                     text: 'حدث خطأ',
@@ -39,12 +40,14 @@ class HomeScreen extends StatelessWidget {
                     fontSize: 30,
                   ),
                 );
-              } else if (!snapshot.hasData) {
+              }
+              else if (!snapshot.hasData) {
                 return const Padding(
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              }else if(snapshot.hasData){
+              }
+              else if(snapshot.hasData){
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [

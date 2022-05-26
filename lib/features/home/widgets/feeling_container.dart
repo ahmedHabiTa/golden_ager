@@ -46,7 +46,7 @@ class FeelingsContainer extends StatelessWidget {
                   CustomWideContainer(
                     child: Row(
                       children: const [
-                        SizedBox(width: 15),
+                        SizedBox(width: 10),
                         CustomText(
                           text: 'Check in',
                           color: Colors.white,
@@ -59,7 +59,7 @@ class FeelingsContainer extends StatelessWidget {
                           color: Colors.white,
                           size: 20,
                         ),
-                        SizedBox(width: 15),
+                        SizedBox(width: 10),
                       ],
                     ),
                     height: Constants.height(context) * 0.11,

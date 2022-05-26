@@ -44,7 +44,7 @@ class HealthDataContainer extends StatelessWidget {
     ];
     return Container(
       width: double.infinity,
-      height: Constants.height(context) * 0.55,
+      height: Constants.height(context) * 0.6,
       color: const Color(0xFFc6dffc),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -70,7 +70,7 @@ class HealthDataContainer extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           Container(
-            height: Constants.height(context) * 0.38,
+            height: Constants.height(context) * 0.4,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               itemBuilder: (context, index) {
@@ -104,7 +104,7 @@ class HealthDataContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: CustomWideContainer(
-        width: Constants.width(context) * 0.45,
+        width: Constants.width(context) * 0.5,
         height: Constants.height(context),
         radius: 20.0,
         child: Padding(
