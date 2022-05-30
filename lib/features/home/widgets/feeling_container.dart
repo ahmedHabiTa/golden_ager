@@ -40,7 +40,7 @@ class FeelingsContainer extends StatelessWidget {
                   CustomText(
                     text: feeling == ''
                         ? 'How do you feel \n today?'
-                        : "you fell\n" + feeling + "\ntoday",
+                        : "you feel\n" + feeling + "\ntoday",
                     color: Colors.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w400,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:golden_ager/features/home/presentaion/tips_details_screen.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/constant/Constant.dart';
@@ -18,6 +19,11 @@ class TipsScreen extends StatelessWidget {
       'assets/images/senior-health.jpg',
       'assets/images/food.jpg',
     ];
+    List<String> docIdList = [
+      'general_tips',
+      'exercise_videos',
+      'food',
+    ];
     return Scaffold(
       body: ListView.builder(
         itemBuilder: (context, index) {
@@ -28,10 +34,14 @@ class TipsScreen extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20.0),
               ),
-              child: _customCard(
+              child: customCard(
                   image: images[index],
                   title: titles[index],
-                  onTap: () {},
+                  onTap: () {
+                    Constant.navigateTo(
+                        routeName: TipsDetailsScreen(docId: docIdList[index]),
+                        context: context);
+                  },
                   context: context,
                   width: Constant.width(context) * 0.9,
                   height: Constant.height(context) * 0.5,
@@ -44,7 +54,7 @@ class TipsScreen extends StatelessWidget {
     );
   }
 
-  Widget _customCard({
+  Widget customCard({
     required double height,
     required double width,
     required Function onTap,

@@ -1,12 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
+import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/loading_widget.dart';
-import '../../../core/constant/Constant.dart';
 import '../../../provider/auth_provider.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -29,7 +29,8 @@ class ProfileScreen extends StatelessWidget {
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              } else if (snapshot.hasError) {
+              }
+              else if (snapshot.hasError) {
                 return const Center(
                   child: CustomText(
                     text: 'Error happen',
@@ -37,14 +38,16 @@ class ProfileScreen extends StatelessWidget {
                     fontSize: 30,
                   ),
                 );
-              } else if (!snapshot.hasData) {
+              }
+              else if (!snapshot.hasData) {
                 return const Padding(
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              } else if (snapshot.hasData) {
+              }
+              else if (snapshot.hasData) {
                 return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Stack(
                       alignment: Alignment.bottomCenter,
@@ -86,29 +89,114 @@ class ProfileScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 10),
                     Center(
-                        child:
-                            _customDynamicText(text: snapshot.data!['name'])),
-                    _customFixedText(text: 'Email :'),
-                    _customDynamicText(text: snapshot.data!['email']),
+                      child: _customDynamicText(text: snapshot.data!['name']),
+                    ),
                     _customDivider(),
-                    _customFixedText(text: 'Gender :'),
-                    _customDynamicText(text: snapshot.data!['gender']),
-                    _customDivider(),
-                    _customFixedText(text: 'Feeling :'),
-                    _customDynamicText(text: snapshot.data!['feeling']),
-                    _customDivider(),
-                    _customFixedText(text: 'Phone :'),
-                    _customDynamicText(text: snapshot.data!['phone']),
-                    _customDivider(),
-                    _customFixedText(text: 'Type :'),
-                    _customDynamicText(text: snapshot.data!['user_type']),
-                    _customDivider(),
-                    _customFixedText(text: 'Age :'),
-                    _customDynamicText(text: snapshot.data!['age']),
-                    _customDivider(),
-                    _customFixedText(text: 'Bio :'),
-                    _customDynamicText(text: snapshot.data!['description']),
-                    _customDivider(),
+                    Align(
+                      child: _customFixedText(text: 'Contact Info'),
+                      alignment: Alignment.centerLeft,
+                    ),
+                    Card(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 12.0),
+                        child: SizedBox(
+                          width: Constant.width(context) * 0.9,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _customFixedText(text: 'Email :'),
+                              _customDynamicText(text: snapshot.data!['email']),
+                              _customFixedText(text: 'Phone :'),
+                              _customDynamicText(text: snapshot.data!['phone']),
+                              _customFixedText(text: 'Bio :'),
+                              _customDynamicText(
+                                  text: snapshot.data!['description']),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      child: _customFixedText(text: 'Personal Info'),
+                      alignment: Alignment.centerLeft,
+                    ),
+                    Card(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 12.0),
+                        child: SizedBox(
+                          width: Constant.width(context) * 0.9,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _customFixedText(text: 'Gender :'),
+                              _customDynamicText(
+                                  text: snapshot.data!['gender']),
+                              _customFixedText(text: 'Feeling :'),
+                              _customDynamicText(
+                                  text: snapshot.data!['feeling']),
+                              _customFixedText(text: 'Type :'),
+                              _customDynamicText(
+                                  text: snapshot.data!['user_type']),
+                              _customFixedText(text: 'Age :'),
+                              _customDynamicText(text: snapshot.data!['age']),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      child: _customFixedText(text: 'Medical history'),
+                      alignment: Alignment.centerLeft,
+                    ),
+                    Card(
+                      elevation: 10,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20.0)),
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0, vertical: 12.0),
+                        child: SizedBox(
+                          width: Constant.width(context) * 0.9,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              _customFixedText(text: 'Medical Specialty:'),
+                              _customDynamicText(text: 'Endocrinology'),
+                              _customFixedText(text: 'Sample Name :'),
+                              _customDynamicText(
+                                  text: 'Diabetes Mellitus Followup'),
+                              _customFixedText(text: 'Description :'),
+                              _customDynamicText(
+                                  text:
+                                      'Return visit to the endocrine clinic for followup management of type 1 diabetes mellitus. Plan today is to make adjustments to her pump based on a total daily dose of 90 units of insulin.(Medical Transcription Sample Report)'),
+                              _customFixedText(text: 'PROBLEM LIST :'),
+                              _customDynamicText(
+                                  text:
+                                      '1. Type two diabetes mellitus,insulin pump.\n2. Hypertension.\n3. Hyperlipidemia.'),
+                              _customFixedText(text: 'CURRENT MEDICATIONS :'),
+                              _customDynamicText(
+                                text: '''1. Zoloft 50 mg p.o. once daily.
+                                \n2. Lisinopril 40 mg once daily.
+                              \n  3. Symlin 60 micrograms, not taking at this point.
+                               \n 4. Folic acid 2 by mouth every day.
+                               \n 5. NovoLog insulin via insulin pump about 90 units of insulin per day.''',
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
                     Consumer<AuthProvider>(
                       builder: (context, authProvider, _) {
                         return Center(
@@ -170,13 +258,13 @@ class ProfileScreen extends StatelessWidget {
     required String text,
   }) {
     return Container(
-      alignment: Alignment.center,
+      //    alignment: Alignment.center,
       padding: const EdgeInsets.symmetric(
         horizontal: 15.0,
       ),
       child: CustomText(
         text: text,
-        fontSize: 20,
+        fontSize: 15,
         color: Constant.primaryColor,
         fontWeight: FontWeight.bold,
       ),

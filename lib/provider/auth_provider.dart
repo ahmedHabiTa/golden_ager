@@ -118,6 +118,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         print(userUUID);
         await FirebaseFirestore.instance.collection('users').doc(userUUID).set({
           "image": imageUrl,
+          "uid" : userUUID,
           "age": age,
           "description": desc,
           "email": email,

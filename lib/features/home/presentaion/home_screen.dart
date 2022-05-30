@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 import 'package:golden_ager/features/home/widgets/help_container.dart';
+import 'package:golden_ager/features/home/widgets/home_app_bar.dart';
 import 'package:golden_ager/features/home/widgets/reminders_container.dart';
 
 import '../../../core/common_widget/custom_text.dart';
@@ -45,6 +46,8 @@ class HomeScreen extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
+                  const SizedBox(height: 10),
+                  HomeAppBar(),
                   const SizedBox(height: 10),
                   Align(
                     alignment: Alignment.centerLeft,
