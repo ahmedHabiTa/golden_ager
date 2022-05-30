@@ -445,7 +445,7 @@ class Doctor extends AppUser {
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
       notifications: List<Notification>.from(
-          map['notifications']?.map((x) => Notification.fromMap(x))),
+          map['notification']?.map((x) => Notification.fromMap(x))),
       patients:
           List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),
     );

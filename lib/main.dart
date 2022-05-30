@@ -1,16 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
-import 'package:golden_ager/features/home/presentaion/splash_screen.dart';
-import 'package:golden_ager/features/home/presentaion/tabs_screen.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
+import 'package:golden_ager/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
 
-import 'core/common_widget/loading_widget.dart';
 import 'core/util/shared_prefs_helper.dart';
 import 'provider/auth_provider.dart';
 import 'provider/home_provider.dart';
+import 'screen/home/splash_screen.dart';
+import 'screen/home/tabs_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,6 +20,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -43,22 +43,38 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const LoadingWidget();
-            } else if (snapshot.hasError) {
-              return const Scaffold(
-                  body: Center(child: Text('Something went wrong')));
-            } else if (snapshot.hasData) {
-              return const TabsScreen();
-            } else {
-              return const SplashScreen();
-            }
-          },
-        ),
+        home: RedierctScreen(),
       ),
     );
+  }
+}
+
+class RedierctScreen extends StatefulWidget {
+  const RedierctScreen({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<RedierctScreen> createState() => _RedierctScreenState();
+}
+
+class _RedierctScreenState extends State<RedierctScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthProvider>().tryToLogin(context: context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AuthProvider>(builder: (ctx, u, _) {
+      if (u.isLoadingTryToLogin) {
+        return const SplashScreen();
+      } else if (u.userType != null) {
+        return const TabsScreen();
+      } else {
+        return LoginScreen();
+      }
+    });
   }
 }

@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:golden_ager/core/util/shared_prefs_helper.dart';
-import 'package:golden_ager/features/home/presentaion/tabs_screen.dart';
 
 import '../core/constant/constant.dart';
+import '../core/util/shared_prefs_helper.dart';
+import '../screen/home/tabs_screen.dart';
 
 class HomeProvider extends ChangeNotifier {
   Future<void> changeFeeling({

@@ -7,8 +7,8 @@ import '../../../../core/common_widget/custom_text.dart';
 import '../../../../core/common_widget/custom_text_form_field.dart';
 import '../../../../core/common_widget/custom_wide_buttom.dart';
 import '../../../../core/common_widget/loading_widget.dart';
-import '../core/constant/constant.dart';
-import '../provider/auth_provider.dart';
+import '../../core/constant/constant.dart';
+import '../../provider/auth_provider.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {

@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
-import 'package:golden_ager/features/home/widgets/help_container.dart';
-import 'package:golden_ager/features/home/widgets/home_app_bar.dart';
-import 'package:golden_ager/features/home/widgets/reminders_container.dart';
+import '../../core/constant/Constant.dart';
+import '../home/widgets/help_container.dart';
+import '../home/widgets/reminders_container.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/loading_widget.dart';
-import '../widgets/feeling_container.dart';
-import '../widgets/health_data_container.dart';
+import 'widgets/feeling_container.dart';
+import 'widgets/health_data_container.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,6 +17,19 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final userUUID = SharedPrefsHelper.getData(key: 'userUUID');
     return Scaffold(
+      appBar: AppBar(
+        foregroundColor: Color(0xffEFF1F3),
+        leading: GestureDetector(
+          onTap: () {
+            //todo: navigate to notifications screen
+          },
+          child: const Icon(
+            Icons.notifications_none_sharp,
+            color: Constant.primaryDarkColor,
+            size: 40,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         child: StreamBuilder<DocumentSnapshot>(
           stream: FirebaseFirestore.instance
@@ -46,13 +59,11 @@ class HomeScreen extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  const SizedBox(height: 10),
-                  HomeAppBar(),
-                  const SizedBox(height: 10),
                   Align(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     child: CustomText(
-                      text: 'Hello, ${snapshot.data!['name']} ! ',
+                      text:
+                          'Hello, ${snapshot.data!['name'].toString().split(' ')[0]} ! ',
                       color: const Color(0xFF0d2137),
                       fontSize: 34,
                       fontWeight: FontWeight.bold,

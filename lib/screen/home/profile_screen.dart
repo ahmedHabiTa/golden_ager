@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/loading_widget.dart';
 import '../../../provider/auth_provider.dart';
+import 'package:clipboard/clipboard.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -29,8 +30,7 @@ class ProfileScreen extends StatelessWidget {
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              }
-              else if (snapshot.hasError) {
+              } else if (snapshot.hasError) {
                 return const Center(
                   child: CustomText(
                     text: 'Error happen',
@@ -38,14 +38,12 @@ class ProfileScreen extends StatelessWidget {
                     fontSize: 30,
                   ),
                 );
-              }
-              else if (!snapshot.hasData) {
+              } else if (!snapshot.hasData) {
                 return const Padding(
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              }
-              else if (snapshot.hasData) {
+              } else if (snapshot.hasData) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
@@ -115,6 +113,30 @@ class ProfileScreen extends StatelessWidget {
                               _customFixedText(text: 'Bio :'),
                               _customDynamicText(
                                   text: snapshot.data!['description']),
+                              _customFixedText(text: 'Id :'),
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  _customDynamicText(
+                                      text: snapshot.data!['uid']),
+                                  GestureDetector(
+                                      onTap: () {
+                                        FlutterClipboard.copy(
+                                                snapshot.data!['uid'])
+                                            .then((value) =>
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                  duration:
+                                                      Duration(seconds: 1),
+                                                  content: Text(
+                                                      'your id has been copied'),
+                                                  backgroundColor: Colors.grey,
+                                                )));
+                                      },
+                                      child: Icon(Icons.copy))
+                                ],
+                              ),
                             ],
                           ),
                         ),

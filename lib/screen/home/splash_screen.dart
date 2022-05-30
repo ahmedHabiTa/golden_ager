@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
 
-import '../../../pages/login_screen.dart';
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
 
@@ -12,11 +10,6 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreenState extends State<SplashScreen>
     with TickerProviderStateMixin {
-  double opacityLevel = 0.0;
-  void _changeOpacity() {
-    setState(() => opacityLevel = 1.0);
-  }
-
   @override
   void dispose() {
     super.dispose();
@@ -25,15 +18,6 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
-    // Future.delayed(
-    //   const Duration(seconds: 1),
-    //   () => _changeOpacity(),
-    // );
-    Future.delayed(
-      const Duration(seconds: 2),
-      () => Constant.navigateToRep(
-          routeName: const LoginScreen(), context: context),
-    );
   }
 
   @override

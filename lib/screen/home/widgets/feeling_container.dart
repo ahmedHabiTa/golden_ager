@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/custom_wide_container.dart';
 import '../../../core/constant/Constant.dart';
-import '../presentaion/check_in_screen.dart';
+import '../check_in_screen.dart';
 
 class FeelingsContainer extends StatelessWidget {
   final String feeling;

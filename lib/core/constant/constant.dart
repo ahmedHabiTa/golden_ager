@@ -13,14 +13,11 @@ class Constant {
   ];
   // font color
   // buttons
-  static ButtonStyle buttonStyle = ButtonStyle(
-    backgroundColor: MaterialStateProperty.all(primaryColor),
-    shadowColor: MaterialStateProperty.all(Colors.transparent),
-    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-      RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.0),
-        side: const BorderSide(color: Colors.white),
-      ),
+  static ButtonStyle buttonStyle = ElevatedButton.styleFrom(
+    primary: primaryColor,
+    shadowColor: Colors.transparent,
+    shape: RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(30.0),
     ),
   );
   static ButtonStyle getbuttonStyleRounded(Color color) {
