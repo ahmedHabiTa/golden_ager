@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import 'core/common_widget/loading_widget.dart';
 import 'core/util/shared_prefs_helper.dart';
+import 'features/home/presentaion/add_report_screen.dart';
 import 'provider/auth_provider.dart';
 import 'provider/home_provider.dart';
 
@@ -43,21 +44,7 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const LoadingWidget();
-            } else if (snapshot.hasError) {
-              return const Scaffold(
-                  body: Center(child: Text('Something went wrong')));
-            } else if (snapshot.hasData) {
-              return const TabsScreen();
-            } else {
-              return const SplashScreen();
-            }
-          },
-        ),
+        home: AddReportScreen(),
       ),
     );
   }
