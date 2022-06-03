@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
-import 'package:golden_ager/screen/medicine_reminder.dart';
 
 import '../../../core/common_widget/custom_text.dart';
+import '../../medicine/medicine_reminder.dart';
 
 class ReminderContainer extends StatelessWidget {
   const ReminderContainer({Key? key}) : super(key: key);
@@ -24,7 +24,7 @@ class ReminderContainer extends StatelessWidget {
             children: const [
               // SizedBox(width: 15),
               CustomText(
-                text: 'Today\'s Reminders',
+                text: 'Reminders',
                 color: Constant.primaryDarkColor,
                 fontSize: 28,
                 fontWeight: FontWeight.w400,

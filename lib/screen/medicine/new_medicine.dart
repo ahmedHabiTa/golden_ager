@@ -12,8 +12,9 @@ import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
-import '../core/common_widget/custom_text.dart';
-import '../core/common_widget/custom_wide_buttom.dart';
+import '../../core/common_widget/custom_text.dart';
+import '../../core/common_widget/custom_wide_buttom.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class NewMedicineScreen extends StatefulWidget {
   const NewMedicineScreen({Key? key}) : super(key: key);
@@ -74,34 +75,18 @@ class _NewMedicineScreenState extends State<NewMedicineScreen> {
                     prefixIcon: Icon(AgeIcon.liquidMedical,
                         color: Constant.primaryDarkColor),
                     title: 'Dose',
-                    items: const [
-                      DropdownMenuItem(
-                        child: Center(
-                            child: Text(
-                          '1 time',
-                          style: Constant.mediumTextStyle,
-                        )),
-                        value: '1',
-                      ),
-                      DropdownMenuItem(
-                        child: Center(
+                    items: [1, 2, 3, 4]
+                        .map(
+                          (e) => DropdownMenuItem(
                             child: Center(
-                          child: Text(
-                            '2 times',
-                            style: Constant.mediumTextStyle,
+                                child: Text(
+                              '$e time' + (e > 1 ? 's' : ''),
+                              style: Constant.mediumTextStyle,
+                            )),
+                            value: '$e',
                           ),
-                        )),
-                        value: '2',
-                      ),
-                      DropdownMenuItem(
-                        child: Center(
-                            child: Text(
-                          '3 times',
-                          style: Constant.mediumTextStyle,
-                        )),
-                        value: '3',
-                      )
-                    ]),
+                        )
+                        .toList()),
                 DateSelectWidget(
                   startOnChanged: (DateTime value) {
                     startAt = value;
@@ -233,15 +218,12 @@ class ColorSelectWidget extends StatefulWidget {
 }
 
 class _ColorSelectWidgetState extends State<ColorSelectWidget> {
-  List<int> colors = [
-    0xffD1325E,
-    0xffF1C125,
-    0xff2165B1,
-    0xff66AC61,
-    0xffC472C1,
-    0xffEA8877
-  ];
-  int color = 0xffD1325E;
+  Color pickedColor = Color(0xffD1325E);
+
+  void changeColor(Color color) {
+    setState(() => pickedColor = color);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -249,40 +231,59 @@ class _ColorSelectWidgetState extends State<ColorSelectWidget> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Color",
-              textAlign: TextAlign.start,
-              style: Constant.mediumTextStyle,
+            Row(
+              children: [
+                Text(
+                  "Color",
+                  textAlign: TextAlign.start,
+                  style: Constant.mediumTextStyle,
+                ),
+                IconButton(
+                    icon: Icon(
+                      Icons.color_lens_sharp,
+                    ),
+                    onPressed: () {
+// raise the [showDialog] widget
+                      showDialog(
+                        builder: (context) => AlertDialog(
+                          title: const Text('Pick a color!',
+                              style: Constant.mediumTextStyle),
+                          content: SingleChildScrollView(
+                            child: ColorPicker(
+                              pickerColor: pickedColor,
+                              onColorChanged: changeColor,
+                            ),
+                          ),
+                          actions: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.all(12.0),
+                              child: ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                    primary: Constant.primaryDarkColor),
+                                child: Text(
+                                  'Got it',
+                                  style: Constant.mediumTextStyle
+                                      .copyWith(color: Colors.white),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                        context: context,
+                      );
+                    })
+              ],
             ),
             Container(
-                height: 155,
-                width: double.infinity,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: GridView.builder(
-                    physics: NeverScrollableScrollPhysics(),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            mainAxisSpacing: 8,
-                            childAspectRatio: 2 / 1,
-                            crossAxisCount: 3,
-                            crossAxisSpacing: 8),
-                    itemCount: 6,
-                    itemBuilder: (contrxt, i) => GestureDetector(
-                          onTap: () {
-                            setState(() => color = colors[i]);
-                            widget.onChanged(colors[i]);
-                          },
-                          child: Container(
-                              height: 75,
-                              decoration: BoxDecoration(
-                                  color: Color(colors[i]),
-                                  border: Border.all(
-                                      width: 3,
-                                      color: color == colors[i]
-                                          ? Constant.primaryColor
-                                          : Colors.transparent),
-                                  borderRadius: BorderRadius.circular(16))),
-                        )))
+              height: 50,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                  color: pickedColor, borderRadius: BorderRadius.circular(16)),
+              margin: const EdgeInsets.symmetric(vertical: 8),
+            )
           ],
         ));
   }
@@ -316,7 +317,7 @@ class _DateSelectWidgetState extends State<DateSelectWidget> {
               initialDateTime: isStart
                   ? DateTime.now()
                   : DateTime.now().add(Duration(days: 1)),
-              maximumDate: DateTime.now().add(Duration(days: 7)),
+              maximumDate: DateTime.now().add(Duration(days: 360)),
               minimumDate: isStart
                   ? DateTime.now()
                   : DateTime.now().add(Duration(days: 1)),
@@ -341,17 +342,19 @@ class _DateSelectWidgetState extends State<DateSelectWidget> {
       final picked = await showDatePicker(
           useRootNavigator: false,
           context: context,
-          initialDate: DateTime.now(),
-          firstDate: DateTime.now(),
-          lastDate: DateTime.now().add(Duration(days: 7)),
+          initialDate:
+              isStart ? DateTime.now() : DateTime.now().add(Duration(days: 1)),
+          firstDate:
+              isStart ? DateTime.now() : DateTime.now().add(Duration(days: 1)),
+          lastDate: DateTime.now().add(Duration(days: 360)),
           builder: (BuildContext context, Widget? child) {
             return Theme(
               data: ThemeData.light().copyWith(
                 colorScheme: ColorScheme.dark(
-                  primary: Theme.of(context).primaryColor,
+                  primary: Constant.primaryColor,
                   onPrimary: Colors.white,
-                  surface: Theme.of(context).primaryColor,
-                  onSurface: Colors.black,
+                  surface: Colors.white,
+                  onSurface: Constant.primaryDarkColor,
                 ),
                 dialogBackgroundColor: Colors.white,
               ),

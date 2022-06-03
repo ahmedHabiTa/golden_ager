@@ -7,8 +7,8 @@ import '../../../../core/common_widget/custom_text.dart';
 import '../../../../core/common_widget/custom_text_form_field.dart';
 import '../../../../core/common_widget/custom_wide_buttom.dart';
 import '../../../../core/common_widget/loading_widget.dart';
-import '../core/constant/constant.dart';
-import '../provider/auth_provider.dart';
+import '../../core/constant/constant.dart';
+import '../../provider/auth_provider.dart';
 import 'login_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
@@ -30,6 +30,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   String? userType;
   String? gender;
+  String? specialty;
   List<String> userTypes = [
     'patient',
     'mentor',
@@ -38,6 +39,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
   List<String> genders = [
     'male',
     'female',
+  ];
+  List<String> specialties = [
+    'surgery specialty',
+    'orthopedic specialty',
   ];
 
   @override
@@ -241,6 +246,30 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }),
                       iconSize: 0,
                     ),
+                    if(userType == 'doctor')
+                    const SizedBox(height: 10),
+                    if(userType == 'doctor')
+                    CustomDropDownFormField(
+                      title: 'Specialty',
+                      onChanged: (value) {
+                        setState(() {
+                          specialty = value;
+                        });
+
+                      },
+                      items: List.generate(specialties.length, (index) {
+                        return DropdownMenuItem(
+                          value: specialties[index],
+                          child: CustomText(
+                            text: specialties[index],
+                            color: const Color(0xFF0d2137),
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        );
+                      }),
+                      iconSize: 0,
+                    ),
                     const SizedBox(height: 10),
                     CustomDropDownFormField(
                       title: 'Gender',
@@ -306,6 +335,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       desc: descController.text,
                                       gender: gender!,
                                       userType: userType!,
+                                      specialty: specialty ?? '',
                                       context: context,
                                     );
                                   }

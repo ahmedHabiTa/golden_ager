@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:golden_ager/models/medicine.dart';
+import 'package:golden_ager/models/report.dart';
 import 'package:golden_ager/models/user.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -13,34 +15,52 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
-import 'package:golden_ager/features/home/presentaion/splash_screen.dart';
-import '../features/home/presentaion/tabs_screen.dart';
+
+import '../screen/home/tabs_screen.dart';
 
 class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   User? _firebasecurrentUser;
+
   User? get firebasecurrentUser => _firebasecurrentUser;
 
+  String? _userType;
+
+  String? get userType => _userType;
+
   Patient? _patient;
+
   Patient? get patient => _patient;
-  Future<void> login({
-    required String email,
-    required String password,
-    required BuildContext context,
-  }) async {
+  Doctor? _doctor;
+
+  Doctor? get doctor => _doctor;
+  Mentor? _mentor;
+
+  Mentor? get mentor => _mentor;
+  Report? _report;
+
+  Report? get report => _report;
+
+  Future<void> login(
+      {required String email,
+      required String password,
+      required BuildContext context}) async {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       _firebasecurrentUser = FirebaseAuth.instance.currentUser!;
-      getUserData();
+      await getUserData();
       final userUUID = _firebasecurrentUser!.uid.toString();
       await SharedPrefsHelper.saveData(key: 'userUUID', value: userUUID);
-      Constant.navigateToRep(routeName: const TabsScreen(), context: context);
+      await SharedPrefsHelper.saveData(
+          key: 'user_data',
+          value: json.encode({'email': email, 'password': password}));
     } on FirebaseAuthException catch (error) {
       Constant.showToast(
         message: error.message.toString(),
         color: Colors.red,
       );
     }
+
     notifyListeners();
   }
 
@@ -51,11 +71,15 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         .doc(userUUID)
         .get();
     if (userData.data() != null) {
-      if (userData.data()!['user_type'] == 'patient') {
+      _userType = userData.data()!['user_type'];
+      if (_userType == 'patient') {
         _patient = Patient.fromMap(userData.data()!);
+      } else if (_userType == 'doctor') {
+        _doctor = Doctor.fromMap(userData.data()!);
+      } else if (_userType == 'mentor') {
+        _mentor = Mentor.fromMap(userData.data()!);
       }
     }
-    notifyListeners();
   }
 
   File? image;
@@ -77,6 +101,19 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     notifyListeners();
   }
 
+//* Try To login
+  bool _isLoadingTryToLogin = true;
+
+  bool get isLoadingTryToLogin => _isLoadingTryToLogin;
+
+  Future<void> tryToLogin({required BuildContext context}) async {
+    final data = json.decode(await SharedPrefsHelper.getData(key: 'user_data'));
+    await login(
+        email: data['email'], password: data['password'], context: context);
+    _isLoadingTryToLogin = false;
+    notifyListeners();
+  }
+
   bool isLoadingSignUp = false;
 
   toggleLoading() {
@@ -93,20 +130,25 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     required String desc,
     required String gender,
     required String userType,
+    required String specialty,
     required BuildContext context,
   }) async {
+    print('1');
     if (image == null) {
       Constant.showToast(
         message: 'Please select an image',
         color: Colors.red,
       );
     } else {
+      print('2');
       try {
         toggleLoading();
         await FirebaseAuth.instance
             .createUserWithEmailAndPassword(email: email, password: password);
         final userUUID = FirebaseAuth.instance.currentUser!.uid.toString();
         await SharedPrefsHelper.saveData(key: 'userUUID', value: userUUID);
+        await SharedPrefsHelper.saveData(
+            key: 'user_data', value: {'email': email, "password": password});
         String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
         Reference ref = FirebaseStorage.instance.ref().child(imageFileName);
         UploadTask uploadTask = ref.putFile(image!);
@@ -118,7 +160,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         print(userUUID);
         await FirebaseFirestore.instance.collection('users').doc(userUUID).set({
           "image": imageUrl,
-          "uid" : userUUID,
+          "uid": userUUID,
           "age": age,
           "description": desc,
           "email": email,
@@ -127,6 +169,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           "name": name,
           "phone": phone,
           'user_type': userType,
+          'specialty': specialty,
           "notification": [],
           'reports': [],
           'medicine': [],
@@ -140,17 +183,19 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         );
       }
     }
-
-    toggleLoading();
   }
 
   Future<void> logOut(context) async {
     await FirebaseAuth.instance.signOut();
-    Constant.navigateToRep(routeName: const SplashScreen(), context: context);
+    _userType = null;
+    _doctor = null;
+    _patient = null;
+    _mentor = null;
     notifyListeners();
   }
 
   bool isLoadingAddMedicine = false;
+
   toggleAddMedicineLoading() {
     isLoadingAddMedicine = !isLoadingAddMedicine;
     notifyListeners();
@@ -192,6 +237,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     _patient!.medicines.add(medicine);
     await updateUserData();
     toggleAddMedicineLoading();
+
     return true;
   }
 
@@ -204,6 +250,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
 
   List<Medicine> displayMedcines = [];
   DateTime selectedDate = DateTime.now();
+
   void getDisplayMedcines(DateTime date) {
     selectedDate = date;
     notifyListeners();
@@ -214,6 +261,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   }
 
   List todayActivity = [1, 1, 1];
+
   void getTodayActivity() {
     int max = 0;
     int done = 0;
@@ -250,4 +298,17 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
 
   @override
   void reassemble() {}
+
+  Future<void> postReport({required String patientID}) async {
+    final userUUID = SharedPrefsHelper.getData(key: 'userUUID');
+    try {
+      FirebaseFirestore.instance
+          .collection('reports')
+          .doc('$userUUID-$patientID')
+          .collection('$userUUID-$patientID')
+          .add(report!.toMap());
+    } on FirebaseException catch (error) {
+      print(error.toString());
+    }
+  }
 }

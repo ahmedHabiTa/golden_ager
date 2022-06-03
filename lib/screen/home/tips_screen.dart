@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:golden_ager/features/home/presentaion/tips_details_screen.dart';
-
+import 'package:golden_ager/screen/home/tips_details_screen.dart';
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/constant/Constant.dart';
 

@@ -15,6 +15,7 @@ class AppUser {
   final String age;
   final String image;
   final String gender;
+  final String specialty;
   final List<Notification> notifications;
   AppUser({
     required this.uid,
@@ -25,6 +26,7 @@ class AppUser {
     required this.age,
     required this.image,
     required this.gender,
+    required this.specialty,
     required this.notifications,
   });
 
@@ -37,6 +39,7 @@ class AppUser {
     String? age,
     String? image,
     String? gender,
+    String? specialty,
     List<Notification>? notifications,
   }) {
     return AppUser(
@@ -48,6 +51,7 @@ class AppUser {
       age: age ?? this.age,
       image: image ?? this.image,
       gender: gender ?? this.gender,
+      specialty: specialty ?? this.specialty,
       notifications: notifications ?? this.notifications,
     );
   }
@@ -62,6 +66,7 @@ class AppUser {
       'age': age,
       'image': image,
       'gender': gender,
+      'specialty': specialty,
       'notifications': notifications.map((x) => x.toMap()).toList(),
     };
   }
@@ -76,6 +81,7 @@ class AppUser {
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
+      specialty: map['specialty'] ?? '',
       notifications: List<Notification>.from(
           map['notifications']?.map((x) => Notification.fromMap(x))),
     );
@@ -137,6 +143,7 @@ class Patient extends AppUser {
     required String age,
     required String image,
     required String gender,
+    required String specialty,
     required List<Notification> notifications,
     required this.medicines,
     required this.description,
@@ -153,6 +160,7 @@ class Patient extends AppUser {
             userType: userType,
             image: image,
             gender: gender,
+            specialty: specialty,
             notifications: notifications);
 
   @override
@@ -168,6 +176,7 @@ class Patient extends AppUser {
     List<Notification>? notifications,
     String? description,
     String? feeling,
+    String? specialty,
     Mentor? mentor,
     List<Medicine>? medicine,
     List<Report>? reports,
@@ -186,6 +195,7 @@ class Patient extends AppUser {
         medicines: medicine ?? medicines,
         description: description ?? this.description,
         feeling: feeling ?? this.feeling,
+        specialty: specialty ?? this.specialty,
         mentor: mentor ?? this.mentor,
         doctors: doctors ?? this.doctors,
         reports: reports ?? this.reports);
@@ -204,6 +214,7 @@ class Patient extends AppUser {
       'gender': gender,
       'description': description,
       'feeling': feeling,
+      'specialty': specialty,
       'mentor': mentor?.toMap(),
       'medicines': medicines.map((e) => e.toMap()).toList(),
       'doctors': doctors.map((x) => x.toMap()).toList(),
@@ -221,6 +232,7 @@ class Patient extends AppUser {
         age: map['age'] ?? '',
         image: map['image'] ?? '',
         gender: map['gender'] ?? '',
+        specialty: map['specialty'] ?? '',
         notifications: List<Notification>.from(
             map['notifications']?.map((x) => Notification.fromMap(x))),
         description: map['description'] ?? '',
@@ -276,6 +288,7 @@ class Mentor extends AppUser {
     required String age,
     required String image,
     required String gender,
+    required String specialty,
     required List<Notification> notifications,
     required this.patient,
   }) : super(
@@ -287,6 +300,7 @@ class Mentor extends AppUser {
             userType: userType,
             image: image,
             gender: gender,
+      specialty: specialty,
             notifications: notifications);
 
   @override
@@ -299,6 +313,7 @@ class Mentor extends AppUser {
     String? age,
     String? image,
     String? gender,
+    String? specialty,
     List<Notification>? notifications,
     Patient? patient,
   }) {
@@ -309,6 +324,7 @@ class Mentor extends AppUser {
       phone: phone ?? this.phone,
       email: email ?? this.email,
       userType: userType ?? this.userType,
+      specialty: specialty ?? this.specialty,
       image: image ?? this.image,
       gender: gender ?? this.gender,
       notifications: notifications ?? this.notifications,
@@ -327,6 +343,7 @@ class Mentor extends AppUser {
       'age': age,
       'image': image,
       'gender': gender,
+      'specialty': specialty,
       'notifications': notifications.map((x) => x.toMap()).toList(),
       'patient': patient.toMap(),
     };
@@ -342,6 +359,7 @@ class Mentor extends AppUser {
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
+      specialty: map['specialty'] ?? '',
       notifications: List<Notification>.from(
           map['notifications']?.map((x) => Notification.fromMap(x))),
       patient: Patient.fromMap(map['patient']),
@@ -378,6 +396,7 @@ class Doctor extends AppUser {
     required String age,
     required String image,
     required String gender,
+    required String specialty,
     required List<Notification> notifications,
     required this.patients,
   }) : super(
@@ -389,6 +408,7 @@ class Doctor extends AppUser {
             userType: userType,
             image: image,
             gender: gender,
+      specialty: specialty,
             notifications: notifications);
 
   @override
@@ -401,6 +421,7 @@ class Doctor extends AppUser {
     String? age,
     String? image,
     String? gender,
+    String? specialty,
     List<Notification>? notifications,
     List<Patient>? patients,
   }) {
@@ -413,6 +434,7 @@ class Doctor extends AppUser {
       userType: userType ?? this.userType,
       image: image ?? this.image,
       gender: gender ?? this.gender,
+      specialty: specialty ?? this.specialty,
       notifications: notifications ?? this.notifications,
       patients: patients ?? this.patients,
     );
@@ -429,6 +451,7 @@ class Doctor extends AppUser {
       'age': age,
       'image': image,
       'gender': gender,
+      'specialty': specialty,
       'notifications': notifications.map((x) => x.toMap()).toList(),
       'patients': patients.map((x) => x.toMap()).toList(),
     };
@@ -444,8 +467,9 @@ class Doctor extends AppUser {
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
+      specialty: map['specialty'] ?? '',
       notifications: List<Notification>.from(
-          map['notifications']?.map((x) => Notification.fromMap(x))),
+          map['notification']?.map((x) => Notification.fromMap(x))),
       patients:
           List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),
     );
