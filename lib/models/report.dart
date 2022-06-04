@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 class Report {
-  final String from;
-  final String to;
+   String from;
+   String to;
   final String medicalSpecialty;
   final String sampleName;
   final String description;
   final String problem;
-  final String time;
+   DateTime time;
 
   Report({
     required this.from,
@@ -26,7 +26,7 @@ class Report {
     String? sampleName,
     String? description,
     String? problem,
-    String? time,
+    DateTime? time,
   }) {
     return Report(
       from: from ?? this.from,

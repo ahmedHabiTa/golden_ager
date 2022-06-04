@@ -8,7 +8,16 @@ import '../../../core/common_widget/custom_wide_buttom.dart';
 import '../../../core/common_widget/report_form_field.dart';
 
 class AddReportScreen extends StatefulWidget {
-  const AddReportScreen({Key? key}) : super(key: key);
+  final String patientID;
+  final String doctorName;
+  final String patientName;
+
+  const AddReportScreen({
+    Key? key,
+    required this.patientID,
+    required this.doctorName,
+    required this.patientName,
+  }) : super(key: key);
 
   @override
   _AddReportScreenState createState() => _AddReportScreenState();
@@ -20,9 +29,16 @@ class _AddReportScreenState extends State<AddReportScreen> {
   final description = TextEditingController();
   final problem = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
+  toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
   @override
   Widget build(BuildContext context) {
+    print(widget.patientID);
     return SafeArea(
       child: Scaffold(
         body: SingleChildScrollView(
@@ -33,101 +49,112 @@ class _AddReportScreenState extends State<AddReportScreen> {
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
                 child: Consumer<AuthProvider>(
-                 builder: (context, authProvider, _) {
-                   return Column(
-                     crossAxisAlignment: CrossAxisAlignment.center,
-                     children: [
-                       const SizedBox(height: 20),
-                       const CustomText(
-                         text: 'Post Report',
-                         color: Color(0xFF091249),
-                         fontSize: 24,
-                         fontWeight: FontWeight.w600,
-                       ),
-                       const SizedBox(height: 10),
-                       ReportFormField(
-                         controller: medicalSpecialty,
-                         onChanged: (value) {
-                           setState(() {
-                             value =  authProvider.report!.medicalSpecialty.trim();
-                           });
-                         },
-                         validation: 'field is required',
-                         width: Constant.width(context) * 0.9,
-                         height: 50,
-                         labelText: 'Medical Specialty',
-                         hintText: '',
-                       ),
-                       const SizedBox(height: 10),
-                       ReportFormField(
-                         controller: sampleName,
-                         onChanged: (value) {
-                           setState(() {
-                             value = authProvider.report!.sampleName.trim();
-                           });
-                         },
-                         validation: 'field is required',
-                         width: Constant.width(context) * 0.9,
-                         height: 50,
-                         labelText: 'Sample Name',
-                         hintText: '',
-                       ),
-                       const SizedBox(height: 10),
-                       ReportFormField(
-                         maxLine: 2,
-                         controller: problem,
-                         onChanged: (value) {
-                           setState(() {
-                             value =  authProvider.report!.problem.trim();
-                           });
-                         },
-                         validation: 'field is required',
-                         width: Constant.width(context) * 0.9,
-                         height: 50,
-                         labelText: 'Problem',
-                         hintText: '',
-                       ),
-                       const SizedBox(height: 10),
-                       ReportFormField(
-                         maxLine: 5,
-                         controller: description,
-                         onChanged: (value) {
-                           setState(() {
-                             value =  authProvider.report!.description.trim();
-                           });
-                         },
-                         validation: 'field is required',
-                         width: Constant.width(context) * 0.9,
-                         height: 50,
-                         labelText: 'Description',
-                         hintText: '',
-                       ),
-                       const SizedBox(height: 10),
-                       CustomWideButton(
-                         radius: 10.0,
-                         height: 40,
-                         width: 130,
-                         color: Constant.primaryDarkColor,
-                         onTap: () async {
-                           if (!formKey.currentState!.validate()) {
-                             return;
-                           } else {
-                             //implement from and to
-                             await authProvider.postReport(patientID: '');
-                           }
-                         },
-                         child: const Center(
-                           child: CustomText(
-                             text: 'Post',
-                             color: Colors.white,
-                             fontSize: 16,
-                             fontWeight: FontWeight.w600,
-                           ),
-                         ),
-                       ),
-                     ],
-                   );
-                 },
+                  builder: (context, authProvider, _) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        const CustomText(
+                          text: 'Post Report',
+                          color: Color(0xFF091249),
+                          fontSize: 24,
+                          fontWeight: FontWeight.w600,
+                        ),
+                        const SizedBox(height: 10),
+                        ReportFormField(
+                          controller: medicalSpecialty,
+                          onChanged: (value) {
+                            setState(() {
+                              value = medicalSpecialty.text.trim();
+                            });
+                          },
+                          validation: 'field is required',
+                          width: Constant.width(context) * 0.9,
+                          height: 50,
+                          labelText: 'Medical Specialty',
+                          hintText: '',
+                        ),
+                        const SizedBox(height: 10),
+                        ReportFormField(
+                          controller: sampleName,
+                          onChanged: (value) {
+                            setState(() {
+                              value = sampleName.text.trim();
+                            });
+                          },
+                          validation: 'field is required',
+                          width: Constant.width(context) * 0.9,
+                          height: 50,
+                          labelText: 'Sample Name',
+                          hintText: '',
+                        ),
+                        const SizedBox(height: 10),
+                        ReportFormField(
+                          maxLine: 2,
+                          controller: problem,
+                          onChanged: (value) {
+                            setState(() {
+                              value = problem.text.trim();
+                            });
+                          },
+                          validation: 'field is required',
+                          width: Constant.width(context) * 0.9,
+                          height: 50,
+                          labelText: 'Problem',
+                          hintText: '',
+                        ),
+                        const SizedBox(height: 10),
+                        ReportFormField(
+                          maxLine: 5,
+                          controller: description,
+                          onChanged: (value) {
+                            setState(() {
+                              value = description.text.trim();
+                            });
+                          },
+                          validation: 'field is required',
+                          width: Constant.width(context) * 0.9,
+                          height: 50,
+                          labelText: 'Description',
+                          hintText: '',
+                        ),
+                        const SizedBox(height: 10),
+                        CustomWideButton(
+                          radius: 10.0,
+                          height: 40,
+                          width: 130,
+                          color: Constant.primaryDarkColor,
+                          onTap: () async {
+                            if (!formKey.currentState!.validate()) {
+                              return;
+                            } else {
+                              //implement from and to
+                              toggleLoading();
+                              await authProvider.postReportForDoctor(
+                                context: context,
+                                patientID: widget.patientID,
+                                description: description.text.trim(),
+                                from: widget.doctorName,
+                                to: widget.patientName,
+                                medicalSpecialty: medicalSpecialty.text.trim(),
+                                problem: problem.text.trim(),
+                                sampleName: sampleName.text.trim(),
+                              );
+                              toggleLoading();
+                            }
+                          },
+                          child: const Center(
+                            child: CustomText(
+                              text: 'Post',
+                              color: Colors.white,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
             ),

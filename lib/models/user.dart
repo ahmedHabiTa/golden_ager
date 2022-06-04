@@ -1,12 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:golden_ager/models/medicine.dart';
 
-import 'package:golden_ager/models/notification.dart';
-import 'package:golden_ager/models/report.dart';
+import 'medicine.dart';
+import 'notification.dart';
+import 'report.dart';
+import 'request.dart';
 
 class AppUser {
+  final String fcmToken;
   final String uid;
   final String name;
   final String email;
@@ -15,9 +17,9 @@ class AppUser {
   final String age;
   final String image;
   final String gender;
-  final String specialty;
   final List<Notification> notifications;
   AppUser({
+    required this.fcmToken,
     required this.uid,
     required this.name,
     required this.email,
@@ -26,23 +28,22 @@ class AppUser {
     required this.age,
     required this.image,
     required this.gender,
-    required this.specialty,
     required this.notifications,
   });
 
-  AppUser copyWith({
-    String? uid,
-    String? name,
-    String? email,
-    String? phone,
-    String? userType,
-    String? age,
-    String? image,
-    String? gender,
-    String? specialty,
-    List<Notification>? notifications,
-  }) {
+  AppUser copyWith(
+      {String? uid,
+      String? name,
+      String? email,
+      String? phone,
+      String? userType,
+      String? age,
+      String? image,
+      String? gender,
+      List<Notification>? notifications,
+      String? fcmToken}) {
     return AppUser(
+      fcmToken: fcmToken ?? this.fcmToken,
       uid: uid ?? this.uid,
       name: name ?? this.name,
       email: email ?? this.email,
@@ -51,7 +52,6 @@ class AppUser {
       age: age ?? this.age,
       image: image ?? this.image,
       gender: gender ?? this.gender,
-      specialty: specialty ?? this.specialty,
       notifications: notifications ?? this.notifications,
     );
   }
@@ -62,26 +62,25 @@ class AppUser {
       'name': name,
       'email': email,
       'phone': phone,
-      'user_type': userType,
+      'userType': userType,
       'age': age,
       'image': image,
       'gender': gender,
-      'specialty': specialty,
       'notifications': notifications.map((x) => x.toMap()).toList(),
     };
   }
 
   factory AppUser.fromMap(Map<String, dynamic> map) {
     return AppUser(
+      fcmToken: map['fcm_token'] ?? '',
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
       phone: map['phone'] ?? '',
-      userType: map['user_type'] ?? '',
+      userType: map['userType'] ?? '',
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
-      specialty: map['specialty'] ?? '',
       notifications: List<Notification>.from(
           map['notifications']?.map((x) => Notification.fromMap(x))),
     );
@@ -94,7 +93,7 @@ class AppUser {
 
   @override
   String toString() {
-    return 'User(uid: $uid, name: $name, email: $email, phone: $phone, userType: $userType, age: $age, image: $image, gender: $gender, notifications: $notifications)';
+    return 'AppUser(uid: $uid, name: $name, email: $email, phone: $phone, userType: $userType, age: $age, image: $image, gender: $gender, notifications: $notifications,)';
   }
 
   @override
@@ -143,7 +142,7 @@ class Patient extends AppUser {
     required String age,
     required String image,
     required String gender,
-    required String specialty,
+    required String fcmToken,
     required List<Notification> notifications,
     required this.medicines,
     required this.description,
@@ -152,6 +151,7 @@ class Patient extends AppUser {
     required this.doctors,
     required this.reports,
   }) : super(
+            fcmToken: fcmToken,
             age: age,
             uid: uid,
             name: name,
@@ -160,7 +160,6 @@ class Patient extends AppUser {
             userType: userType,
             image: image,
             gender: gender,
-            specialty: specialty,
             notifications: notifications);
 
   @override
@@ -176,13 +175,14 @@ class Patient extends AppUser {
     List<Notification>? notifications,
     String? description,
     String? feeling,
-    String? specialty,
     Mentor? mentor,
     List<Medicine>? medicine,
     List<Report>? reports,
     List<Doctor>? doctors,
+    String? fcmToken,
   }) {
     return Patient(
+        fcmToken: fcmToken ?? this.fcmToken,
         age: age ?? this.age,
         uid: uid ?? this.uid,
         name: name ?? this.name,
@@ -195,7 +195,6 @@ class Patient extends AppUser {
         medicines: medicine ?? medicines,
         description: description ?? this.description,
         feeling: feeling ?? this.feeling,
-        specialty: specialty ?? this.specialty,
         mentor: mentor ?? this.mentor,
         doctors: doctors ?? this.doctors,
         reports: reports ?? this.reports);
@@ -214,8 +213,25 @@ class Patient extends AppUser {
       'gender': gender,
       'description': description,
       'feeling': feeling,
-      'specialty': specialty,
+      'fcm_token': fcmToken
+    };
+  }
+
+  Map<String, dynamic> toMapFirstUser() {
+    return {
+      'uid': uid,
+      'name': name,
+      'email': email,
+      'fcm_token': fcmToken,
+      'phone': phone,
+      'user_type': userType,
+      'age': age,
+      'image': image,
+      'gender': gender,
+      'description': description,
+      'feeling': feeling,
       'mentor': mentor?.toMap(),
+      'notifications': notifications.map((e) => e.toMap()).toList(),
       'medicines': medicines.map((e) => e.toMap()).toList(),
       'doctors': doctors.map((x) => x.toMap()).toList(),
       'reports': reports.map((e) => e.toMap()).toList()
@@ -224,6 +240,7 @@ class Patient extends AppUser {
 
   factory Patient.fromMap(Map<String, dynamic> map) {
     return Patient(
+        fcmToken: map['fcm_token'] ?? '',
         uid: map['uid'] ?? '',
         name: map['name'] ?? '',
         email: map['email'] ?? '',
@@ -232,18 +249,25 @@ class Patient extends AppUser {
         age: map['age'] ?? '',
         image: map['image'] ?? '',
         gender: map['gender'] ?? '',
-        specialty: map['specialty'] ?? '',
-        notifications: List<Notification>.from(
-            map['notifications']?.map((x) => Notification.fromMap(x))),
+        notifications: map['notifications'] == null ||
+                (map['notifications'] as List).isEmpty
+            ? []
+            : List<Notification>.from(
+                map['notifications']?.map((x) => Notification.fromMap(x))),
         description: map['description'] ?? '',
         feeling: map['feeling'] ?? '',
         mentor: map['mentor'] == null ? null : Mentor.fromMap(map['mentor']),
-        medicines: List<Medicine>.from(
-            map['medicines']?.map((x) => Medicine.fromMap(x))),
-        doctors:
-            List<Doctor>.from(map['doctors']?.map((x) => Doctor.fromMap(x))),
-        reports:
-            List<Report>.from(map['reports']?.map((x) => Report.fromMap(x))));
+        medicines:
+            map['medicines'] == null || (map['medicines'] as List).isEmpty
+                ? []
+                : List<Medicine>.from(
+                    map['medicines']?.map((x) => Medicine.fromMap(x))),
+        doctors: map['doctors'] == null || (map['doctors'] as List).isEmpty
+            ? []
+            : List<Doctor>.from(map['doctors']?.map((x) => Doctor.fromMap(x))),
+        reports: map['reports'] == null || (map['reports'] as List).isEmpty
+            ? []
+            : List<Report>.from(map['reports']?.map((x) => Report.fromMap(x))));
   }
 
   @override
@@ -288,10 +312,11 @@ class Mentor extends AppUser {
     required String age,
     required String image,
     required String gender,
-    required String specialty,
+    required String fcmToken,
     required List<Notification> notifications,
     required this.patient,
   }) : super(
+            fcmToken: fcmToken,
             age: age,
             uid: uid,
             name: name,
@@ -300,7 +325,6 @@ class Mentor extends AppUser {
             userType: userType,
             image: image,
             gender: gender,
-      specialty: specialty,
             notifications: notifications);
 
   @override
@@ -313,18 +337,18 @@ class Mentor extends AppUser {
     String? age,
     String? image,
     String? gender,
-    String? specialty,
+    String? fcmToken,
     List<Notification>? notifications,
     Patient? patient,
   }) {
     return Mentor(
+      fcmToken: fcmToken ?? this.fcmToken,
       age: age ?? this.age,
       uid: uid ?? this.uid,
       name: name ?? this.name,
       phone: phone ?? this.phone,
       email: email ?? this.email,
       userType: userType ?? this.userType,
-      specialty: specialty ?? this.specialty,
       image: image ?? this.image,
       gender: gender ?? this.gender,
       notifications: notifications ?? this.notifications,
@@ -341,9 +365,9 @@ class Mentor extends AppUser {
       'phone': phone,
       'user_type': userType,
       'age': age,
+      'fcm_token': fcmToken,
       'image': image,
       'gender': gender,
-      'specialty': specialty,
       'notifications': notifications.map((x) => x.toMap()).toList(),
       'patient': patient.toMap(),
     };
@@ -351,6 +375,7 @@ class Mentor extends AppUser {
 
   factory Mentor.fromMap(Map<String, dynamic> map) {
     return Mentor(
+      fcmToken: map['fcm_token'] ?? '',
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
@@ -359,9 +384,11 @@ class Mentor extends AppUser {
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
-      specialty: map['specialty'] ?? '',
-      notifications: List<Notification>.from(
-          map['notifications']?.map((x) => Notification.fromMap(x))),
+      notifications:
+          map['notifications'] == null || (map['notifications'] as List).isEmpty
+              ? []
+              : List<Notification>.from(
+                  map['notifications']?.map((x) => Notification.fromMap(x))),
       patient: Patient.fromMap(map['patient']),
     );
   }
@@ -387,6 +414,7 @@ class Mentor extends AppUser {
 
 class Doctor extends AppUser {
   final List<Patient> patients;
+  final String specialization;
   Doctor({
     required String uid,
     required String name,
@@ -396,10 +424,12 @@ class Doctor extends AppUser {
     required String age,
     required String image,
     required String gender,
-    required String specialty,
+    required String fcmToken,
     required List<Notification> notifications,
     required this.patients,
+    required this.specialization,
   }) : super(
+            fcmToken: fcmToken,
             age: age,
             uid: uid,
             name: name,
@@ -408,11 +438,11 @@ class Doctor extends AppUser {
             userType: userType,
             image: image,
             gender: gender,
-      specialty: specialty,
             notifications: notifications);
 
   @override
   Doctor copyWith({
+    List<Request>? requests,
     String? uid,
     String? name,
     String? email,
@@ -421,11 +451,14 @@ class Doctor extends AppUser {
     String? age,
     String? image,
     String? gender,
-    String? specialty,
     List<Notification>? notifications,
     List<Patient>? patients,
+    String? fcmToken,
+    String? specialization,
   }) {
     return Doctor(
+      fcmToken: fcmToken ?? this.fcmToken,
+      specialization: specialization ?? this.specialization,
       age: age ?? this.age,
       uid: uid ?? this.uid,
       name: name ?? this.name,
@@ -434,7 +467,6 @@ class Doctor extends AppUser {
       userType: userType ?? this.userType,
       image: image ?? this.image,
       gender: gender ?? this.gender,
-      specialty: specialty ?? this.specialty,
       notifications: notifications ?? this.notifications,
       patients: patients ?? this.patients,
     );
@@ -451,7 +483,8 @@ class Doctor extends AppUser {
       'age': age,
       'image': image,
       'gender': gender,
-      'specialty': specialty,
+      'fcm_token': fcmToken,
+      'specialization': specialization,
       'notifications': notifications.map((x) => x.toMap()).toList(),
       'patients': patients.map((x) => x.toMap()).toList(),
     };
@@ -459,6 +492,8 @@ class Doctor extends AppUser {
 
   factory Doctor.fromMap(Map<String, dynamic> map) {
     return Doctor(
+      fcmToken: map['fcm_token'] ?? "",
+      specialization: map["specialization"] ?? "",
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',
@@ -467,11 +502,14 @@ class Doctor extends AppUser {
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
-      specialty: map['specialty'] ?? '',
-      notifications: List<Notification>.from(
-          map['notification']?.map((x) => Notification.fromMap(x))),
-      patients:
-          List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),
+      notifications:
+          map['notifications'] == null || (map['notifications'] as List).isEmpty
+              ? []
+              : List<Notification>.from(
+                  map['notification']?.map((x) => Notification.fromMap(x))),
+      patients: map['patients'] == null || (map['patients'] as List).isEmpty
+          ? []
+          : List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),
     );
   }
 

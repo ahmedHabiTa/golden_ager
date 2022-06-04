@@ -22,6 +22,7 @@ class _MedicineReminderScreenState extends State<MedicineReminderScreen> {
   void initState() {
     super.initState();
     Future.delayed(Duration.zero, () {
+      context.read<AuthProvider>().selectedDate = DateTime.now();
       context.read<AuthProvider>().getDisplayMedcines(DateTime.now());
       context.read<AuthProvider>().getTodayActivity();
     });
@@ -52,15 +53,19 @@ class _MedicineReminderScreenState extends State<MedicineReminderScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           WeekDays(),
-          ProgresBar(),
-          Expanded(
-              child: ListView.builder(
-                  itemCount: medicines.length + 1,
-                  itemBuilder: (context, index) => index == medicines.length
-                      ? SizedBox(
-                          height: 20,
-                        )
-                      : MedicineItem(medicine: medicines[index]))),
+          if (medicines.isNotEmpty) ProgresBar(),
+          if (medicines.isNotEmpty)
+            Expanded(
+                child: ListView.builder(
+                    itemCount: medicines.length + 1,
+                    itemBuilder: (context, index) => index == medicines.length
+                        ? SizedBox(height: 20)
+                        : MedicineItem(medicine: medicines[index]))),
+          if (medicines.isEmpty)
+            Expanded(
+                child: Center(
+                    child: Text("you have no medicine this day",
+                        style: Constant.mediumTextStyle)))
         ],
       ),
     );
@@ -78,29 +83,7 @@ class MedicineItem extends StatefulWidget {
 }
 
 class _MedicineItemState extends State<MedicineItem> {
-  String getDisplayTime(String time) {
-    String timeResult = '';
-    int timeInt = int.parse(time);
-    if (timeInt == 0) {
-      timeResult = "12 am";
-    } else if (timeInt < 12) {
-      timeResult = time + " am";
-    } else if (timeInt == 12) {
-      timeResult = time + " pm";
-    } else {
-      int replace = timeInt - 12;
-      timeResult = time.replaceRange(0, 2, replace.toString()) + " pm";
-    }
-    return timeResult;
-  }
-
   late Map<String, bool> isdoneDay;
-  late Medicine medicine;
-  @override
-  void initState() {
-    super.initState();
-    medicine = widget.medicine;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -154,50 +137,9 @@ class _MedicineItemState extends State<MedicineItem> {
           Divider(),
         if (!isdoneDay.values.every(((element) => element == true)) &&
             context.read<AuthProvider>().selectedDate.day == DateTime.now().day)
-          SizedBox(
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: isdoneDay.keys
-                      .map((key) => Column(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  setState(() {
-                                    isdoneDay[key] = true;
-                                  });
-                                },
-                                child: Text(
-                                  getDisplayTime(key),
-                                  style: Constant.mediumTextStyle,
-                                ),
-                              ),
-                              isdoneDay[key]!
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(11.0),
-                                      child: Text("done",
-                                          style: Constant.mediumTextStyle
-                                              .copyWith(color: Colors.green)),
-                                    )
-                                  : ElevatedButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          isdoneDay[key] = true;
-                                        });
-                                        context
-                                            .read<AuthProvider>()
-                                            .toggleTakeMedicine(medicine, key);
-                                      },
-                                      style: Constant.buttonStyle,
-                                      child: Text(
-                                        isdoneDay[key]! ? "done" : "take",
-                                        style: Constant.mediumTextStyle
-                                            .copyWith(color: Colors.white),
-                                      ),
-                                    )
-                            ],
-                          ))
-                      .toList()))
+          TakeAndDoneWidget(
+            medicine: widget.medicine,
+          )
       ]),
     );
   }
@@ -226,7 +168,7 @@ class ProgresBar extends StatelessWidget {
                 Expanded(
                   child: LinearPercentIndicator(
                     lineHeight: 10.0,
-                    percent: ratio[0] + .0,
+                    percent: (ratio[0] ?? 0) + .0,
                     barRadius: Radius.circular(20),
                     backgroundColor: Constant.accentColorLight,
                     progressColor: Constant.primaryColor,
@@ -325,5 +267,86 @@ class _WeekDaysState extends State<WeekDays> {
                         ],
                       )),
                 )));
+  }
+}
+
+class TakeAndDoneWidget extends StatefulWidget {
+  const TakeAndDoneWidget({Key? key, required this.medicine}) : super(key: key);
+  final Medicine medicine;
+  @override
+  State<TakeAndDoneWidget> createState() => _TakeAndDoneWidgetState();
+}
+
+class _TakeAndDoneWidgetState extends State<TakeAndDoneWidget> {
+  String getDisplayTime(String time) {
+    String timeResult = '';
+    int timeInt = int.parse(time);
+    if (timeInt == 0) {
+      timeResult = "12 am";
+    } else if (timeInt < 12) {
+      timeResult = time + " am";
+    } else if (timeInt == 12) {
+      timeResult = time + " pm";
+    } else {
+      int replace = timeInt - 12;
+      timeResult = time.replaceRange(0, 2, replace.toString()) + " pm";
+    }
+    return timeResult;
+  }
+
+  late Map<String, bool> isdoneDay;
+  late List isdoneDayList;
+
+  @override
+  Widget build(BuildContext context) {
+    isdoneDay = widget.medicine.isDone![
+        DateFormat('yMd').format(context.read<AuthProvider>().selectedDate)]!;
+    isdoneDayList = isdoneDay.keys.map((e) => int.parse(e)).toList();
+    isdoneDayList.sort();
+    return SizedBox(
+        child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: isdoneDayList
+                .map((key) => Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isdoneDay[key.toString()] = true;
+                            });
+                          },
+                          child: Text(
+                            getDisplayTime(key.toString()),
+                            style: Constant.mediumTextStyle,
+                          ),
+                        ),
+                        isdoneDay[key.toString()]!
+                            ? Padding(
+                                padding: const EdgeInsets.all(11.0),
+                                child: Text("done",
+                                    style: Constant.mediumTextStyle
+                                        .copyWith(color: Colors.green)),
+                              )
+                            : ElevatedButton(
+                                onPressed: () {
+                                  setState(() {
+                                    isdoneDay[key.toString()] = true;
+                                  });
+                                  context
+                                      .read<AuthProvider>()
+                                      .toggleTakeMedicine(
+                                          widget.medicine, key.toString());
+                                },
+                                style: Constant.buttonStyle,
+                                child: Text(
+                                  "take",
+                                  style: Constant.mediumTextStyle
+                                      .copyWith(color: Colors.white),
+                                ),
+                              )
+                      ],
+                    ))
+                .toList()));
   }
 }

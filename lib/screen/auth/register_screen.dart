@@ -335,7 +335,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       desc: descController.text,
                                       gender: gender!,
                                       userType: userType!,
-                                      specialty: specialty ?? '',
+                                     // specialty: specialty ?? '',
                                       context: context,
                                     );
                                   }

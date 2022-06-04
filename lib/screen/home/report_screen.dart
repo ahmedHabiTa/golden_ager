@@ -3,11 +3,25 @@ import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_text.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
+import 'package:golden_ager/screen/home/add_report_screen.dart';
 
 import '../../../core/common_widget/loading_widget.dart';
 
 class ReportScreen extends StatefulWidget {
-  const ReportScreen({Key? key}) : super(key: key);
+  final String doctorId;
+  final String patientId;
+  final String userType;
+  final String doctorName;
+  final String patientName;
+
+  const ReportScreen({
+    Key? key,
+    required this.doctorId,
+    required this.patientId,
+    required this.userType,
+    required this.doctorName,
+    required this.patientName,
+  }) : super(key: key);
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -16,13 +30,13 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreenState extends State<ReportScreen> {
   @override
   Widget build(BuildContext context) {
-    final userUUID = SharedPrefsHelper.getData(key: 'userUUID');
-    return StreamBuilder<DocumentSnapshot>(
+    return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
-          .collection('users')
-          .doc(userUUID)
+          .collection('reports')
+          .doc('${widget.doctorId}-${widget.patientId}')
+          .collection('${widget.doctorId}-${widget.patientId}')
           .snapshots(),
-      builder: (context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Scaffold(
             body: const Padding(
@@ -30,8 +44,7 @@ class _ReportScreenState extends State<ReportScreen> {
               child: LoadingWidget(),
             ),
           );
-        }
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           return Scaffold(
             body: const Center(
               child: CustomText(
@@ -41,8 +54,7 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
             ),
           );
-        }
-        else if (!snapshot.hasData) {
+        } else if (!snapshot.hasData) {
           return Scaffold(
             body: const Center(
               child: CustomText(
@@ -52,32 +64,151 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
             ),
           );
-        }
-        else if (snapshot.hasData) {
-          final reportsList = snapshot.data!['reports'] ;
+        } else if (snapshot.hasData) {
+          print(snapshot.data!.docs.length);
           return Scaffold(
-            body:reportsList.isEmpty ? const Center(
-              child: CustomText(
-                text: 'There is no Reports yet !!',
-                color: Constant.primaryDarkColor,
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
+            floatingActionButton: widget.userType == 'doctor'
+                ? FloatingActionButton(
+                    backgroundColor: Constant.primaryDarkColor,
+                    child: const Center(
+                      child: Icon(Icons.add),
+                    ),
+                    onPressed: () {
+                      Constant.navigateTo(
+                          routeName: AddReportScreen(
+                            patientID: widget.patientId,
+                            doctorName: widget.doctorName,
+                          patientName: widget.patientName,
+                          ),
+                          context: context);
+                    },
+                  )
+                : Container(),
+            body: SizedBox(
+              height: double.infinity,
+              width: double.infinity,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    CustomText(
+                      text: 'Reports',
+                      color: Constant.primaryDarkColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.docs.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          elevation: 10,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20.0)),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0, vertical: 12.0),
+                            child: SizedBox(
+                              width: Constant.width(context) * 0.9,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  _customFixedText(text: 'From:'),
+                                  _customDynamicText(
+                                      text: snapshot.data!.docs[index]['from']),
+                                  _customFixedText(text: 'To:'),
+                                  _customDynamicText(
+                                      text: snapshot.data!.docs[index]['to']),
+                                  _customFixedText(text: 'Medical Specialty:'),
+                                  _customDynamicText(
+                                      text: snapshot.data!.docs[index]
+                                          ['medicalSpecialty']),
+                                  _customFixedText(text: 'Sample Name :'),
+                                  _customDynamicText(
+                                      text: snapshot.data!.docs[index]
+                                          ['sampleName']),
+                                  _customFixedText(text: 'Description :'),
+                                  _customDynamicText(
+                                      text: snapshot.data!.docs[index]
+                                          ['description']),
+                                  _customFixedText(text: 'Problem :'),
+                                  _customDynamicText(
+                                      text: snapshot.data!.docs[index]
+                                          ['problem']),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                  ],
+                ),
               ),
-            ) : Container(),
-            appBar: AppBar(
-              title: CustomText(
-                text: 'Medical Reports',
-                color: Constant.primaryDarkColor,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-              ),
-              centerTitle: true,
-              iconTheme: IconThemeData(size: 0),
             ),
           );
+          // return Scaffold(
+          //   body: reportsList.isEmpty
+          //       ? const Center(
+          //           child: CustomText(
+          //             text: 'There is no Reports yet !!',
+          //             color: Constant.primaryDarkColor,
+          //             fontSize: 25,
+          //             fontWeight: FontWeight.w600,
+          //           ),
+          //         )
+          //       : Container(),
+          //   appBar: AppBar(
+          //     title: CustomText(
+          //       text: 'Medical Reports',
+          //       color: Constant.primaryDarkColor,
+          //       fontSize: 20,
+          //       fontWeight: FontWeight.w600,
+          //     ),
+          //     centerTitle: true,
+          //     iconTheme: IconThemeData(size: 0),
+          //   ),
+          // );
         }
         return Container();
       },
     );
   }
+}
+
+Widget _customFixedText({
+  required String text,
+}) {
+  return Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 5.0),
+    child: CustomText(
+      text: text,
+      fontSize: 13,
+      color: Constant.primaryDarkColor,
+      fontWeight: FontWeight.w300,
+    ),
+  );
+}
+
+Widget _customDynamicText({
+  required String text,
+}) {
+  return Container(
+    //    alignment: Alignment.center,
+    padding: const EdgeInsets.symmetric(
+      horizontal: 15.0,
+    ),
+    child: CustomText(
+      text: text,
+      fontSize: 15,
+      color: Constant.primaryColor,
+      fontWeight: FontWeight.bold,
+    ),
+  );
 }

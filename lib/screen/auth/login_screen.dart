@@ -97,28 +97,29 @@ class _LoginScreenState extends State<LoginScreen> {
                   height: 50,
                   hintText: 'Password',
                 ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: SizedBox(
-                    width: 200,
-                    child: CheckboxListTile(
-                      controlAffinity: ListTileControlAffinity.leading,
-                      activeColor: const Color(0xFF091249),
-                      title: const CustomText(
-                        text: 'Remember Me',
-                        color: Color(0xFF0d2137),
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      value: checkValue,
-                      onChanged: (value) {
-                        setState(() {
-                          checkValue = !checkValue;
-                        });
-                      },
-                    ),
-                  ),
-                ),
+                SizedBox(height: 20),
+                // Align(
+                //   alignment: Alignment.centerLeft,
+                //   child: SizedBox(
+                //     width: 200,
+                //     child: CheckboxListTile(
+                //       controlAffinity: ListTileControlAffinity.leading,
+                //       activeColor: const Color(0xFF091249),
+                //       title: const CustomText(
+                //         text: 'Remember Me',
+                //         color: Color(0xFF0d2137),
+                //         fontSize: 12,
+                //         fontWeight: FontWeight.w600,
+                //       ),
+                //       value: checkValue,
+                //       onChanged: (value) {
+                //         setState(() {
+                //           checkValue = !checkValue;
+                //         });
+                //       },
+                //     ),
+                //   ),
+                // ),
                 Consumer<AuthProvider>(
                   builder: (context, authProvider, _) {
                     return isLoading == true

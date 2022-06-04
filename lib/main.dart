@@ -1,36 +1,39 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
+import 'package:golden_ager/features/chat/presentation/provider/chat_provider.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
-import 'package:golden_ager/screen/home/splash_screen.dart';
-import 'package:golden_ager/screen/home/tabs_screen.dart';
+import 'package:golden_ager/provider/requests_provider.dart';
+import 'package:golden_ager/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
-
-import 'core/common_widget/loading_widget.dart';
+import 'features/injection/injection_container.dart' as di;
+import 'features/injection/injection_container.dart';
 import 'core/util/shared_prefs_helper.dart';
 import 'provider/auth_provider.dart';
 import 'provider/home_provider.dart';
+import 'screen/home/splash_screen.dart';
+import 'screen/home/tabs_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await di.init();
   await SharedPrefsHelper.init();
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(),
-        ),
-        ChangeNotifierProvider<HomeProvider>(
-          create: (_) => HomeProvider(),
-        ),
+        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+        ChangeNotifierProvider<RequestsProvider>(
+            create: (_) => RequestsProvider()),
+        ChangeNotifierProvider<ChatProvider>(create: (_) => sl<ChatProvider>())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -43,22 +46,38 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
         ),
         debugShowCheckedModeBanner: false,
-        home: StreamBuilder<User?>(
-          stream: FirebaseAuth.instance.authStateChanges(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const LoadingWidget();
-            } else if (snapshot.hasError) {
-              return const Scaffold(
-                  body: Center(child: Text('Something went wrong')));
-            } else if (snapshot.hasData) {
-              return const TabsScreen();
-            } else {
-              return const SplashScreen();
-            }
-          },
-        ),
+        home: RedierctScreen(),
       ),
     );
+  }
+}
+
+class RedierctScreen extends StatefulWidget {
+  const RedierctScreen({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<RedierctScreen> createState() => _RedierctScreenState();
+}
+
+class _RedierctScreenState extends State<RedierctScreen> {
+  @override
+  void initState() {
+    super.initState();
+    context.read<AuthProvider>().tryToLogin(context: context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<AuthProvider>(builder: (ctx, u, _) {
+      if (u.isLoadingTryToLogin) {
+        return const SplashScreen();
+      } else if (u.userType != null) {
+        return const TabsScreen();
+      } else {
+        return LoginScreen();
+      }
+    });
   }
 }

@@ -27,69 +27,67 @@ class _SplashScreenState extends State<SplashScreen>
         curve: Curves.ease,
         duration: const Duration(seconds: 2),
         builder: (BuildContext context, double opacity, Widget? child) {
-          return SafeArea(
-            child: Scaffold(
-              body: Container(
-                width: Constant.width(context),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: const [
-                      Constant.primaryColor,
-                      Constant.primaryDarkColor,
-                    ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                  ),
+          return Scaffold(
+            body: Container(
+              width: Constant.width(context),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: const [
+                    Constant.primaryColor,
+                    Constant.primaryDarkColor,
+                  ],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
-                child: Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      AnimatedOpacity(
-                        opacity: opacity % 2 > 1 ? 1 : opacity % 2,
-                        duration: const Duration(seconds: 4),
-                        child: Container(
-                          width: Constant.width(context) * 0.6,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFF628BB2),
-                          ),
-                        ),
-                      ),
-                      AnimatedOpacity(
-                        opacity: opacity % 1 > 1 ? 1 : opacity % 1,
-                        duration: const Duration(seconds: 2),
-                        child: Container(
-                          width: Constant.width(context) * 0.45,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Color(0xFFBCD2DF),
-                          ),
-                        ),
-                      ),
-                      AnimatedOpacity(
-                        opacity: opacity > 1 ? 1 : opacity,
-                        duration: const Duration(seconds: 1),
-                        child: Container(
-                          width: Constant.width(context) * 0.3,
-                          decoration: const BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        width: Constant.width(context) * 0.15,
-                        height: Constant.height(context) * 0.15,
+              ),
+              child: Center(
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    AnimatedOpacity(
+                      opacity: opacity % 2 > 1 ? 1 : opacity % 2,
+                      duration: const Duration(seconds: 4),
+                      child: Container(
+                        width: Constant.width(context) * 0.6,
                         decoration: const BoxDecoration(
                           shape: BoxShape.circle,
-                          image: DecorationImage(
-                              fit: BoxFit.fill,
-                              image: AssetImage('assets/images/logo.png')),
+                          color: Color(0xFF628BB2),
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    AnimatedOpacity(
+                      opacity: opacity % 1 > 1 ? 1 : opacity % 1,
+                      duration: const Duration(seconds: 2),
+                      child: Container(
+                        width: Constant.width(context) * 0.45,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(0xFFBCD2DF),
+                        ),
+                      ),
+                    ),
+                    AnimatedOpacity(
+                      opacity: opacity > 1 ? 1 : opacity,
+                      duration: const Duration(seconds: 1),
+                      child: Container(
+                        width: Constant.width(context) * 0.3,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      width: Constant.width(context) * 0.15,
+                      height: Constant.height(context) * 0.15,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                            fit: BoxFit.fill,
+                            image: AssetImage('assets/images/logo.png')),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
