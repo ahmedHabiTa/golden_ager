@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:golden_ager/models/medicine.dart';
 import 'package:golden_ager/models/user.dart';
 import 'package:image_picker/image_picker.dart';
@@ -39,8 +40,12 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
       _firebasecurrentUser = FirebaseAuth.instance.currentUser!;
-      await getUserData();
       final userUUID = _firebasecurrentUser!.uid.toString();
+      FirebaseFirestore.instance
+          .doc("users/$userUUID")
+          .update({"fcm_token": await FirebaseMessaging.instance.getToken()});
+      await getUserData();
+
       await SharedPrefsHelper.saveData(key: 'userUUID', value: userUUID);
       await SharedPrefsHelper.saveData(
           key: 'user_data',
@@ -154,6 +159,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           "name": name,
           "phone": phone,
           'user_type': userType,
+          "fcm_token": await FirebaseMessaging.instance.getToken(),
           "notification": [],
           'reports': [],
           'medicine': [],
@@ -220,6 +226,8 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     medicine.isDone = isDone;
     _patient!.medicines.add(medicine);
     await updateUserData();
+    getDisplayMedcines(selectedDate);
+    getTodayActivity();
     toggleAddMedicineLoading();
 
     return true;
@@ -241,6 +249,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         .where((element) =>
             element.startAt.isBefore(date) && element.endAt.isAfter(date))
         .toList();
+    notifyListeners();
   }
 
   List todayActivity = [1, 1, 1];
@@ -255,7 +264,6 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         .toList();
     for (Medicine medicine in displayMedcines) {
       final int hours = 24 ~/ medicine.dose;
-      int condition = medicine.endAt.difference(medicine.startAt).inDays;
       max++;
       for (var j = 0; j < medicine.dose; j++) {
         if (medicine.isDone![DateFormat('yMd').format(DateTime.now())]![
@@ -275,7 +283,8 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   Future<void> updateUserData() async {
     await FirebaseFirestore.instance
         .doc('users/${_firebasecurrentUser!.uid}')
-        .update(_patient!.toMap());
+        .update(
+            {"medicines": _patient!.medicines.map((e) => e.toMap()).toList()});
   }
 
   @override

@@ -7,7 +7,7 @@ class CustomText extends StatelessWidget {
   final double? letterSpacing;
   final Color? color;
   final TextOverflow? textOverflow;
-  final int? maxLines ;
+  final int? maxLines;
   final TextDirection? textDirection;
   final TextDecoration? decoration;
 
@@ -28,11 +28,10 @@ class CustomText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      textAlign: TextAlign.center,
       textDirection: textDirection,
       maxLines: maxLines,
       style: TextStyle(
-        decoration:decoration,
+        decoration: decoration,
         fontFamily: 'Montserrat',
         fontSize: fontSize,
         color: color,

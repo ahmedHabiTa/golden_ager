@@ -1,10 +1,13 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
+import 'package:golden_ager/features/chat/presentation/provider/chat_provider.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
+import 'package:golden_ager/provider/requests_provider.dart';
 import 'package:golden_ager/screen/auth/login_screen.dart';
 import 'package:provider/provider.dart';
-
+import 'features/injection/injection_container.dart' as di;
+import 'features/injection/injection_container.dart';
 import 'core/util/shared_prefs_helper.dart';
 import 'provider/auth_provider.dart';
 import 'provider/home_provider.dart';
@@ -14,6 +17,7 @@ import 'screen/home/tabs_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await di.init();
   await SharedPrefsHelper.init();
   runApp(const MyApp());
 }
@@ -25,12 +29,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(),
-        ),
-        ChangeNotifierProvider<HomeProvider>(
-          create: (_) => HomeProvider(),
-        ),
+        ChangeNotifierProvider<AuthProvider>(create: (_) => AuthProvider()),
+        ChangeNotifierProvider<HomeProvider>(create: (_) => HomeProvider()),
+        ChangeNotifierProvider<RequestsProvider>(
+            create: (_) => RequestsProvider()),
+        ChangeNotifierProvider<ChatProvider>(create: (_) => sl<ChatProvider>())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

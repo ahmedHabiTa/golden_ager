@@ -30,8 +30,7 @@ class _ReportScreenState extends State<ReportScreen> {
               child: LoadingWidget(),
             ),
           );
-        }
-        else if (snapshot.hasError) {
+        } else if (snapshot.hasError) {
           return Scaffold(
             body: const Center(
               child: CustomText(
@@ -41,8 +40,7 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
             ),
           );
-        }
-        else if (!snapshot.hasData) {
+        } else if (!snapshot.hasData) {
           return Scaffold(
             body: const Center(
               child: CustomText(
@@ -52,18 +50,19 @@ class _ReportScreenState extends State<ReportScreen> {
               ),
             ),
           );
-        }
-        else if (snapshot.hasData) {
-          final reportsList = snapshot.data!['reports'] ;
+        } else if (snapshot.hasData) {
+          final reportsList = snapshot.data!['reports'];
           return Scaffold(
-            body:reportsList.isEmpty ? const Center(
-              child: CustomText(
-                text: 'There is no Reports yet !!',
-                color: Constant.primaryDarkColor,
-                fontSize: 25,
-                fontWeight: FontWeight.w600,
-              ),
-            ) : Container(),
+            body: reportsList.isEmpty
+                ? const Center(
+                    child: CustomText(
+                      text: 'There is no Reports yet !!',
+                      color: Constant.primaryDarkColor,
+                      fontSize: 25,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  )
+                : Container(),
             appBar: AppBar(
               title: CustomText(
                 text: 'Medical Reports',
