@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
+
+import '../../notifications.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -18,6 +21,25 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void initState() {
     super.initState();
+    notify();
+  }
+
+  notify() async {
+    await localNotifyManager.repeatedNotification(
+      body: 'Check out your health data',
+      payload: 'tabs_screen',
+      repeatInterval: RepeatInterval.everyMinute,
+    );
+    await localNotifyManager.repeatedNotification(
+      body: 'Don\'t forget to take your dose',
+      payload: 'medicine_screen',
+      repeatInterval: RepeatInterval.hourly,
+    );
+    await localNotifyManager.showEveryDayAtATimeNotification(
+      body: 'Tell us How you feel today',
+      payload: 'checkIn_screen',
+      time: Time(12, 0, 0),
+    );
   }
 
   @override

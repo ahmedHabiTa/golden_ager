@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
+import 'package:golden_ager/screen/auth/login_screen.dart';
+import 'package:golden_ager/screen/home/check_in_screen.dart';
 import 'package:provider/provider.dart';
+import '../../notifications.dart';
+import '../medicine/medicine_reminder.dart';
 import '../patient/patient_reports_screen.dart';
 import 'home_screen.dart';
 import '../doctor/home_screen_for_doctor.dart';
@@ -17,6 +21,21 @@ class TabsScreen extends StatefulWidget {
 
 class _TabsScreenState extends State<TabsScreen> {
   int _index = 0;
+
+  onNotificationReceive(ReceivedNotification notification) {
+    print('notification received');
+  }
+
+  onNotificationClick(String payload) {
+    if (payload == 'tabs_screen') {
+      Constant.navigateTo(routeName: const TabsScreen(), context: context);
+    } else if (payload == 'medicine_screen') {
+      Constant.navigateTo(
+          routeName: const MedicineReminderScreen(), context: context);
+    } else if (payload == 'checkIn_screen') {
+      Constant.navigateTo(routeName: const CheckInScreen(), context: context);
+    }
+  }
 
   Map<String, List<Map<String, dynamic>>> pagesForTypeUser = {
     'patient': [
@@ -68,10 +87,13 @@ class _TabsScreenState extends State<TabsScreen> {
   };
 
   late List<Map<String, dynamic>> pages;
+
   @override
   void initState() {
     super.initState();
     pages = pagesForTypeUser[context.read<AuthProvider>().userType]!;
+    localNotifyManager.setOnNotificationReceive(onNotificationReceive);
+    localNotifyManager.setOnNotificationClick(onNotificationClick);
   }
 
   @override

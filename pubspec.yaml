@@ -38,6 +38,7 @@ dependencies:
   firebase_core: null
   firebase_messaging: ^11.4.1
   firebase_storage: null
+  flutter_local_notifications:
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.0.3

@@ -11,6 +11,7 @@ import 'package:badges/badges.dart';
 import '../../features/chat/domain/entities/order_user.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../models/user.dart';
+import '../../notifications.dart';
 import '../home/profile_screen.dart';
 import '../home/report_screen.dart';
 import 'doctor_request_screen.dart';
@@ -22,10 +23,16 @@ class HomeScreenForDoctor extends StatefulWidget {
   _HomeScreenForDoctorState createState() => _HomeScreenForDoctorState();
 }
 
+
 class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
+
+
+
+
   @override
   Widget build(BuildContext context) {
     final doctor = context.watch<AuthProvider>().doctor!;
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Color(0xffEFF1F3),
