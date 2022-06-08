@@ -3,10 +3,7 @@ import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:golden_ager/models/medicine.dart';
-import 'package:golden_ager/models/report.dart';
-import 'package:golden_ager/models/report.dart';
 import 'package:golden_ager/models/user.dart';
-import 'package:golden_ager/screen/doctor/home_screen_for_doctor.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +26,19 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   String? _userType;
 
   String? get userType => _userType;
+  Future<void> changeUserType(
+      {required String newUserType, String? PatientId}) async {
+    if (newUserType == "patient") {
+      final patientData =
+          await FirebaseFirestore.instance.doc("users/$PatientId").get();
+      _patient = Patient.fromMap(patientData.data() as Map<String, dynamic>);
+      _userType = newUserType;
+      notifyListeners();
+    } else {
+      _patient = null;
+      _userType = newUserType;
+    }
+  }
 
   Patient? _patient;
 
@@ -40,9 +50,10 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
 
   Mentor? get mentor => _mentor;
 
-  Future<void> login({required String email,
-    required String password,
-    required BuildContext context}) async {
+  Future<void> login(
+      {required String email,
+      required String password,
+      required BuildContext context}) async {
     try {
       await FirebaseAuth.instance
           .signInWithEmailAndPassword(email: email, password: password);
@@ -140,6 +151,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         message: 'Please select an image',
         color: Colors.red,
       );
+      return;
     } else {
       try {
         toggleLoading();
@@ -148,11 +160,9 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         final userUUID = FirebaseAuth.instance.currentUser!.uid.toString();
         await SharedPrefsHelper.saveData(key: 'userUUID', value: userUUID);
         await SharedPrefsHelper.saveData(
-            key: 'user_data', value: {'email': email, "password": password});
-        String imageFileName = DateTime
-            .now()
-            .millisecondsSinceEpoch
-            .toString();
+            key: 'user_data',
+            value: json.encode({'email': email, "password": password}));
+        String imageFileName = DateTime.now().millisecondsSinceEpoch.toString();
         Reference ref = FirebaseStorage.instance.ref().child(imageFileName);
         UploadTask uploadTask = ref.putFile(image!);
         await uploadTask.then((res) async {
@@ -160,7 +170,6 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
             imageUrl = url;
           });
         });
-        print(userUUID);
         await FirebaseFirestore.instance.collection('users').doc(userUUID).set({
           "image": imageUrl,
           "uid": userUUID,
@@ -173,6 +182,8 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           "phone": phone,
           'user_type': userType,
           "fcm_token": await FirebaseMessaging.instance.getToken(),
+          "patients": [],
+          "mentor": [],
           "notification": [],
           'reports': [],
           'medicine': [],
@@ -184,13 +195,17 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           message: error.message.toString(),
           color: Colors.red,
         );
+
+        toggleLoading();
       }
+
+      toggleLoading();
     }
-    toggleLoading();
   }
 
   Future<void> logOut(context) async {
     await FirebaseAuth.instance.signOut();
+    await SharedPrefsHelper.clearData();
     _userType = null;
     _doctor = null;
     _patient = null;
@@ -205,17 +220,16 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     notifyListeners();
   }
 
-  Future<bool> addMedicine({required String name,
-    required String pillDosage,
-    required int shape,
-    required int color,
-    required int dose,
-    required DateTime startAt,
-    required DateTime endAt}) async {
+  Future<bool> addMedicine(
+      {required String name,
+      required String pillDosage,
+      required int shape,
+      required int color,
+      required int dose,
+      required DateTime startAt,
+      required DateTime endAt}) async {
     toggleAddMedicineLoading();
-    await FirebaseFirestore.instance
-        .doc('users/${_firebasecurrentUser!.uid}')
-        .get();
+    await FirebaseFirestore.instance.doc('users/${_patient!.uid}').get();
     final Medicine medicine = Medicine(
         name: name,
         pillDosage: pillDosage,
@@ -226,21 +240,20 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         endAt: endAt);
     Map<String, Map<String, bool>> isDone = {};
     final int hours = 24 ~/ medicine.dose;
-    int condition = medicine.endAt
-        .difference(medicine.startAt)
-        .inDays;
+    int condition = medicine.endAt.difference(medicine.startAt).inDays;
     for (var i = 0; i < condition; i++) {
       isDone[DateFormat('yMd')
           .format(medicine.startAt.add(Duration(days: i)))] = {};
       for (var j = 0; j < medicine.dose; j++) {
         isDone[DateFormat('yMd')
-            .format(medicine.startAt.add(Duration(days: i)))]!
+                .format(medicine.startAt.add(Duration(days: i)))]!
             .addAll({(hours * j).toString(): false});
       }
     }
     medicine.isDone = isDone;
     _patient!.medicines.add(medicine);
-    await updateUserData();
+    await FirebaseFirestore.instance.doc('users/${_patient!.uid}').update(
+        {"medicines": _patient!.medicines.map((e) => e.toMap()).toList()});
     getDisplayMedcines(selectedDate);
     getTodayActivity();
     toggleAddMedicineLoading();
@@ -248,11 +261,12 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     return true;
   }
 
-  void toggleTakeMedicine(Medicine medicine, String key) {
+  Future<void> toggleTakeMedicine(Medicine medicine, String key) async {
     patient!.medicines[patient!.medicines.indexOf(medicine)]
         .isDone![DateFormat('yMd').format(DateTime.now())]![key] = true;
     getTodayActivity();
-    updateUserData();
+    FirebaseFirestore.instance.doc('users/${_patient!.uid}').update(
+        {"medicines": _patient!.medicines.map((e) => e.toMap()).toList()});
   }
 
   List<Medicine> displayMedcines = [];
@@ -261,9 +275,9 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   void getDisplayMedcines(DateTime date) {
     selectedDate = date;
     notifyListeners();
-    displayMedcines = patient!.medicines
+    displayMedcines = _patient!.medicines
         .where((element) =>
-    element.startAt.isBefore(date) && element.endAt.isAfter(date))
+            element.startAt.isBefore(date) && element.endAt.isAfter(date))
         .toList();
     notifyListeners();
   }
@@ -276,15 +290,15 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     int doneForOneMedicine = 0;
     displayMedcines = patient!.medicines
         .where((element) =>
-    element.startAt.isBefore(DateTime.now()) &&
-        element.endAt.isAfter(DateTime.now()))
+            element.startAt.isBefore(DateTime.now()) &&
+            element.endAt.isAfter(DateTime.now()))
         .toList();
     for (Medicine medicine in displayMedcines) {
       final int hours = 24 ~/ medicine.dose;
       max++;
       for (var j = 0; j < medicine.dose; j++) {
         if (medicine.isDone![DateFormat('yMd').format(DateTime.now())]![
-        (hours * j).toString()] as bool) {
+            (hours * j).toString()] as bool) {
           doneForOneMedicine++;
         }
       }
@@ -297,11 +311,12 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     notifyListeners();
   }
 
-  Future<void> updateUserData() async {
-    await FirebaseFirestore.instance
-        .doc('users/${_firebasecurrentUser!.uid}')
-        .update(
-        {"medicines": _patient!.medicines.map((e) => e.toMap()).toList()});
+  Future<void> updateUserLocal(
+      {Patient? patient, Doctor? doctor, Mentor? mentor}) async {
+    _patient = patient ?? _patient;
+    _doctor = doctor ?? _doctor;
+    _mentor = mentor ?? _mentor;
+    notifyListeners();
   }
 
   @override
@@ -330,11 +345,9 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         'sampleName': sampleName,
         'description': description,
         'problem': problem,
-        'time': DateTime
-            .now().toString(),
+        'time': DateTime.now().toString(),
       },
     );
-    Constant.navigateToRep(
-        routeName: const TabsScreen(), context: context);
+    Constant.navigateToRep(routeName: const TabsScreen(), context: context);
   }
 }

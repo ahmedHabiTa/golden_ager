@@ -5,11 +5,12 @@ import 'package:golden_ager/models/user.dart';
 import '../models/request.dart';
 
 class RequestsProvider extends ChangeNotifier {
-  Future<void> makeRequest(
+  Future<void> makeDoctorRequest(
       {required Patient patient,
       required Doctor doctor,
       required BuildContext context}) async {
     final Request request = Request(
+        requestType: 'doctor',
         timeStamp: DateTime.now(),
         uid: patient.uid,
         fromId: patient.uid,
@@ -43,34 +44,34 @@ class RequestsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> changeRequestStatus(
+  Future<void> changeDoctorRequestStatus(
       {required Request request,
       required String status,
       required BuildContext context}) async {
     try {
       // chnage request Status for the doctor
       FirebaseFirestore.instance
-          .doc("users/${request.doctor.uid}/requests/${request.patient.uid}")
+          .doc("users/${request.doctor!.uid}/requests/${request.patient.uid}")
           .update({'status': status});
       // chnage request Status for the patient
       FirebaseFirestore.instance
-          .doc("users/${request.patient.uid}/requests/${request.doctor.uid}")
+          .doc("users/${request.patient.uid}/requests/${request.doctor!.uid}")
           .update({"status": status});
 
       if (status == 'accepted') {
         // add doctor to patient data
         final patientRef =
             FirebaseFirestore.instance.doc("users/${request.patient.uid}");
-        request.patient.doctors.add(request.doctor);
+        request.patient.doctors.add(request.doctor!);
         patientRef.update({
           'doctors': request.patient.doctors.map((e) => e.toMap()).toList()
         });
         // add patient to doctor data
         final docRef =
-            FirebaseFirestore.instance.doc("users/${request.doctor.uid}");
-        request.doctor.patients.add(request.patient);
+            FirebaseFirestore.instance.doc("users/${request.doctor!.uid}");
+        request.doctor!.patients.add(request.patient);
         docRef.update({
-          'patients': request.doctor.patients.map((e) => e.toMap()).toList()
+          'patients': request.doctor!.patients.map((e) => e.toMap()).toList()
         });
       }
 
@@ -81,6 +82,100 @@ class RequestsProvider extends ChangeNotifier {
       ));
     } catch (e) {
       print(e);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text('error happend'),
+        backgroundColor: Colors.red,
+      ));
+    }
+  }
+
+  Future<void> makeMentorRequest(
+      {required String patientId,
+      required Mentor mentor,
+      required BuildContext context}) async {
+    final patientRef =
+        await FirebaseFirestore.instance.doc("users/$patientId").get();
+    if (!patientRef.exists || patientRef.data()!["user_type"] != 'patient') {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 2),
+        content: Text('Invaild patient id'),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    } else {
+      final Patient patient =
+          Patient.fromMap(patientRef.data() as Map<String, dynamic>);
+      final Request request = Request(
+          requestType: "mentor",
+          timeStamp: DateTime.now(),
+          uid: patient.uid,
+          fromId: mentor.uid,
+          toId: patient.uid,
+          patient: patient,
+          mentor: mentor,
+          status: 'waiting');
+      // add to docotr requests collection
+      final mentorRef = FirebaseFirestore.instance
+          .doc("users/${mentor.uid}/requests/${patient.uid}");
+      final data = await mentorRef.get();
+      // check if patient send request before
+      if (data.exists) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('pervious request in waiting'),
+          backgroundColor: Colors.grey,
+        ));
+      } else {
+        await mentorRef.set(request.toMap());
+        FirebaseFirestore.instance
+            .doc("users/${patient.uid}/requests/${mentor.uid}")
+            .set(request.toMap());
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          duration: Duration(seconds: 1),
+          content: Text('request sended successfly'),
+          backgroundColor: Colors.green,
+        ));
+      }
+    }
+  }
+
+  Future<void> changeMentorRequestStatus(
+      {required Request request,
+      required String status,
+      required BuildContext context}) async {
+    try {
+      // chnage request Status for the doctor
+      FirebaseFirestore.instance
+          .doc("users/${request.mentor!.uid}/requests/${request.patient.uid}")
+          .update({'status': status});
+      // chnage request Status for the patient
+      FirebaseFirestore.instance
+          .doc("users/${request.patient.uid}/requests/${request.mentor!.uid}")
+          .update({"status": status});
+
+      if (status == 'accepted') {
+        // add doctor to patient data
+        final patientRef =
+            FirebaseFirestore.instance.doc("users/${request.patient.uid}");
+        request.patient.mentor.add(request.mentor!);
+        patientRef.update(
+            {'mentor': request.patient.mentor.map((e) => e.toMap()).toList()});
+        // add patient to doctor data
+        final mentorRef =
+            FirebaseFirestore.instance.doc("users/${request.mentor!.uid}");
+        request.mentor!.patients.add(request.patient);
+        mentorRef.update({
+          'patients': request.mentor!.patients.map((e) => e.toMap()).toList()
+        });
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        duration: Duration(seconds: 1),
+        content: Text('request $status successfly'),
+        backgroundColor: Colors.grey,
+      ));
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 1),
         content: Text('error happend'),

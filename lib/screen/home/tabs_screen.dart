@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
-import 'package:golden_ager/screen/auth/login_screen.dart';
 import 'package:golden_ager/screen/home/check_in_screen.dart';
 import 'package:provider/provider.dart';
+import '../../core/util/shared_prefs_helper.dart';
 import '../../notifications.dart';
 import '../medicine/medicine_reminder.dart';
-import '../patient/patient_reports_screen.dart';
+import '../mentor/mentor_home_screen.dart';
+import '../patient/patient_mentor_screen.dart';
 import 'home_screen.dart';
 import '../doctor/home_screen_for_doctor.dart';
 import 'profile_screen.dart';
 import 'tips_screen.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({Key? key}) : super(key: key);
-
+  const TabsScreen({Key? key, this.userId}) : super(key: key);
+  final String? userId;
   @override
   _TabsScreenState createState() => _TabsScreenState();
 }
@@ -37,60 +38,84 @@ class _TabsScreenState extends State<TabsScreen> {
     }
   }
 
-  Map<String, List<Map<String, dynamic>>> pagesForTypeUser = {
-    'patient': [
-      {
-        "index": 0,
-        "page": const HomeScreen(),
-        "title": "Home",
-        'icon': Icon(Icons.home_filled)
-      },
-      {
-        "index": 1,
-        "page": const TipsScreen(),
-        "title": "Tips",
-        'icon': Icon(Icons.lightbulb_outline)
-      },
-      {
-        "index": 2,
-        "page": const PatientReportsScreen(),
-        "title": "Mentors",
-        "icon": Icon(Icons.assessment_outlined)
-      },
-      {
-        "index": 3,
-        "page": const ProfileScreen(isMe: true),
-        "title": "Profile",
-        'icon': Icon(Icons.person_outline)
-      },
-    ],
-    'doctor': [
-      {
-        "index": 0,
-        "page": const HomeScreenForDoctor(),
-        "title": "Home",
-        'icon': Icon(Icons.home_filled)
-      },
-      {
-        "index": 1,
-        "page": const TipsScreen(),
-        "title": "Tips",
-        'icon': Icon(Icons.lightbulb_outline)
-      },
-      {
-        "index": 2,
-        "page": const ProfileScreen(isMe: true),
-        "title": "Profile",
-        'icon': Icon(Icons.person_outline)
-      },
-    ]
-  };
+  late Map<String, List<Map<String, dynamic>>> pagesForTypeUser;
 
   late List<Map<String, dynamic>> pages;
 
   @override
   void initState() {
     super.initState();
+    pagesForTypeUser = {
+      'patient': [
+        {
+          "index": 0,
+          "page": HomeScreen(
+              userUUID:
+                  widget.userId ?? SharedPrefsHelper.getData(key: 'userUUID')),
+          "title": "Home",
+          'icon': Icon(Icons.home_filled)
+        },
+        {
+          "index": 1,
+          "page": const TipsScreen(),
+          "title": "Tips",
+          'icon': Icon(Icons.lightbulb_outline)
+        },
+        {
+          "index": 2,
+          "page": const PatientMentorsScreen(),
+          "title": "Mentors",
+          "icon": Icon(Icons.assessment_outlined)
+        },
+        {
+          "index": 3,
+          "page": ProfileScreen(
+              isMe: (widget.userId == null), userId: widget.userId),
+          "title": "Profile",
+          'icon': Icon(Icons.person_outline)
+        },
+      ],
+      'doctor': [
+        {
+          "index": 0,
+          "page": const HomeScreenForDoctor(),
+          "title": "Home",
+          'icon': Icon(Icons.home_filled)
+        },
+        {
+          "index": 1,
+          "page": const TipsScreen(),
+          "title": "Tips",
+          'icon': Icon(Icons.lightbulb_outline)
+        },
+        {
+          "index": 2,
+          "page": const ProfileScreen(isMe: true),
+          "title": "Profile",
+          'icon': Icon(Icons.person_outline)
+        },
+      ],
+      'mentor': [
+        {
+          "index": 0,
+          "page": const MentorHomeScreen(),
+          "title": "Home",
+          'icon': Icon(Icons.home_filled)
+        },
+        {
+          "index": 1,
+          "page": const TipsScreen(),
+          "title": "Tips",
+          'icon': Icon(Icons.lightbulb_outline)
+        },
+        {
+          "index": 2,
+          "page": const ProfileScreen(isMe: true),
+          "title": "Profile",
+          'icon': Icon(Icons.person_outline)
+        },
+      ]
+    };
     pages = pagesForTypeUser[context.read<AuthProvider>().userType]!;
     localNotifyManager.setOnNotificationReceive(onNotificationReceive);
     localNotifyManager.setOnNotificationClick(onNotificationClick);
@@ -109,6 +134,7 @@ class _TabsScreenState extends State<TabsScreen> {
             color: Colors.white,
           ),
           selectedItemColor: Colors.white,
+          unselectedItemColor: Constant.primaryColor,
           items: pages
               .map(
                 (e) => BottomNavigationBarItem(

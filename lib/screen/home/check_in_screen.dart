@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/common_widget/loading_widget.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
 
 import 'package:golden_ager/provider/home_provider.dart';
 import 'package:provider/provider.dart';
@@ -119,8 +120,12 @@ class _CheckInScreenState extends State<CheckInScreen> {
                             onTap: () {
                               toggleLoading();
                               homeProvider.changeFeeling(
-                                  feeling: feeling, context: context);
+                                  userID:
+                                      context.read<AuthProvider>().patient!.uid,
+                                  feeling: feeling,
+                                  context: context);
                               toggleLoading();
+                              Navigator.pop(context);
                             },
                           ),
                         );

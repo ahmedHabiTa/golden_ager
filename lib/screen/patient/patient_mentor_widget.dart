@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/common_widget/custom_text.dart';
 import '../../core/constant/constant.dart';
+import '../../features/chat/domain/entities/order_user.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
+import '../home/profile_screen.dart';
 
 class PatientMentorCard extends StatefulWidget {
   const PatientMentorCard({Key? key}) : super(key: key);
@@ -47,7 +51,7 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.read<AuthProvider>().patient!;
+    final user = context.watch<AuthProvider>().patient!;
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
@@ -66,7 +70,7 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
               ),
             )
           ]),
-          if (user.mentor != null)
+          if (user.mentor.isNotEmpty)
             SizedBox(
               width: Constant.width(context) * 0.9,
               child: Card(
@@ -76,59 +80,91 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Row(
+                  child: Column(
                     // crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(
                         width: Constant.width(context) * 0.55,
                         child: Column(
                           children: [
-                            Container(
-                              height: Constant.height(context) * 0.2,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                image: DecorationImage(
-                                  fit: BoxFit.fill,
-                                  image: NetworkImage(user.mentor!.image),
+                            GestureDetector(
+                              onTap: () {
+                                Constant.navigateTo(
+                                    routeName: ProfileScreen(
+                                        isMe: false,
+                                        userId: user.doctors[0].uid),
+                                    context: context);
+                              },
+                              child: Container(
+                                height: Constant.height(context) * 0.3,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  image: DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image: NetworkImage(user.doctors[0].image),
+                                  ),
                                 ),
                               ),
                             ),
                             const SizedBox(height: 5),
                             CustomText(
-                              text: user.mentor!.name.toString().toUpperCase(),
+                              text:
+                                  user.mentor[0].name.toString().toUpperCase(),
                               fontWeight: FontWeight.w600,
                               fontSize: 17,
                               color: Constant.primaryDarkColor,
                             ),
                             const SizedBox(height: 5),
-                            CustomText(
-                              text: user.mentor!.phone,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 17,
-                              color: Constant.primaryDarkColor,
-                            ),
                           ],
                         ),
                       ),
-                      Spacer(),
-                      SizedBox(
-                        width: Constant.width(context) * 0.3,
-                        height: Constant.height(context) * 0.3,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            GestureDetector(
-                              onTap: () {},
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        children: [
+                          SizedBox(
+                            width: Constant.width(context) * 0.3,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                Constant.navigateTo(
+                                    routeName: ChatPage(
+                                        user1: ChatUser.fromAppUser(user),
+                                        user2: ChatUser.fromAppUser(
+                                            user.mentor[0])),
+                                    context: context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white,
+                              ),
                               child: CustomText(
-                                text: 'Connect',
+                                text: 'Chat',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 17,
-                                color: Constant.primaryDarkColor,
+                                color: Constant.primaryColor,
                               ),
                             ),
-                          ],
-                        ),
-                      )
+                          ),
+                          SizedBox(
+                            width: Constant.width(context) * 0.3,
+                            child: ElevatedButton(
+                              onPressed: () async {
+                                await launchUrl(Uri(
+                                  scheme: 'tel',
+                                  path: user.mentor[0].phone.toString(),
+                                ));
+                              },
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.white,
+                              ),
+                              child: CustomText(
+                                text: 'Call',
+                                fontWeight: FontWeight.w600,
+                                fontSize: 17,
+                                color: Constant.primaryColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 ),

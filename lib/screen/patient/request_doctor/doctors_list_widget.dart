@@ -31,7 +31,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
           GestureDetector(
             onTap: () {
               Constant.navigateTo(
-                  routeName: RequestHistory(
+                  routeName: RequestHistoryScreen(
                     userId: context.read<AuthProvider>().patient!.uid,
                   ),
                   context: context);
@@ -214,7 +214,7 @@ class _ConnectButtonState extends State<ConnectButton> {
         : ElevatedButton(
             onPressed: () async {
               toggleIsLoading();
-              await context.read<RequestsProvider>().makeRequest(
+              await context.read<RequestsProvider>().makeDoctorRequest(
                   context: context,
                   patient: context.read<AuthProvider>().patient!,
                   doctor: widget.doctor);

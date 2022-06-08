@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 
@@ -69,8 +70,11 @@ class HelpContainer extends StatelessWidget {
             width: Constant.width(context) * 0.45,
             radius: 15.0,
             containerColor: Constant.primaryDarkColor,
-            onTap: () {
-              //todo: call the ambulance 123
+            onTap: () async {
+              await launchUrl(Uri(
+                scheme: 'tel',
+                path: 123.toString(),
+              ));
             },
           ),
         ],

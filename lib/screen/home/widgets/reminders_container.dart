@@ -22,7 +22,6 @@ class ReminderContainer extends StatelessWidget {
         children: [
           Row(
             children: const [
-              // SizedBox(width: 15),
               CustomText(
                 text: 'Reminders',
                 color: Constant.primaryDarkColor,
@@ -30,28 +29,19 @@ class ReminderContainer extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
               Spacer(),
-              // Icon(
-              //   Icons.add_circle_outline,
-              //   color: Constant.primaryDarkColor,
-              //   size: 30,
-              // ),
-              // SizedBox(width: 15),
             ],
           ),
           const SizedBox(),
-          ListView.builder(
-            shrinkWrap: true,
-            itemBuilder: (context, index) {
-              return _customContainer(
-                onTap: () => Constant.navigateTo(
-                    routeName: MedicineReminderScreen(), context: context),
-                context: context,
-                image: images[index],
-                title: titles[index],
-              );
-            },
-            itemCount: 1,
-          ),
+          SizedBox(
+            width: double.infinity,
+            child: _customContainer(
+              onTap: () => Constant.navigateTo(
+                  routeName: MedicineReminderScreen(), context: context),
+              context: context,
+              image: images[0],
+              title: titles[0],
+            ),
+          )
         ],
       ),
     );

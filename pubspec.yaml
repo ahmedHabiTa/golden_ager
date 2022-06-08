@@ -38,10 +38,10 @@ dependencies:
   firebase_core: null
   firebase_messaging: ^11.4.1
   firebase_storage: null
-  flutter_local_notifications:
   flutter:
     sdk: flutter
   flutter_colorpicker: ^1.0.3
+  flutter_local_notifications: null
   flutter_screenutil: null
   flutter_svg: ^1.0.3
   fluttertoast: null
@@ -53,7 +53,7 @@ dependencies:
   provider: null
   shared_preferences: null
   swipe_to: ^1.0.2
-  url_launcher: ^6.0.17
+  url_launcher: ^6.1.2
 
 dev_dependencies:
   flutter_lints: ^1.0.0

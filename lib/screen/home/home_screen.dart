@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 import '../../core/constant/Constant.dart';
 import '../home/widgets/help_container.dart';
 import '../home/widgets/reminders_container.dart';
@@ -11,24 +10,25 @@ import 'widgets/feeling_container.dart';
 import 'widgets/health_data_container.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
-
+  const HomeScreen({Key? key, required this.userUUID}) : super(key: key);
+  final userUUID;
   @override
   Widget build(BuildContext context) {
-    final userUUID = SharedPrefsHelper.getData(key: 'userUUID');
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Color(0xffEFF1F3),
-        leading: GestureDetector(
-          onTap: () {
-            //todo: navigate to notifications screen
-          },
-          child: const Icon(
-            Icons.notifications_none_sharp,
-            color: Constant.primaryDarkColor,
-            size: 40,
+        actions: [
+          GestureDetector(
+            onTap: () {
+              //todo: navigate to notifications screen
+            },
+            child: const Icon(
+              Icons.notifications_none_sharp,
+              color: Constant.primaryDarkColor,
+              size: 40,
+            ),
           ),
-        ),
+        ],
       ),
       body: SingleChildScrollView(
         child: StreamBuilder<DocumentSnapshot>(
@@ -80,7 +80,7 @@ class HomeScreen extends StatelessWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 16.0),
                       alignment: Alignment.centerLeft,
                       child: CustomText(
-                        text: 'How can I help you?',
+                        text: 'Contacts',
                         color: Color(0xFF0d2137),
                         fontSize: 28,
                         fontWeight: FontWeight.w400,

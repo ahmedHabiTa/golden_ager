@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_text.dart';
 import 'package:golden_ager/core/constant/constant.dart';
-import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 import 'package:golden_ager/screen/home/add_report_screen.dart';
 
 import '../../../core/common_widget/loading_widget.dart';
@@ -35,6 +34,7 @@ class _ReportScreenState extends State<ReportScreen> {
           .collection('reports')
           .doc('${widget.doctorId}-${widget.patientId}')
           .collection('${widget.doctorId}-${widget.patientId}')
+          .orderBy("time")
           .snapshots(),
       builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -67,6 +67,14 @@ class _ReportScreenState extends State<ReportScreen> {
         } else if (snapshot.hasData) {
           print(snapshot.data!.docs.length);
           return Scaffold(
+            appBar: AppBar(
+              title: CustomText(
+                text: 'Reports',
+                color: Constant.primaryDarkColor,
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             floatingActionButton: widget.userType == 'doctor'
                 ? FloatingActionButton(
                     backgroundColor: Constant.primaryDarkColor,
@@ -78,27 +86,20 @@ class _ReportScreenState extends State<ReportScreen> {
                           routeName: AddReportScreen(
                             patientID: widget.patientId,
                             doctorName: widget.doctorName,
-                          patientName: widget.patientName,
+                            patientName: widget.patientName,
                           ),
                           context: context);
                     },
                   )
                 : Container(),
-            body: SizedBox(
+            body: Container(
+              padding: Constant.kPaddingListTile,
               height: double.infinity,
               width: double.infinity,
+              color: Constant.primaryColor,
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    const SizedBox(
-                      height: 50,
-                    ),
-                    CustomText(
-                      text: 'Reports',
-                      color: Constant.primaryDarkColor,
-                      fontSize: 25,
-                      fontWeight: FontWeight.bold,
-                    ),
                     ListView.builder(
                       physics: const NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
@@ -116,12 +117,17 @@ class _ReportScreenState extends State<ReportScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _customFixedText(text: 'From:'),
-                                  _customDynamicText(
-                                      text: snapshot.data!.docs[index]['from']),
-                                  _customFixedText(text: 'To:'),
-                                  _customDynamicText(
-                                      text: snapshot.data!.docs[index]['to']),
+                                  if (widget.userType != 'doctor')
+                                    _customFixedText(text: 'From:'),
+                                  if (widget.userType != 'doctor')
+                                    _customDynamicText(
+                                        text: snapshot.data!.docs[index]
+                                            ['from']),
+                                  if (widget.userType == 'doctor')
+                                    _customFixedText(text: 'To:'),
+                                  if (widget.userType == 'doctor')
+                                    _customDynamicText(
+                                        text: snapshot.data!.docs[index]['to']),
                                   _customFixedText(text: 'Medical Specialty:'),
                                   _customDynamicText(
                                       text: snapshot.data!.docs[index]

@@ -66,7 +66,6 @@ class AppUser {
       'age': age,
       'image': image,
       'gender': gender,
-      'notifications': notifications.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -129,10 +128,11 @@ class AppUser {
 class Patient extends AppUser {
   final String description;
   final String feeling;
-  final Mentor? mentor;
+  final List<Mentor> mentor;
   final List<Doctor> doctors;
   final List<Report> reports;
   final List<Medicine> medicines;
+
   Patient({
     required String uid,
     required String name,
@@ -175,7 +175,7 @@ class Patient extends AppUser {
     List<Notification>? notifications,
     String? description,
     String? feeling,
-    Mentor? mentor,
+    List<Mentor>? mentor,
     List<Medicine>? medicine,
     List<Report>? reports,
     List<Doctor>? doctors,
@@ -230,7 +230,7 @@ class Patient extends AppUser {
       'gender': gender,
       'description': description,
       'feeling': feeling,
-      'mentor': mentor?.toMap(),
+      'mentor': mentor.map((e) => e.toMap()).toList(),
       'notifications': notifications.map((e) => e.toMap()).toList(),
       'medicines': medicines.map((e) => e.toMap()).toList(),
       'doctors': doctors.map((x) => x.toMap()).toList(),
@@ -256,7 +256,9 @@ class Patient extends AppUser {
                 map['notifications']?.map((x) => Notification.fromMap(x))),
         description: map['description'] ?? '',
         feeling: map['feeling'] ?? '',
-        mentor: map['mentor'] == null ? null : Mentor.fromMap(map['mentor']),
+        mentor: map['mentor'] == null || (map['mentor'] as List).isEmpty
+            ? []
+            : List<Mentor>.from(map['mentor']?.map((x) => Mentor.fromMap(x))),
         medicines:
             map['medicines'] == null || (map['medicines'] as List).isEmpty
                 ? []
@@ -302,7 +304,7 @@ class Patient extends AppUser {
 }
 
 class Mentor extends AppUser {
-  final Patient patient;
+  final List<Patient> patients;
   Mentor({
     required String uid,
     required String name,
@@ -314,7 +316,7 @@ class Mentor extends AppUser {
     required String gender,
     required String fcmToken,
     required List<Notification> notifications,
-    required this.patient,
+    required this.patients,
   }) : super(
             fcmToken: fcmToken,
             age: age,
@@ -339,7 +341,7 @@ class Mentor extends AppUser {
     String? gender,
     String? fcmToken,
     List<Notification>? notifications,
-    Patient? patient,
+    List<Patient>? patient,
   }) {
     return Mentor(
       fcmToken: fcmToken ?? this.fcmToken,
@@ -352,7 +354,7 @@ class Mentor extends AppUser {
       image: image ?? this.image,
       gender: gender ?? this.gender,
       notifications: notifications ?? this.notifications,
-      patient: patient ?? this.patient,
+      patients: patient ?? patients,
     );
   }
 
@@ -368,8 +370,6 @@ class Mentor extends AppUser {
       'fcm_token': fcmToken,
       'image': image,
       'gender': gender,
-      'notifications': notifications.map((x) => x.toMap()).toList(),
-      'patient': patient.toMap(),
     };
   }
 
@@ -389,7 +389,9 @@ class Mentor extends AppUser {
               ? []
               : List<Notification>.from(
                   map['notifications']?.map((x) => Notification.fromMap(x))),
-      patient: Patient.fromMap(map['patient']),
+      patients: map['patients'] == null || (map['patients'] as List).isEmpty
+          ? []
+          : List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),
     );
   }
 
@@ -399,17 +401,17 @@ class Mentor extends AppUser {
   factory Mentor.fromJson(String source) => Mentor.fromMap(json.decode(source));
 
   @override
-  String toString() => 'Mentor(patient: $patient)';
+  String toString() => 'Mentor(patient: $patients)';
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Mentor && other.patient == patient;
+    return other is Mentor && other.patients == patients;
   }
 
   @override
-  int get hashCode => patient.hashCode;
+  int get hashCode => patients.hashCode;
 }
 
 class Doctor extends AppUser {

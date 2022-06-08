@@ -113,7 +113,7 @@ class _MedicineItemState extends State<MedicineItem> {
             Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text(widget.medicine.name, style: Constant.headLineTextStyle),
+                Text(widget.medicine.name, style: Constant.semieBoldTextStyle),
                 Text(widget.medicine.pillDosage,
                     style: Constant.normalTextStyle
                         .copyWith(color: Constant.primaryDarkColor)),

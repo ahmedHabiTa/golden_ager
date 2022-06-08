@@ -1,6 +1,4 @@
-
 import 'dart:io' show Platform;
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -31,8 +29,7 @@ class LocalNotifyManager {
   }
 
   initializePlatform() {
-    var initSettingAndroid =
-        AndroidInitializationSettings('logo');
+    var initSettingAndroid = AndroidInitializationSettings('logo');
     var initSettingIOS = IOSInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
@@ -60,7 +57,10 @@ class LocalNotifyManager {
     });
   }
 
-  Future<void> repeatedNotification({required String body,required String payload,required RepeatInterval repeatInterval}) async {
+  Future<void> repeatedNotification(
+      {required String body,
+      required String payload,
+      required RepeatInterval repeatInterval}) async {
     var androidChannel = AndroidNotificationDetails(
       'Channel_ID repeated',
       'Channel_Name repeated',
@@ -80,9 +80,11 @@ class LocalNotifyManager {
       payload: payload,
     );
   }
+
   Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin!.cancelAll();
   }
+
   Future<void> scheduleNotification() async {
     var scheduleTime = DateTime.now().add(Duration(seconds: 5));
     var androidChannel = AndroidNotificationDetails(
@@ -99,7 +101,11 @@ class LocalNotifyManager {
         1, 'title', 'body', scheduleTime, platformChannel,
         payload: 'new payload');
   }
-  Future<void> showEveryDayAtATimeNotification({required String body, required Time time,required String payload}) async {
+
+  Future<void> showEveryDayAtATimeNotification(
+      {required String body,
+      required Time time,
+      required String payload}) async {
     var androidChannel = AndroidNotificationDetails(
       'Channel_ID daily',
       'Channel_Name daily',
@@ -110,11 +116,12 @@ class LocalNotifyManager {
     var iosChannel = IOSNotificationDetails();
     var platformChannel =
         NotificationDetails(android: androidChannel, iOS: iosChannel);
-    await flutterLocalNotificationsPlugin!.showDailyAtTime(
-        1, '', body, time, platformChannel,
-        payload: payload);
+    await flutterLocalNotificationsPlugin!
+        .showDailyAtTime(1, '', body, time, platformChannel, payload: payload);
   }
-  Future<void> showWeeklyAtDayAtTimeNotification({required String body, Day? day, Time? time}) async {
+
+  Future<void> showWeeklyAtDayAtTimeNotification(
+      {required String body, Day? day, Time? time}) async {
     var androidChannel = AndroidNotificationDetails(
       'Channel_ID Weekly',
       'Channel_Name Weekly',
@@ -129,12 +136,9 @@ class LocalNotifyManager {
         3, '', body, day!, time!, platformChannel,
         payload: 'new payload');
   }
-
 }
 
 LocalNotifyManager localNotifyManager = LocalNotifyManager.init();
-
-
 
 class ReceivedNotification {
   final int id;

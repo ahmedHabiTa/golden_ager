@@ -4,14 +4,12 @@ import 'package:golden_ager/core/common_widget/custom_text.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/models/request.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
-import 'package:golden_ager/screen/home/add_report_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:badges/badges.dart';
 
 import '../../features/chat/domain/entities/order_user.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../models/user.dart';
-import '../../notifications.dart';
 import '../home/profile_screen.dart';
 import '../home/report_screen.dart';
 import 'doctor_request_screen.dart';
@@ -23,12 +21,7 @@ class HomeScreenForDoctor extends StatefulWidget {
   _HomeScreenForDoctorState createState() => _HomeScreenForDoctorState();
 }
 
-
 class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
-
-
-
-
   @override
   Widget build(BuildContext context) {
     final doctor = context.watch<AuthProvider>().doctor!;
@@ -87,7 +80,10 @@ class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Column(
           children: [
-            Text('Your Patients', style: Constant.semieBoldTextStyle),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text('Your Patients', style: Constant.semieBoldTextStyle),
+            ),
             StreamBuilder<DocumentSnapshot>(
                 stream: FirebaseFirestore.instance
                     .doc("users/${doctor.uid}")

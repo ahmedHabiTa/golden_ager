@@ -54,11 +54,11 @@ class Constant {
     );
   }
 
-  static void navigateTo({
+  static Future<void> navigateTo({
     required var routeName,
     required BuildContext context,
-  }) {
-    Navigator.push(
+  }) async {
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => routeName,

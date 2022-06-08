@@ -7,17 +7,21 @@ class Request {
   final String fromId;
   final String toId;
   final Patient patient;
-  final Doctor doctor;
+  final Doctor? doctor;
+  final Mentor? mentor;
   String status; // waiting, accepted, declined
   final DateTime timeStamp;
+  final String requestType; // mentor , doctor
   Request({
     required this.uid,
     required this.fromId,
     required this.toId,
     required this.patient,
-    required this.doctor,
+    this.doctor,
+    this.mentor,
     required this.status,
     required this.timeStamp,
+    required this.requestType,
   });
 
   Request copyWith({
@@ -26,8 +30,10 @@ class Request {
     String? toId,
     Patient? patient,
     Doctor? doctor,
+    Mentor? mentor,
     String? status,
     DateTime? timeStamp,
+    String? requestType,
   }) {
     return Request(
       uid: uid ?? this.uid,
@@ -35,8 +41,10 @@ class Request {
       toId: toId ?? this.toId,
       patient: patient ?? this.patient,
       doctor: doctor ?? this.doctor,
+      mentor: mentor ?? this.mentor,
       status: status ?? this.status,
       timeStamp: timeStamp ?? this.timeStamp,
+      requestType: requestType ?? this.requestType,
     );
   }
 
@@ -46,9 +54,11 @@ class Request {
       'fromId': fromId,
       'toId': toId,
       'patient': patient.toMap(),
-      'doctor': doctor.toMap(),
+      'doctor': doctor?.toMap(),
+      'mentor': mentor?.toMap(),
       'status': status,
-      'time_stamp': timeStamp.millisecondsSinceEpoch,
+      'timeStamp': timeStamp.millisecondsSinceEpoch,
+      'requestType': requestType,
     };
   }
 
@@ -58,9 +68,11 @@ class Request {
       fromId: map['fromId'] ?? '',
       toId: map['toId'] ?? '',
       patient: Patient.fromMap(map['patient']),
-      doctor: Doctor.fromMap(map['doctor']),
+      doctor: map['doctor'] != null ? Doctor.fromMap(map['doctor']) : null,
+      mentor: map['mentor'] != null ? Mentor.fromMap(map['mentor']) : null,
       status: map['status'] ?? '',
-      timeStamp: DateTime.fromMillisecondsSinceEpoch(map['time_stamp']),
+      timeStamp: DateTime.fromMillisecondsSinceEpoch(map['timeStamp']),
+      requestType: map['requestType'] ?? '',
     );
   }
 
@@ -71,7 +83,7 @@ class Request {
 
   @override
   String toString() {
-    return 'Request(uid: $uid, fromId: $fromId, toId: $toId, patient: $patient, doctor: $doctor, status: $status, time_stamp: $timeStamp)';
+    return 'Request(uid: $uid, fromId: $fromId, toId: $toId, patient: $patient, doctor: $doctor, mentor: $mentor, status: $status, timeStamp: $timeStamp, requestType: $requestType)';
   }
 
   @override
@@ -84,8 +96,10 @@ class Request {
         other.toId == toId &&
         other.patient == patient &&
         other.doctor == doctor &&
+        other.mentor == mentor &&
         other.status == status &&
-        other.timeStamp == timeStamp;
+        other.timeStamp == timeStamp &&
+        other.requestType == requestType;
   }
 
   @override
@@ -95,7 +109,9 @@ class Request {
         toId.hashCode ^
         patient.hashCode ^
         doctor.hashCode ^
+        mentor.hashCode ^
         status.hashCode ^
-        timeStamp.hashCode;
+        timeStamp.hashCode ^
+        requestType.hashCode;
   }
 }
