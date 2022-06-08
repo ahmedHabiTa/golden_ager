@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_text.dart';
 import 'package:golden_ager/core/constant/constant.dart';
-import 'package:golden_ager/screen/home/add_report_screen.dart';
+import 'package:golden_ager/screen/doctor/add_report_screen.dart';
 
 import '../../../core/common_widget/loading_widget.dart';
 

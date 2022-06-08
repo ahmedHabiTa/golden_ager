@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import '../../core/common_widget/loading_widget.dart';
 import '../../core/constant/constant.dart';
-import '../doctor/doctor_request_screen.dart';
+import 'request_screen.dart';
 
 class RequestHistoryScreen extends StatefulWidget {
   const RequestHistoryScreen({Key? key, required this.userId})

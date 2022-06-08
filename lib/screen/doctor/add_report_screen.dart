@@ -36,6 +36,7 @@ class _AddReportScreenState extends State<AddReportScreen> {
       isLoading = !isLoading;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     print(widget.patientID);
