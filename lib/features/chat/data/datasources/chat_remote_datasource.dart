@@ -151,7 +151,7 @@ class ChatRemoteDataSourceImpl extends ChatRemoteDataSource {
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
           'Authorization':
-              'key=AAAAbAINmLU:APA91bEQGjl1BdpBLIXSQVqHyAAFlFrrhGJwxKcA5CP4Qh943DCFr4urgZ-EW0CxkkzJ5r50wE6kYYJZxKtlWiRFoSNFylpspvo74hD03VW75qCzIkt6MJ6TCpQgkM4LToZ0QcFngusf'
+              'key=AAAA1qlt7Qg:APA91bGGGR-c_wv3L7BPGby8TqBDX6dgJK3WT455n3zNRj5tOS68ReSQKtsO02q25cKKFKim4m7Vp_JlkZAYSQfX176WZ5y4JIlHl3aMtdbJ87v9MDiPPi_wcqg7ZM_isFYSutu0GHnI'
         },
         body: constructFCMPayload(sender, reciver, message),
       );

@@ -101,7 +101,7 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: NetworkImage(user.doctors[0].image),
+                                    image: NetworkImage(user.mentor[0].image),
                                   ),
                                 ),
                               ),
