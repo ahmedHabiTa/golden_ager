@@ -69,7 +69,6 @@ class FeelingsContainer extends StatelessWidget {
                     radius: 20.0,
                     containerColor: const Color(0xFF00b4d8),
                     onTap: () {
-                      //todo:navigator to feelings screen
                       Constant.navigateTo(
                           routeName: const CheckInScreen(), context: context);
                     },

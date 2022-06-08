@@ -1,71 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/models/request.dart';
 import 'package:golden_ager/provider/requests_provider.dart';
 import 'package:provider/provider.dart';
-
-import '../../provider/auth_provider.dart';
-import '../home/request_history_screen.dart';
-
-class UserRequestsScreen extends StatelessWidget {
-  const UserRequestsScreen({Key? key, required this.requests})
-      : super(key: key);
-  final List<Request> requests;
-  @override
-  Widget build(BuildContext context) {
-    final docor = context.watch<AuthProvider>().doctor!;
-
-    return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Requests',
-            style: Constant.semieBoldTextStyle,
-          ),
-          actions: [
-            GestureDetector(
-              onTap: () {
-                Constant.navigateTo(
-                    routeName: RequestHistoryScreen(
-                        userId: context.read<AuthProvider>().doctor!.uid),
-                    context: context);
-              },
-              child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.history,
-                  )),
-            )
-          ],
-        ),
-        body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-            stream: FirebaseFirestore.instance
-                .collection("users/${docor.uid}/requests")
-                .snapshots(),
-            builder: (cyx, sh) {
-              if (sh.connectionState != ConnectionState.waiting) {
-                final List<Request> requests = sh.data!.docs
-                    .map((e) => Request.fromMap(e.data()))
-                    .toList();
-                return Column(
-                  children: [
-                    Expanded(
-                      child: ListView.builder(
-                          itemCount: requests.length,
-                          itemBuilder: (context, index) => RequestsItem(
-                                userPerview:
-                                    context.read<AuthProvider>().userType!,
-                                request: requests[index],
-                              )),
-                    )
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            }));
-  }
-}
 
 class RequestsItem extends StatefulWidget {
   final Request? request;

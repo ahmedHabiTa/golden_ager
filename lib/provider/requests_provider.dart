@@ -1,10 +1,16 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/models/user.dart';
 
+import 'package:http/http.dart' as http;
+import '../core/error/exceptions.dart';
+import '../models/notification.dart';
 import '../models/request.dart';
 
 class RequestsProvider extends ChangeNotifier {
+  // should send FCM to doctor
   Future<void> makeDoctorRequest(
       {required Patient patient,
       required Doctor doctor,
@@ -22,9 +28,8 @@ class RequestsProvider extends ChangeNotifier {
     final docRef = FirebaseFirestore.instance
         .doc("users/${doctor.uid}/requests/${patient.uid}");
     final data = await docRef.get();
-
     // check if patient send request before
-    if (data.exists && data.data()!['status'] != "waiting") {
+    if (data.exists && data.data()!['status'] == "waiting") {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 1),
         content: Text('pervious request in waiting'),
@@ -35,15 +40,18 @@ class RequestsProvider extends ChangeNotifier {
       FirebaseFirestore.instance
           .doc("users/${patient.uid}/requests/${doctor.uid}")
           .set(request.toMap());
-
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        duration: Duration(seconds: 1),
-        content: Text('request sended successfly'),
-        backgroundColor: Colors.green,
-      ));
+      final AppNotification notification = AppNotification(
+          senderName: patient.name,
+          senderToken: patient.fcmToken,
+          body: "${patient.name} needs your help ",
+          category: "request",
+          title: "Request",
+          timeStamp: DateTime.now());
+      await sendNotification(notification: notification, reciverID: doctor.uid);
     }
   }
 
+  // should send FCM to patient
   Future<void> changeDoctorRequestStatus(
       {required Request request,
       required String status,
@@ -90,6 +98,7 @@ class RequestsProvider extends ChangeNotifier {
     }
   }
 
+// send to patient
   Future<void> makeMentorRequest(
       {required String patientId,
       required Mentor mentor,
@@ -140,6 +149,7 @@ class RequestsProvider extends ChangeNotifier {
     }
   }
 
+// send to mentor
   Future<void> changeMentorRequestStatus(
       {required Request request,
       required String status,
@@ -192,5 +202,42 @@ class RequestsProvider extends ChangeNotifier {
     return stream.map((qShot) => qShot.docs
         .map((doc) => Request.fromMap(doc.data() as Map<String, dynamic>))
         .toList());
+  }
+
+  Future<void> sendNotification(
+      {required AppNotification notification,
+      required String reciverID}) async {
+    await sendPushMessage(notification: notification);
+    await FirebaseFirestore.instance
+        .collection("notifications/$reciverID/notifications")
+        .add(notification.toMap());
+  }
+
+  Future<void> sendPushMessage({required AppNotification notification}) async {
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization':
+              'key=AAAA1qlt7Qg:APA91bGGGR-c_wv3L7BPGby8TqBDX6dgJK3WT455n3zNRj5tOS68ReSQKtsO02q25cKKFKim4m7Vp_JlkZAYSQfX176WZ5y4JIlHl3aMtdbJ87v9MDiPPi_wcqg7ZM_isFYSutu0GHnI'
+        },
+        body: jsonEncode({
+          'to': notification.senderToken,
+          'data': {
+            'via': 'FlutterFire Cloud Messaging!!!',
+            "click_action": "FLUTTER_NOTIFICATION_CLICK",
+            "category": notification.category,
+          },
+          'notification': {
+            'title': notification.title,
+            'body': notification.body,
+            "sound": "default"
+          },
+        }),
+      );
+    } catch (e) {
+      throw ServerException();
+    }
   }
 }

@@ -127,50 +127,62 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                   fontSize: 15,
                                   color: Colors.white,
                                 ),
-                                StreamBuilder<DocumentSnapshot>(
-                                  stream: FirebaseFirestore.instance
-                                      .doc(
-                                          "users/${doctors[index].uid}/requests/${patient.uid}")
-                                      .snapshots(),
-                                  builder: (context, sh) => sh
-                                              .connectionState ==
-                                          ConnectionState.waiting
-                                      ? Center(
+                                StreamBuilder<
+                                        DocumentSnapshot<Map<String, dynamic>>>(
+                                    stream: FirebaseFirestore.instance
+                                        .doc(
+                                            "users/${doctors[index].uid}/requests/${patient.uid}")
+                                        .snapshots(),
+                                    builder: (context, sh) {
+                                      if (sh.connectionState ==
+                                          ConnectionState.waiting) {
+                                        return Center(
                                           child: Constant.indicator(),
-                                        )
-                                      : sh.data!.exists
-                                          ? patient.doctors
-                                                  .where((element) =>
-                                                      element.uid ==
-                                                      doctors[index].uid)
-                                                  .isNotEmpty
-                                              ? Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                    "this doctor is follow up with you already",
-                                                    style: Constant
-                                                        .normalTextStyle
-                                                        .copyWith(
-                                                            color:
-                                                                Colors.amber),
-                                                  ),
-                                                )
-                                              : Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                    "you have been send request already",
-                                                    style: Constant
-                                                        .normalTextStyle
-                                                        .copyWith(
-                                                            color:
-                                                                Colors.amber),
-                                                  ),
-                                                )
-                                          : ConnectButton(
-                                              doctor: doctors[index]),
-                                )
+                                        );
+                                      } else if (sh.data!.exists &&
+                                          sh.data!.data()!["status"]! ==
+                                              'waiting') {
+                                        if (patient.doctors
+                                            .where((element) =>
+                                                element.uid ==
+                                                doctors[index].uid)
+                                            .isNotEmpty) {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "this doctor is follow up with you already",
+                                              style: Constant.normalTextStyle
+                                                  .copyWith(
+                                                      color: Colors.amber),
+                                            ),
+                                          );
+                                        } else {
+                                          return Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Text(
+                                              "you have been send request already",
+                                              style: Constant.normalTextStyle
+                                                  .copyWith(
+                                                      color: Colors.amber),
+                                            ),
+                                          );
+                                        }
+                                      } else if (sh.data!.exists &&
+                                          sh.data!.data()!["status"]! ==
+                                              'accepted') {
+                                        return Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Text(
+                                            "this doctor is follow up with you already",
+                                            style: Constant.normalTextStyle
+                                                .copyWith(color: Colors.amber),
+                                          ),
+                                        );
+                                      } else {
+                                        return ConnectButton(
+                                            doctor: doctors[index]);
+                                      }
+                                    })
                               ],
                             ),
                           );
@@ -219,7 +231,7 @@ class _ConnectButtonState extends State<ConnectButton> {
                   patient: context.read<AuthProvider>().patient!,
                   doctor: widget.doctor);
               Future.delayed(Duration(seconds: 1));
-              toggleIsLoading();
+              isLoading = !isLoading;
             },
             style: ElevatedButton.styleFrom(primary: Colors.white),
             child: CustomText(

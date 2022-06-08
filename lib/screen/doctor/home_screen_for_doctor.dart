@@ -12,7 +12,7 @@ import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../models/user.dart';
 import '../home/profile_screen.dart';
 import '../home/report_screen.dart';
-import 'doctor_request_screen.dart';
+import '../home/request_history_screen.dart';
 
 class HomeScreenForDoctor extends StatefulWidget {
   const HomeScreenForDoctor({Key? key}) : super(key: key);
@@ -64,7 +64,7 @@ class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
                       icon: Icon(Icons.email, size: 30),
                       onPressed: () {
                         Constant.navigateTo(
-                            routeName: UserRequestsScreen(requests: requests),
+                            routeName: RequestHistoryScreen(userId: doctor.uid),
                             context: context);
                       },
                     ),

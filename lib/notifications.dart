@@ -85,8 +85,7 @@ class LocalNotifyManager {
     await flutterLocalNotificationsPlugin!.cancelAll();
   }
 
-  Future<void> scheduleNotification() async {
-    var scheduleTime = DateTime.now().add(Duration(seconds: 5));
+  Future<void> scheduleNotification({required DateTime scheduleTime}) async {
     var androidChannel = AndroidNotificationDetails(
       'Channel_ID scheduled',
       'Channel_Name scheduled',

@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:golden_ager/screen/home/check_in_screen.dart';
 import 'package:provider/provider.dart';
 import '../../core/util/shared_prefs_helper.dart';
+import '../../features/chat/domain/entities/order_user.dart';
+import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../notifications.dart';
 import '../medicine/medicine_reminder.dart';
 import '../mentor/mentor_home_screen.dart';
@@ -28,13 +32,21 @@ class _TabsScreenState extends State<TabsScreen> {
   }
 
   onNotificationClick(String payload) {
+    print(payload);
     if (payload == 'tabs_screen') {
       Constant.navigateTo(routeName: const TabsScreen(), context: context);
     } else if (payload == 'medicine_screen') {
       Constant.navigateTo(
-          routeName: const MedicineReminderScreen(), context: context);
+          routeName: MedicineReminderScreen(), context: context);
     } else if (payload == 'checkIn_screen') {
       Constant.navigateTo(routeName: const CheckInScreen(), context: context);
+    } else if (payload.contains('chat')) {
+      Map<String, dynamic> payloadMap = json.decode(payload);
+      Constant.navigateTo(
+          context: context,
+          routeName: ChatPage(
+              user1: ChatUser.fromMap(jsonDecode(payloadMap["reciver_user"])),
+              user2: ChatUser.fromMap(jsonDecode(payloadMap["sender_user"]))));
     }
   }
 

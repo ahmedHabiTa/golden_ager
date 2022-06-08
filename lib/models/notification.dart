@@ -1,54 +1,91 @@
 import 'dart:convert';
 
-class Notification {
-  final String content;
-  final String time;
-  Notification({
-    required this.content,
-    required this.time,
+class AppNotification {
+  final String senderName;
+  final String senderToken;
+  final String body;
+  final String category;
+  final String title;
+  final DateTime timeStamp;
+  AppNotification({
+    required this.senderName,
+    required this.senderToken,
+    required this.body,
+    required this.category,
+    required this.title,
+    required this.timeStamp,
   });
 
-  Notification copyWith({
-    String? content,
-    String? time,
+  AppNotification copyWith({
+    String? senderName,
+    String? senderToken,
+    String? body,
+    String? category,
+    String? title,
+    DateTime? timeStamp,
   }) {
-    return Notification(
-      content: content ?? this.content,
-      time: time ?? this.time,
+    return AppNotification(
+      senderName: senderName ?? this.senderName,
+      senderToken: senderToken ?? this.senderToken,
+      body: body ?? this.body,
+      category: category ?? this.category,
+      title: title ?? this.title,
+      timeStamp: timeStamp ?? this.timeStamp,
     );
   }
 
   Map<String, dynamic> toMap() {
     return {
-      'content': content,
-      'time': time,
+      'senderName': senderName,
+      'senderToken': senderToken,
+      'body': body,
+      'category': category,
+      'title': title,
+      'timeStamp': timeStamp.millisecondsSinceEpoch,
     };
   }
 
-  factory Notification.fromMap(Map<String, dynamic> map) {
-    return Notification(
-      content: map['content'] ?? '',
-      time: map['time'] ?? '',
+  factory AppNotification.fromMap(Map<String, dynamic> map) {
+    return AppNotification(
+      senderName: map['senderName'] ?? '',
+      senderToken: map['senderToken'] ?? '',
+      body: map['body'] ?? '',
+      category: map['category'] ?? '',
+      title: map['title'] ?? '',
+      timeStamp: DateTime.fromMillisecondsSinceEpoch(map['timeStamp']),
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Notification.fromJson(String source) =>
-      Notification.fromMap(json.decode(source));
+  factory AppNotification.fromJson(String source) =>
+      AppNotification.fromMap(json.decode(source));
 
   @override
-  String toString() => 'Notification(content: $content, time: $time)';
+  String toString() {
+    return 'AppNotification(senderName: $senderName, senderToken: $senderToken, body: $body, category: $category, title: $title, timeStamp: $timeStamp)';
+  }
 
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
 
-    return other is Notification &&
-        other.content == content &&
-        other.time == time;
+    return other is AppNotification &&
+        other.senderName == senderName &&
+        other.senderToken == senderToken &&
+        other.body == body &&
+        other.category == category &&
+        other.title == title &&
+        other.timeStamp == timeStamp;
   }
 
   @override
-  int get hashCode => content.hashCode ^ time.hashCode;
+  int get hashCode {
+    return senderName.hashCode ^
+        senderToken.hashCode ^
+        body.hashCode ^
+        category.hashCode ^
+        title.hashCode ^
+        timeStamp.hashCode;
+  }
 }

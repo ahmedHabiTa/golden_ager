@@ -215,7 +215,7 @@ class MentorPatientCardWidget extends StatelessWidget {
                         },
                         style: ElevatedButton.styleFrom(primary: Colors.white),
                         child: CustomText(
-                          text: 'Login',
+                          text: 'access',
                           fontWeight: FontWeight.w600,
                           fontSize: 17,
                           color: Constant.primaryColor,

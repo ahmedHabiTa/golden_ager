@@ -4,9 +4,9 @@ import 'dart:io';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:golden_ager/models/medicine.dart';
 import 'package:golden_ager/models/user.dart';
+import 'package:golden_ager/notifications.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../../core/constant/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,7 +18,7 @@ import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 
 import '../screen/home/tabs_screen.dart';
 
-class AuthProvider extends ChangeNotifier implements ReassembleHandler {
+class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
   User? _firebasecurrentUser;
 
   User? get firebasecurrentUser => _firebasecurrentUser;
@@ -190,6 +190,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           "notification": [],
           'reports': [],
           'medicine': [],
+          'contacts': [],
           'doctors': []
         });
         Constant.navigateToRep(routeName: const TabsScreen(), context: context);
@@ -223,6 +224,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     notifyListeners();
   }
 
+// make notification Local for every dose
   Future<bool> addMedicine(
       {required String name,
       required String pillDosage,
@@ -245,12 +247,14 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     final int hours = 24 ~/ medicine.dose;
     int condition = medicine.endAt.difference(medicine.startAt).inDays;
     for (var i = 0; i < condition; i++) {
-      isDone[DateFormat('yMd')
-          .format(medicine.startAt.add(Duration(days: i)))] = {};
+      // day.day
+      final day = medicine.startAt.add(Duration(days: i));
+      isDone[DateFormat('yMd').format(day)] = {};
       for (var j = 0; j < medicine.dose; j++) {
-        isDone[DateFormat('yMd')
-                .format(medicine.startAt.add(Duration(days: i)))]!
+        isDone[DateFormat('yMd').format(day)]!
             .addAll({(hours * j).toString(): false});
+        localNotifyManager.scheduleNotification(
+            scheduleTime: day.add(Duration(hours: hours * j)));
       }
     }
     medicine.isDone = isDone;
@@ -319,12 +323,11 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     _patient = patient ?? _patient;
     _doctor = doctor ?? _doctor;
     _mentor = mentor ?? _mentor;
-    notifyListeners();
   }
 
-  @override
-  void reassemble() {}
-
+  // @override
+  // void reassemble() {}
+// Send to patient
   Future<void> postReportForDoctor({
     required String patientID,
     required String from,
