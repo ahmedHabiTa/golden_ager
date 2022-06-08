@@ -64,8 +64,7 @@ class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
                       icon: Icon(Icons.email, size: 30),
                       onPressed: () {
                         Constant.navigateTo(
-                            routeName:
-                                DoctoreRequestsScreen(requests: requests),
+                            routeName: UserRequestsScreen(requests: requests),
                             context: context);
                       },
                     ),
@@ -92,13 +91,31 @@ class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
                   if (sh.connectionState != ConnectionState.waiting) {
                     final Doctor doctorData =
                         Doctor.fromMap(sh.data!.data() as Map<String, dynamic>);
-                    return Expanded(
-                        child: ListView.builder(
-                      itemCount: doctorData.patients.length,
-                      itemBuilder: (context, index) {
-                        return AttatedUserItem(docor: doctorData, index: index);
-                      },
-                    ));
+                    if (doctorData.patients.isNotEmpty) {
+                      return Expanded(
+                          child: ListView.builder(
+                        itemCount: doctorData.patients.length,
+                        itemBuilder: (context, index) {
+                          return AttatedUserItem(
+                              docor: doctorData, index: index);
+                        },
+                      ));
+                    } else {
+                      return Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Constant.primaryColor,
+                        ),
+                        height: 150,
+                        width: double.infinity,
+                        alignment: AlignmentDirectional.center,
+                        child: Text(
+                          "You don't have any patients till now",
+                          style: Constant.normalTextStyle
+                              .copyWith(color: Colors.white),
+                        ),
+                      );
+                    }
                   } else if (sh.connectionState == ConnectionState.waiting) {
                     return Expanded(
                       child: Center(

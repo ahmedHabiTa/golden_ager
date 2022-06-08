@@ -8,8 +8,8 @@ import 'package:provider/provider.dart';
 import '../../provider/auth_provider.dart';
 import '../home/request_history_screen.dart';
 
-class DoctoreRequestsScreen extends StatelessWidget {
-  const DoctoreRequestsScreen({Key? key, required this.requests})
+class UserRequestsScreen extends StatelessWidget {
+  const UserRequestsScreen({Key? key, required this.requests})
       : super(key: key);
   final List<Request> requests;
   @override
@@ -246,7 +246,7 @@ class DoctorTakeActionRow extends StatelessWidget {
             primary: Colors.green,
           ),
           onPressed: () async {
-            if (request.requestType == " doctor") {
+            if (request.requestType == "doctor") {
               await context.read<RequestsProvider>().changeDoctorRequestStatus(
                   context: context, request: request, status: 'accepted');
             } else {
@@ -265,7 +265,7 @@ class DoctorTakeActionRow extends StatelessWidget {
             primary: Colors.red,
           ),
           onPressed: () async {
-            if (request.requestType == " doctor") {
+            if (request.requestType == "doctor") {
               await context.read<RequestsProvider>().changeDoctorRequestStatus(
                   context: context, request: request, status: 'declined');
             } else {

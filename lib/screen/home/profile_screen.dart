@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               _customFixedText(text: 'Specialization :'),
                             if (snapshot.data!['user_type'] == 'doctor')
                               _customDynamicText(
-                                  text: snapshot.data!['specialization']),
+                                  text: snapshot.data!['specialty']),
                             if (snapshot.data!['user_type'] == 'patient')
                               _customFixedText(text: 'Id :'),
                             if (snapshot.data!['user_type'] == 'patient')
