@@ -54,7 +54,7 @@ class ChatUser {
   factory ChatUser.fromMap(Map<String, dynamic> map) {
     return ChatUser(
       fcmToken: map['fcm_token'],
-      id: map['id']?.toInt() ?? 0,
+      id: map['id'] ?? "0",
       image: map['image'] ?? '',
       username: map['username'] ?? '',
     );

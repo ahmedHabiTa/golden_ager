@@ -486,7 +486,7 @@ class Doctor extends AppUser {
       'image': image,
       'gender': gender,
       'fcm_token': fcmToken,
-      'specialization': specialization,
+      'specialty': specialization,
       'notifications': notifications.map((x) => x.toMap()).toList(),
       'patients': patients.map((x) => x.toMap()).toList(),
     };
@@ -495,7 +495,7 @@ class Doctor extends AppUser {
   factory Doctor.fromMap(Map<String, dynamic> map) {
     return Doctor(
       fcmToken: map['fcm_token'] ?? "",
-      specialization: map["specialization"] ?? "",
+      specialization: map["specialty"] ?? "",
       uid: map['uid'] ?? '',
       name: map['name'] ?? '',
       email: map['email'] ?? '',

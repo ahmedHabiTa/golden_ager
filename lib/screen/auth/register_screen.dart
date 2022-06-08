@@ -246,30 +246,33 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       }),
                       iconSize: 0,
                     ),
-                    if(userType == 'doctor')
-                    const SizedBox(height: 10),
-                    if(userType == 'doctor')
-                    CustomDropDownFormField(
-                      title: 'Specialty',
-                      onChanged: (value) {
-                        setState(() {
-                          specialty = value;
-                        });
-
-                      },
-                      items: List.generate(specialties.length, (index) {
-                        return DropdownMenuItem(
-                          value: specialties[index],
-                          child: CustomText(
-                            text: specialties[index],
-                            color: const Color(0xFF0d2137),
-                            fontSize: 14,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        );
-                      }),
-                      iconSize: 0,
-                    ),
+                    if (userType == 'doctor')
+                      Offstage(
+                          offstage: userType != 'doctor',
+                          child: SizedBox(height: 10)),
+                    if (userType == 'doctor')
+                      Offstage(
+                          offstage: userType != 'doctor',
+                          child: CustomDropDownFormField(
+                            title: 'Specialty',
+                            onChanged: (value) {
+                              setState(() {
+                                specialty = value;
+                              });
+                            },
+                            items: List.generate(specialties.length, (index) {
+                              return DropdownMenuItem(
+                                value: specialties[index],
+                                child: CustomText(
+                                  text: specialties[index],
+                                  color: const Color(0xFF0d2137),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              );
+                            }),
+                            iconSize: 0,
+                          )),
                     const SizedBox(height: 10),
                     CustomDropDownFormField(
                       title: 'Gender',
@@ -335,7 +338,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       desc: descController.text,
                                       gender: gender!,
                                       userType: userType!,
-                                     // specialty: specialty ?? '',
+                                      specialty: specialty,
                                       context: context,
                                     );
                                   }

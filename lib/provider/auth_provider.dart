@@ -122,10 +122,12 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
 
   Future<void> tryToLogin({required BuildContext context}) async {
     final data = json.decode(await SharedPrefsHelper.getData(key: 'user_data'));
-    await login(
-        email: data['email'], password: data['password'], context: context);
-    _isLoadingTryToLogin = false;
-    notifyListeners();
+    if (data != null) {
+      await login(
+          email: data['email'], password: data['password'], context: context);
+      _isLoadingTryToLogin = false;
+      notifyListeners();
+    }
   }
 
   bool isLoadingSignUp = false;
@@ -135,17 +137,17 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     notifyListeners();
   }
 
-  Future<void> signUp({
-    required String name,
-    required String phone,
-    required String email,
-    required String password,
-    required String age,
-    required String desc,
-    required String gender,
-    required String userType,
-    required BuildContext context,
-  }) async {
+  Future<void> signUp(
+      {required String name,
+      required String phone,
+      required String email,
+      required String password,
+      required String age,
+      required String desc,
+      required String gender,
+      required String userType,
+      required BuildContext context,
+      String? specialty}) async {
     if (image == null) {
       Constant.showToast(
         message: 'Please select an image',
@@ -182,6 +184,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           "phone": phone,
           'user_type': userType,
           "fcm_token": await FirebaseMessaging.instance.getToken(),
+          "specialty": specialty ?? "",
           "patients": [],
           "mentor": [],
           "notification": [],

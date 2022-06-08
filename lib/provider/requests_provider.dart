@@ -24,7 +24,7 @@ class RequestsProvider extends ChangeNotifier {
     final data = await docRef.get();
 
     // check if patient send request before
-    if (data.exists) {
+    if (data.exists && data.data()!['status'] != "waiting") {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 1),
         content: Text('pervious request in waiting'),
