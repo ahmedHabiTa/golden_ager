@@ -18,4 +18,22 @@ class HomeProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  Future<void> addContact({
+  required BuildContext context,
+    required String name,
+    required String phone,
+    required String userUUID,
+})async{
+    var tempList = [];
+    final value =await FirebaseFirestore.instance.collection('users').doc(userUUID).get();
+    tempList = value['contacts'];
+    tempList.add({
+      'name' : name,
+      'phone':phone
+    });
+    await FirebaseFirestore.instance.collection('users').doc(userUUID).update({
+      'contacts' : tempList,
+    });
+  }
 }

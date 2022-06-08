@@ -5,9 +5,11 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:golden_ager/models/medicine.dart';
 import 'package:golden_ager/models/user.dart';
 import 'package:golden_ager/notifications.dart';
+import 'package:golden_ager/provider/requests_provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-
+import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
 import '../../core/constant/constant.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,9 +18,11 @@ import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/util/shared_prefs_helper.dart';
 
+import '../core/error/exceptions.dart';
+import '../models/notification.dart';
 import '../screen/home/tabs_screen.dart';
 
-class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
+class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   User? _firebasecurrentUser;
 
   User? get firebasecurrentUser => _firebasecurrentUser;
@@ -26,6 +30,7 @@ class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
   String? _userType;
 
   String? get userType => _userType;
+
   Future<void> changeUserType(
       {required String newUserType, String? PatientId}) async {
     if (newUserType == "patient") {
@@ -254,7 +259,7 @@ class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
         isDone[DateFormat('yMd').format(day)]!
             .addAll({(hours * j).toString(): false});
         localNotifyManager.scheduleNotification(
-            scheduleTime: day.add(Duration(hours: hours * j)));
+            scheduleTime: DateTime(hours *j));
       }
     }
     medicine.isDone = isDone;
@@ -268,12 +273,61 @@ class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
     return true;
   }
 
-  Future<void> toggleTakeMedicine(Medicine medicine, String key) async {
+  Future<void> toggleTakeMedicine(
+      Medicine medicine, String key, context) async {
     patient!.medicines[patient!.medicines.indexOf(medicine)]
         .isDone![DateFormat('yMd').format(DateTime.now())]![key] = true;
     getTodayActivity();
-    FirebaseFirestore.instance.doc('users/${_patient!.uid}').update(
-        {"medicines": _patient!.medicines.map((e) => e.toMap()).toList()});
+    FirebaseFirestore.instance.doc('users/${_patient!.uid}').update({
+      "medicines": _patient!.medicines.map((e) => e.toMap()).toList()
+    }).then((value) async {
+      final AppNotification notification = AppNotification(
+          senderName: patient!.name,
+          senderToken: patient!.mentor[0].fcmToken,
+          body: "Reminder : ${patient!.name} has taken his dose at ${DateFormat('yMd').format(DateTime.now())}",
+          category: "request",
+          title: "Request",
+          timeStamp: DateTime.now());
+      await sendNotification(
+          notification: notification, reciverID: patient!.mentor[0].uid);
+    });
+  }
+
+  Future<void> sendNotification(
+      {required AppNotification notification,
+      required String reciverID}) async {
+    await sendPushMessage(notification: notification);
+    await FirebaseFirestore.instance
+        .collection("notifications/$reciverID/notifications")
+        .add(notification.toMap());
+  }
+
+  Future<void> sendPushMessage({required AppNotification notification}) async {
+    try {
+      await http.post(
+        Uri.parse('https://fcm.googleapis.com/fcm/send'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+          'Authorization':
+              'key=AAAA1qlt7Qg:APA91bGGGR-c_wv3L7BPGby8TqBDX6dgJK3WT455n3zNRj5tOS68ReSQKtsO02q25cKKFKim4m7Vp_JlkZAYSQfX176WZ5y4JIlHl3aMtdbJ87v9MDiPPi_wcqg7ZM_isFYSutu0GHnI'
+        },
+        body: jsonEncode({
+          'to': notification.senderToken,
+          'data': {
+            'via': 'FlutterFire Cloud Messaging!!!',
+            "click_action": "FLUTTER_NOTIFICATION_CLICK",
+            "category": notification.category,
+          },
+          'notification': {
+            'title': notification.title,
+            'body': notification.body,
+            "sound": "default"
+          },
+        }),
+      );
+    } catch (e) {
+      throw ServerException();
+    }
   }
 
   List<Medicine> displayMedcines = [];
@@ -325,11 +379,13 @@ class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
     _mentor = mentor ?? _mentor;
   }
 
-  // @override
-  // void reassemble() {}
+  @override
+  void reassemble() {}
+
 // Send to patient
   Future<void> postReportForDoctor({
     required String patientID,
+    required String patientFcm,
     required String from,
     required String to,
     required String medicalSpecialty,
@@ -354,6 +410,16 @@ class AuthProvider extends ChangeNotifier /*implements ReassembleHandler*/ {
         'time': DateTime.now().toString(),
       },
     );
+    final AppNotification notification = AppNotification(
+        senderName: from,
+        senderToken: patientFcm,
+        body: "$from sends you a Report",
+        category: "request",
+        title: "Request",
+        timeStamp: DateTime.now());
+    await context
+        .read<RequestsProvider>()
+        .sendNotification(notification: notification, reciverID: patientID);
     Constant.navigateToRep(routeName: const TabsScreen(), context: context);
   }
 }

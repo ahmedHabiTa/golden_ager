@@ -4,6 +4,8 @@ import 'package:golden_ager/models/request.dart';
 import 'package:golden_ager/provider/requests_provider.dart';
 import 'package:provider/provider.dart';
 
+import '../../models/notification.dart';
+
 class RequestsItem extends StatefulWidget {
   final Request? request;
   final String userPerview;
@@ -205,6 +207,8 @@ class DoctorTakeActionRow extends StatelessWidget {
             if (request.requestType == "doctor") {
               await context.read<RequestsProvider>().changeDoctorRequestStatus(
                   context: context, request: request, status: 'declined');
+
+
             } else {
               await context.read<RequestsProvider>().changeMentorRequestStatus(
                   context: context, request: request, status: 'declined');

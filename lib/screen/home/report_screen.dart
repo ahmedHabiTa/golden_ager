@@ -12,6 +12,7 @@ class ReportScreen extends StatefulWidget {
   final String userType;
   final String doctorName;
   final String patientName;
+  final String patientFcm;
 
   const ReportScreen({
     Key? key,
@@ -20,6 +21,7 @@ class ReportScreen extends StatefulWidget {
     required this.userType,
     required this.doctorName,
     required this.patientName,
+    required this.patientFcm,
   }) : super(key: key);
 
   @override
@@ -87,6 +89,7 @@ class _ReportScreenState extends State<ReportScreen> {
                             patientID: widget.patientId,
                             doctorName: widget.doctorName,
                             patientName: widget.patientName,
+                            patientFcm: widget.patientFcm,
                           ),
                           context: context);
                     },

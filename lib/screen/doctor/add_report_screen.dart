@@ -11,12 +11,14 @@ class AddReportScreen extends StatefulWidget {
   final String patientID;
   final String doctorName;
   final String patientName;
+  final String patientFcm;
 
   const AddReportScreen({
     Key? key,
     required this.patientID,
     required this.doctorName,
     required this.patientName,
+    required this.patientFcm,
   }) : super(key: key);
 
   @override
@@ -129,7 +131,6 @@ class _AddReportScreenState extends State<AddReportScreen> {
                             if (!formKey.currentState!.validate()) {
                               return;
                             } else {
-                              //implement from and to
                               toggleLoading();
                               await authProvider.postReportForDoctor(
                                 context: context,
@@ -140,6 +141,7 @@ class _AddReportScreenState extends State<AddReportScreen> {
                                 medicalSpecialty: medicalSpecialty.text.trim(),
                                 problem: problem.text.trim(),
                                 sampleName: sampleName.text.trim(),
+                                patientFcm: widget.patientFcm,
                               );
                               toggleLoading();
                             }

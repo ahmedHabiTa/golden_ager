@@ -97,8 +97,8 @@ class LocalNotifyManager {
     var platformChannel =
         NotificationDetails(android: androidChannel, iOS: iosChannel);
     await flutterLocalNotificationsPlugin!.schedule(
-        1, 'title', 'body', scheduleTime, platformChannel,
-        payload: 'new payload');
+        1, 'title', 'Don\'t forget to take your dose', scheduleTime, platformChannel,
+        payload: 'medicine_screen');
   }
 
   Future<void> showEveryDayAtATimeNotification(

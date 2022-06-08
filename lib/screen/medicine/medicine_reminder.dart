@@ -336,7 +336,8 @@ class _TakeAndDoneWidgetState extends State<TakeAndDoneWidget> {
                                   context
                                       .read<AuthProvider>()
                                       .toggleTakeMedicine(
-                                          widget.medicine, key.toString());
+                                          widget.medicine, key.toString(),context);
+
                                 },
                                 style: Constant.buttonStyle,
                                 child: Text(

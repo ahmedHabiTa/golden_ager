@@ -10,6 +10,7 @@ import 'package:badges/badges.dart';
 import '../../features/chat/domain/entities/order_user.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../models/user.dart';
+import '../home/notifications_screen.dart';
 import '../home/profile_screen.dart';
 import '../home/report_screen.dart';
 import '../home/request_history_screen.dart';
@@ -31,7 +32,8 @@ class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
         foregroundColor: Color(0xffEFF1F3),
         leading: GestureDetector(
           onTap: () {
-            //todo: navigate to notifications screen
+            Constant.navigateTo(
+                routeName: const NotificationsScreen(), context: context);
           },
           child: const Icon(
             Icons.notifications_none_sharp,
@@ -254,6 +256,7 @@ class AttatedUserItem extends StatelessWidget {
                                 userType: docor.userType,
                                 patientName: docor.patients[index].name,
                                 doctorName: docor.name,
+                                patientFcm: docor.patients[index].fcmToken,
                               ),
                               context: context);
                         },

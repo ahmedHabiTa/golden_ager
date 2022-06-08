@@ -3,8 +3,10 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/models/user.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
 
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import '../core/error/exceptions.dart';
 import '../models/notification.dart';
 import '../models/request.dart';
@@ -42,7 +44,7 @@ class RequestsProvider extends ChangeNotifier {
           .set(request.toMap());
       final AppNotification notification = AppNotification(
           senderName: patient.name,
-          senderToken: patient.fcmToken,
+          senderToken: doctor.fcmToken,
           body: "${patient.name} needs your help ",
           category: "request",
           title: "Request",
@@ -64,7 +66,17 @@ class RequestsProvider extends ChangeNotifier {
       // chnage request Status for the patient
       FirebaseFirestore.instance
           .doc("users/${request.patient.uid}/requests/${request.doctor!.uid}")
-          .update({"status": status});
+          .update({"status": status}).then((value) async {
+        final AppNotification notification = AppNotification(
+            senderName: request.doctor!.name,
+            senderToken: request.patient.fcmToken,
+            body: "${request.doctor!.name} has $status your request ",
+            category: "request",
+            title: "Request",
+            timeStamp: DateTime.now());
+        await sendNotification(
+            notification: notification, reciverID: request.patient.uid);
+      });
 
       if (status == 'accepted') {
         // add doctor to patient data
@@ -82,10 +94,9 @@ class RequestsProvider extends ChangeNotifier {
           'patients': request.doctor!.patients.map((e) => e.toMap()).toList()
         });
       }
-
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         duration: Duration(seconds: 1),
-        content: Text('request $status successfly'),
+        content: Text('request $status successfully'),
         backgroundColor: Colors.grey,
       ));
     } catch (e) {
@@ -129,7 +140,7 @@ class RequestsProvider extends ChangeNotifier {
           .doc("users/${mentor.uid}/requests/${patient.uid}");
       final data = await mentorRef.get();
       // check if patient send request before
-      if (data.exists) {
+      if (data.exists && data.data()!['status'] == "waiting") {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           duration: Duration(seconds: 1),
           content: Text('pervious request in waiting'),
@@ -145,6 +156,15 @@ class RequestsProvider extends ChangeNotifier {
           content: Text('request sended successfly'),
           backgroundColor: Colors.green,
         ));
+        final AppNotification notification = AppNotification(
+            senderName: mentor.name,
+            senderToken: patient.fcmToken,
+            body: "${mentor.name} wants to be your MENTOR ",
+            category: "request",
+            title: "Request",
+            timeStamp: DateTime.now());
+        await sendNotification(
+            notification: notification, reciverID: patient.uid);
       }
     }
   }
@@ -162,7 +182,19 @@ class RequestsProvider extends ChangeNotifier {
       // chnage request Status for the patient
       FirebaseFirestore.instance
           .doc("users/${request.patient.uid}/requests/${request.mentor!.uid}")
-          .update({"status": status});
+          .update({"status": status}).then((value)async{
+
+        print('hhhhhhhhhhhhhhh');
+        final AppNotification notification = AppNotification(
+            senderName: request.patient.name,
+            senderToken: request.mentor!.fcmToken,
+            body: "${request.patient.name} has $status your request ",
+            category: "request",
+            title: "Request",
+            timeStamp: DateTime.now());
+        await sendNotification(
+            notification: notification, reciverID: request.mentor!.uid);
+      });
 
       if (status == 'accepted') {
         // add doctor to patient data

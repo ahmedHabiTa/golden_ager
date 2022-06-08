@@ -12,6 +12,7 @@ import '../../features/chat/domain/entities/order_user.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
 import '../../models/user.dart';
 import '../../provider/auth_provider.dart';
+import '../home/notifications_screen.dart';
 import '../home/profile_screen.dart';
 import '../home/request_history_screen.dart';
 
@@ -34,7 +35,8 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         actions: [
           GestureDetector(
             onTap: () {
-              //todo: navigate to notifications screen
+              Constant.navigateTo(
+                  routeName: const NotificationsScreen(), context: context);
             },
             child: const Icon(
               Icons.notifications_none_sharp,

@@ -141,6 +141,7 @@ class _PatientDoctorCardState extends State<PatientDoctorCard> {
                                           userType: user.userType,
                                           patientName: user.name,
                                           doctorName: user.doctors[index].name,
+                                          patientFcm: user.fcmToken,
                                         ),
                                         context: context);
                                   },

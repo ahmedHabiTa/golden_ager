@@ -1,17 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../../core/constant/Constant.dart';
+import 'package:golden_ager/core/constant/constant.dart';
 import '../home/widgets/help_container.dart';
 import '../home/widgets/reminders_container.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/common_widget/loading_widget.dart';
+import 'notifications_screen.dart';
 import 'widgets/feeling_container.dart';
 import 'widgets/health_data_container.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key, required this.userUUID}) : super(key: key);
   final userUUID;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -20,7 +22,8 @@ class HomeScreen extends StatelessWidget {
         actions: [
           GestureDetector(
             onTap: () {
-              //todo: navigate to notifications screen
+              Constant.navigateTo(
+                  routeName: const NotificationsScreen(), context: context);
             },
             child: const Icon(
               Icons.notifications_none_sharp,
@@ -63,7 +66,8 @@ class HomeScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     child: CustomText(
                       text:
-                          'Hello, ${snapshot.data!['name'].toString().split(' ')[0]} ! ',
+                      'Hello, ${snapshot.data!['name'].toString().split(
+                          ' ')[0]} ! ',
                       color: const Color(0xFF0d2137),
                       fontSize: 34,
                       fontWeight: FontWeight.bold,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
+import 'package:golden_ager/screen/home/contacts_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/common_widget/custom_text.dart';
@@ -41,7 +42,8 @@ class HelpContainer extends StatelessWidget {
             radius: 15.0,
             containerColor: Constant.primaryDarkColor,
             onTap: () {
-              //todo: call the mentor number vis url launcher
+              Constant.navigateTo(
+                  routeName: const ContactScreen(), context: context);
             },
           ),
           const Spacer(),

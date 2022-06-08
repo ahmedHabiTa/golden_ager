@@ -25,16 +25,6 @@ class _SplashScreenState extends State<SplashScreen>
   }
 
   notify() async {
-    await localNotifyManager.repeatedNotification(
-      body: 'Check out your health data',
-      payload: 'tabs_screen',
-      repeatInterval: RepeatInterval.everyMinute,
-    );
-    await localNotifyManager.repeatedNotification(
-      body: 'Don\'t forget to take your dose',
-      payload: 'medicine_screen',
-      repeatInterval: RepeatInterval.hourly,
-    );
     await localNotifyManager.showEveryDayAtATimeNotification(
       body: 'Tell us How you feel today',
       payload: 'checkIn_screen',
