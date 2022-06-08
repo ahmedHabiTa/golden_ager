@@ -48,7 +48,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
         child: Column(
           children: [
             MentorPatientWidget(mentor: mentor),
-            if (mentor.patients.isEmpty) MentorAddPatientWidget()
+            MentorAddPatientWidget(mentor: mentor)
           ],
         ),
       ),
@@ -208,13 +208,10 @@ class MentorPatientCardWidget extends StatelessWidget {
                               newUserType: 'patient',
                               PatientId: mentorData.patients[0].uid);
                           await Constant.navigateTo(
-                                  routeName: TabsScreen(
-                                    userId: mentorData.patients[0].uid,
-                                  ),
-                                  context: context)
-                              .then((value) => context
-                                  .read<AuthProvider>()
-                                  .changeUserType(newUserType: 'mentor'));
+                              routeName: TabsScreen(
+                                userId: mentorData.patients[0].uid,
+                              ),
+                              context: context);
                         },
                         style: ElevatedButton.styleFrom(primary: Colors.white),
                         child: CustomText(
@@ -237,8 +234,12 @@ class MentorPatientCardWidget extends StatelessWidget {
 }
 
 class MentorAddPatientWidget extends StatefulWidget {
-  const MentorAddPatientWidget({Key? key}) : super(key: key);
+  const MentorAddPatientWidget({
+    Key? key,
+    required this.mentor,
+  }) : super(key: key);
 
+  final Mentor mentor;
   @override
   State<MentorAddPatientWidget> createState() => _MentorAddPatientWidgetState();
 }
@@ -249,72 +250,96 @@ class _MentorAddPatientWidgetState extends State<MentorAddPatientWidget> {
   void toggleLoading() => isLoading = !isLoading;
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Text('Add Patient', style: Constant.semieBoldTextStyle),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: CustomFormField(
-                controller: addPatientController,
-                onChanged: (value) {
-                  addPatientController.text.trim();
-                },
-                prefix: Icon(Icons.person, color: Constant.primaryColor),
-                validation: 'field is Required',
-                width: Constant.width(context) * 0.9,
-                height: 50,
-                hintText: 'Patient\'s ID',
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
-                onTap: () {
-                  Constant.navigateTo(
-                      routeName: RequestHistoryScreen(
-                        userId: context.read<AuthProvider>().mentor!.uid,
-                      ),
-                      context: context);
-                },
-                child: Icon(
-                  Icons.history,
-                  color: Constant.primaryColor,
-                ),
-              ),
-            )
-          ],
-        ),
-        isLoading
-            ? Constant.indicator()
-            : Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: CustomWideButton(
-                  radius: 10.0,
-                  height: 40,
-                  width: 130,
-                  color: Constant.primaryDarkColor,
-                  onTap: () async {
-                    toggleLoading();
-                    await context.read<RequestsProvider>().makeMentorRequest(
-                        patientId: addPatientController.text,
-                        mentor: context.read<AuthProvider>().mentor!,
-                        context: context);
-                    toggleLoading();
-                  },
-                  child: const Center(
-                    child: CustomText(
-                      text: 'Send request',
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+    return StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance
+            .doc("users/${widget.mentor.uid}")
+            .snapshots(),
+        builder: (cyx, sh) {
+          if (sh.connectionState != ConnectionState.waiting) {
+            final Mentor MentorData =
+                Mentor.fromMap(sh.data!.data() as Map<String, dynamic>);
+            if (MentorData.patients.isEmpty) {
+              return Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child:
+                        Text('Add Patient', style: Constant.semieBoldTextStyle),
                   ),
-                ))
-      ],
-    );
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomFormField(
+                          controller: addPatientController,
+                          onChanged: (value) {
+                            addPatientController.text.trim();
+                          },
+                          prefix:
+                              Icon(Icons.person, color: Constant.primaryColor),
+                          validation: 'field is Required',
+                          width: Constant.width(context) * 0.9,
+                          height: 50,
+                          hintText: 'Patient\'s ID',
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: GestureDetector(
+                          onTap: () {
+                            Constant.navigateTo(
+                                routeName: RequestHistoryScreen(
+                                  userId:
+                                      context.read<AuthProvider>().mentor!.uid,
+                                ),
+                                context: context);
+                          },
+                          child: Icon(
+                            Icons.history,
+                            color: Constant.primaryColor,
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  isLoading
+                      ? Constant.indicator()
+                      : Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: CustomWideButton(
+                            radius: 10.0,
+                            height: 40,
+                            width: 130,
+                            color: Constant.primaryDarkColor,
+                            onTap: () async {
+                              toggleLoading();
+                              await context
+                                  .read<RequestsProvider>()
+                                  .makeMentorRequest(
+                                      patientId: addPatientController.text,
+                                      mentor:
+                                          context.read<AuthProvider>().mentor!,
+                                      context: context);
+                              toggleLoading();
+                            },
+                            child: const Center(
+                              child: CustomText(
+                                text: 'Send request',
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ))
+                ],
+              );
+            } else {
+              return SizedBox();
+            }
+          } else {
+            return Center(
+              child: Constant.indicator(),
+            );
+          }
+        });
   }
 }
