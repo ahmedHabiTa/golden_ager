@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
+import 'contact.dart';
 import 'medicine.dart';
 import 'notification.dart';
 import 'report.dart';
@@ -17,7 +18,7 @@ class AppUser {
   final String age;
   final String image;
   final String gender;
-  final List<Notification> notifications;
+  final List<AppNotification> notifications;
   AppUser({
     required this.fcmToken,
     required this.uid,
@@ -40,7 +41,7 @@ class AppUser {
       String? age,
       String? image,
       String? gender,
-      List<Notification>? notifications,
+      List<AppNotification>? notifications,
       String? fcmToken}) {
     return AppUser(
       fcmToken: fcmToken ?? this.fcmToken,
@@ -80,8 +81,8 @@ class AppUser {
       age: map['age'] ?? '',
       image: map['image'] ?? '',
       gender: map['gender'] ?? '',
-      notifications: List<Notification>.from(
-          map['notifications']?.map((x) => Notification.fromMap(x))),
+      notifications: List<AppNotification>.from(
+          map['notifications']?.map((x) => AppNotification.fromMap(x))),
     );
   }
 
@@ -132,7 +133,7 @@ class Patient extends AppUser {
   final List<Doctor> doctors;
   final List<Report> reports;
   final List<Medicine> medicines;
-
+  final List<Contact> contacts;
   Patient({
     required String uid,
     required String name,
@@ -143,7 +144,8 @@ class Patient extends AppUser {
     required String image,
     required String gender,
     required String fcmToken,
-    required List<Notification> notifications,
+    required List<AppNotification> notifications,
+    required this.contacts,
     required this.medicines,
     required this.description,
     required this.feeling,
@@ -163,25 +165,26 @@ class Patient extends AppUser {
             notifications: notifications);
 
   @override
-  Patient copyWith({
-    String? uid,
-    String? name,
-    String? email,
-    String? phone,
-    String? userType,
-    String? age,
-    String? image,
-    String? gender,
-    List<Notification>? notifications,
-    String? description,
-    String? feeling,
-    List<Mentor>? mentor,
-    List<Medicine>? medicine,
-    List<Report>? reports,
-    List<Doctor>? doctors,
-    String? fcmToken,
-  }) {
+  Patient copyWith(
+      {String? uid,
+      String? name,
+      String? email,
+      String? phone,
+      String? userType,
+      String? age,
+      String? image,
+      String? gender,
+      List<AppNotification>? notifications,
+      String? description,
+      String? feeling,
+      List<Mentor>? mentor,
+      List<Medicine>? medicine,
+      List<Report>? reports,
+      List<Doctor>? doctors,
+      String? fcmToken,
+      List<Contact>? contacts}) {
     return Patient(
+        contacts: contacts ?? this.contacts,
         fcmToken: fcmToken ?? this.fcmToken,
         age: age ?? this.age,
         uid: uid ?? this.uid,
@@ -230,6 +233,7 @@ class Patient extends AppUser {
       'gender': gender,
       'description': description,
       'feeling': feeling,
+      'contacts': contacts.map((e) => e.toMap()).toList(),
       'mentor': mentor.map((e) => e.toMap()).toList(),
       'notifications': notifications.map((e) => e.toMap()).toList(),
       'medicines': medicines.map((e) => e.toMap()).toList(),
@@ -249,11 +253,15 @@ class Patient extends AppUser {
         age: map['age'] ?? '',
         image: map['image'] ?? '',
         gender: map['gender'] ?? '',
+        contacts: map['contacts'] == null || (map['contacts'] as List).isEmpty
+            ? []
+            : List<Contact>.from(
+                map['contacts']?.map((x) => Contact.fromMap(x))),
         notifications: map['notifications'] == null ||
                 (map['notifications'] as List).isEmpty
             ? []
-            : List<Notification>.from(
-                map['notifications']?.map((x) => Notification.fromMap(x))),
+            : List<AppNotification>.from(
+                map['notifications']?.map((x) => AppNotification.fromMap(x))),
         description: map['description'] ?? '',
         feeling: map['feeling'] ?? '',
         mentor: map['mentor'] == null || (map['mentor'] as List).isEmpty
@@ -315,7 +323,7 @@ class Mentor extends AppUser {
     required String image,
     required String gender,
     required String fcmToken,
-    required List<Notification> notifications,
+    required List<AppNotification> notifications,
     required this.patients,
   }) : super(
             fcmToken: fcmToken,
@@ -340,7 +348,7 @@ class Mentor extends AppUser {
     String? image,
     String? gender,
     String? fcmToken,
-    List<Notification>? notifications,
+    List<AppNotification>? notifications,
     List<Patient>? patient,
   }) {
     return Mentor(
@@ -387,8 +395,8 @@ class Mentor extends AppUser {
       notifications:
           map['notifications'] == null || (map['notifications'] as List).isEmpty
               ? []
-              : List<Notification>.from(
-                  map['notifications']?.map((x) => Notification.fromMap(x))),
+              : List<AppNotification>.from(
+                  map['notifications']?.map((x) => AppNotification.fromMap(x))),
       patients: map['patients'] == null || (map['patients'] as List).isEmpty
           ? []
           : List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),
@@ -427,7 +435,7 @@ class Doctor extends AppUser {
     required String image,
     required String gender,
     required String fcmToken,
-    required List<Notification> notifications,
+    required List<AppNotification> notifications,
     required this.patients,
     required this.specialization,
   }) : super(
@@ -453,7 +461,7 @@ class Doctor extends AppUser {
     String? age,
     String? image,
     String? gender,
-    List<Notification>? notifications,
+    List<AppNotification>? notifications,
     List<Patient>? patients,
     String? fcmToken,
     String? specialization,
@@ -507,8 +515,8 @@ class Doctor extends AppUser {
       notifications:
           map['notifications'] == null || (map['notifications'] as List).isEmpty
               ? []
-              : List<Notification>.from(
-                  map['notification']?.map((x) => Notification.fromMap(x))),
+              : List<AppNotification>.from(
+                  map['notification']?.map((x) => AppNotification.fromMap(x))),
       patients: map['patients'] == null || (map['patients'] as List).isEmpty
           ? []
           : List<Patient>.from(map['patients']?.map((x) => Patient.fromMap(x))),

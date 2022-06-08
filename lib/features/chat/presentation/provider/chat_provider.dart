@@ -72,6 +72,7 @@ class ChatProvider extends ChangeNotifier {
     }, (uI) {
       uploadedImage = uI;
     });
+    toggleIsSendingImage();
     return uploadedImage!;
   }
 

@@ -66,9 +66,16 @@ class MessageCard extends StatelessWidget {
                   child: Column(
                     children: [
                       if (message.replayMessage != null)
-                        ReplayWidget(
-                          replayMessage: message.replayMessage!,
-                          isView: true,
+                        GestureDetector(
+                          onTap: () {
+                            Scrollable.ensureVisible(context,
+                                duration: Duration(milliseconds: 500),
+                                curve: Curves.easeOutCirc);
+                          },
+                          child: ReplayWidget(
+                            replayMessage: message.replayMessage!,
+                            isView: true,
+                          ),
                         ),
                       child,
                     ],

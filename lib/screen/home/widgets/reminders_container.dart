@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../medicine/medicine_reminder.dart';
@@ -10,6 +12,7 @@ class ReminderContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var patient = context.watch<AuthProvider>().patient!;
     List<String> images = [
       'assets/images/medicineeee.png',
       'assets/images/reminderrrrr.png'

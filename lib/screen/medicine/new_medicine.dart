@@ -98,8 +98,8 @@ class _NewMedicineScreenState extends State<NewMedicineScreen> {
                 ShapeSelectWidget(onChanged: (int value) {
                   shape = value;
                 }),
-                ColorSelectWidget(onChanged: (int value) {
-                  color = value;
+                ColorSelectWidget(onChanged: (Color value) {
+                  color = value.value;
                 }),
                 SizedBox(
                   width: double.infinity,
@@ -220,10 +220,6 @@ class ColorSelectWidget extends StatefulWidget {
 class _ColorSelectWidgetState extends State<ColorSelectWidget> {
   Color pickedColor = Color(0xffD1325E);
 
-  void changeColor(Color color) {
-    setState(() => pickedColor = color);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -251,7 +247,11 @@ class _ColorSelectWidgetState extends State<ColorSelectWidget> {
                           content: SingleChildScrollView(
                             child: ColorPicker(
                               pickerColor: pickedColor,
-                              onColorChanged: changeColor,
+                              onColorChanged: (Color color) {
+                                setState(() => pickedColor = color);
+                                print(color.value);
+                                widget.onChanged(color);
+                              },
                             ),
                           ),
                           actions: <Widget>[

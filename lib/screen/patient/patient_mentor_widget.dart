@@ -92,7 +92,7 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
                                 Constant.navigateTo(
                                     routeName: ProfileScreen(
                                         isMe: false,
-                                        userId: user.doctors[0].uid),
+                                        userId: user.mentor[0].uid),
                                     context: context);
                               },
                               child: Container(
@@ -101,7 +101,7 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
                                   shape: BoxShape.circle,
                                   image: DecorationImage(
                                     fit: BoxFit.fill,
-                                    image: NetworkImage(user.doctors[0].image),
+                                    image: NetworkImage(user.mentor[0].image),
                                   ),
                                 ),
                               ),
@@ -133,14 +133,13 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
                                     context: context);
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
+                                primary: Constant.primaryColor,
                               ),
                               child: CustomText(
-                                text: 'Chat',
-                                fontWeight: FontWeight.w600,
-                                fontSize: 17,
-                                color: Constant.primaryColor,
-                              ),
+                                  text: 'Chat',
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 17,
+                                  color: Colors.white),
                             ),
                           ),
                           SizedBox(
@@ -153,13 +152,13 @@ class _PatientMentorCardState extends State<PatientMentorCard> {
                                 ));
                               },
                               style: ElevatedButton.styleFrom(
-                                primary: Colors.white,
+                                primary: Constant.primaryColor,
                               ),
                               child: CustomText(
                                 text: 'Call',
                                 fontWeight: FontWeight.w600,
                                 fontSize: 17,
-                                color: Constant.primaryColor,
+                                color: Colors.white,
                               ),
                             ),
                           ),
