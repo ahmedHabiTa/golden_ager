@@ -123,15 +123,7 @@ class MentorPatientCardWidget extends StatelessWidget {
   }) : super(key: key);
 
   final Mentor mentorData;
-  void _launchMapsUrl(double lat, double lon) async {
-    var url = Uri.parse("google.navigation:q=$lat,$lon&mode=d").toString();
 
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not launch $url';
-    }
-  }
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -221,6 +213,7 @@ class MentorPatientCardWidget extends StatelessWidget {
                           await Constant.navigateTo(
                               routeName: TabsScreen(
                                 userId: mentorData.patients[0].uid,
+                                isMentor: true,
                               ),
                               context: context);
                         },
@@ -230,34 +223,6 @@ class MentorPatientCardWidget extends StatelessWidget {
                           fontWeight: FontWeight.w600,
                           fontSize: 17,
                           color: Constant.primaryColor,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: Constant.width(context) * 0.12,
-                      child: GestureDetector(
-                        onTap: (){
-                          //Todo:view location on map
-                          // double lat = double.parse(
-                          //     mentorData.patients[0].latitude);
-                          // double long = double.parse(
-                          //     mentorData.patients[0].longitude);
-                          print(mentorData.patients[0].latitude);
-                         // _launchMapsUrl(lat, long);
-                        },
-                        child: Container(
-                          height: 40,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            color: Colors.white
-                          ),
-                          child: Center(
-                            child: Icon(
-                              Icons.location_pin,
-                              size: 30,
-                              color: Constant.primaryColor,
-                            ),
-                          ),
                         ),
                       ),
                     ),

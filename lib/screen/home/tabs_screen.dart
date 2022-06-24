@@ -1,10 +1,12 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:golden_ager/screen/home/check_in_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../core/util/shared_prefs_helper.dart';
 import '../../features/chat/domain/entities/order_user.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
@@ -18,7 +20,8 @@ import 'profile_screen.dart';
 import 'tips_screen.dart';
 
 class TabsScreen extends StatefulWidget {
-  const TabsScreen({Key? key, this.userId}) : super(key: key);
+  final bool isMentor;
+  const TabsScreen({Key? key, this.userId,this.isMentor = false,}) : super(key: key);
   final String? userId;
 
   @override
@@ -61,7 +64,15 @@ class _TabsScreenState extends State<TabsScreen> {
     localNotifyManager.setOnNotificationReceive(onNotificationReceive);
     localNotifyManager.setOnNotificationClick(onNotificationClick);
   }
+  void _launchMapsUrl(double lat, double lon) async {
+    var url = Uri.parse("google.navigation:q=$lat,$lon&mode=d").toString();
 
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
   @override
   Widget build(BuildContext context) {
     pagesForTypeUser = {
@@ -146,6 +157,36 @@ class _TabsScreenState extends State<TabsScreen> {
     };
     pages = pagesForTypeUser[context.read<AuthProvider>().userType]!;
     return Scaffold(
+      floatingActionButton:!widget.isMentor ?null:  StreamBuilder<DocumentSnapshot>(
+        stream: FirebaseFirestore.instance.collection('users').doc(widget.userId!).snapshots(),
+        builder: (context, snapshot) {
+          return  SizedBox(
+                      width: Constant.width(context) * 0.12,
+                      child: GestureDetector(
+                        onTap: (){
+                           double lat = double.parse(snapshot.data!['latitude']);
+                           double long = double.parse(snapshot.data!['longitude']);
+                          print(snapshot.data!['latitude']);
+                          _launchMapsUrl(lat, long);
+                        },
+                        child: Container(
+                          height: 60,
+                          decoration: BoxDecoration(
+                            color: Constant.primaryColor,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Center(
+                            child: Icon(
+                              Icons.location_pin,
+                              size: 30,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+        },
+      ),
       body: pages[_index]['page'],
       bottomNavigationBar: Theme(
         data:
