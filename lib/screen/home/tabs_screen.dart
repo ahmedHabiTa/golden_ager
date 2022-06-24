@@ -20,6 +20,7 @@ import 'tips_screen.dart';
 class TabsScreen extends StatefulWidget {
   const TabsScreen({Key? key, this.userId}) : super(key: key);
   final String? userId;
+
   @override
   _TabsScreenState createState() => _TabsScreenState();
 }
@@ -57,6 +58,12 @@ class _TabsScreenState extends State<TabsScreen> {
   @override
   void initState() {
     super.initState();
+    localNotifyManager.setOnNotificationReceive(onNotificationReceive);
+    localNotifyManager.setOnNotificationClick(onNotificationClick);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     pagesForTypeUser = {
       'patient': [
         {
@@ -65,26 +72,31 @@ class _TabsScreenState extends State<TabsScreen> {
               userUUID:
                   widget.userId ?? SharedPrefsHelper.getData(key: 'userUUID')),
           "title": "Home",
-          'icon': Icon(Icons.home_filled)
+          'icon':
+              _index == 0 ? Icon(Icons.home_filled) : Icon(Icons.home_outlined)
         },
         {
           "index": 1,
           "page": const TipsScreen(),
           "title": "Tips",
-          'icon': Icon(Icons.lightbulb_outline)
+          'icon': _index == 1
+              ? Icon(Icons.lightbulb)
+              : Icon(Icons.lightbulb_outline)
         },
         {
           "index": 2,
           "page": const PatientMentorsScreen(),
-          "title": "Mentors",
-          "icon": Icon(Icons.assessment_outlined)
+          "title": "Guide",
+          "icon": _index == 2
+              ? Icon(Icons.assessment)
+              : Icon(Icons.assessment_outlined)
         },
         {
           "index": 3,
           "page": ProfileScreen(
               isMe: (widget.userId == null), userId: widget.userId),
           "title": "Profile",
-          'icon': Icon(Icons.person_outline)
+          'icon': _index == 3 ? Icon(Icons.person) : Icon(Icons.person_outline)
         },
       ],
       'doctor': [
@@ -92,19 +104,21 @@ class _TabsScreenState extends State<TabsScreen> {
           "index": 0,
           "page": const HomeScreenForDoctor(),
           "title": "Home",
-          'icon': Icon(Icons.home_filled)
+          'icon':   _index == 0 ? Icon(Icons.home_filled) : Icon(Icons.home_outlined)
         },
         {
           "index": 1,
           "page": const TipsScreen(),
           "title": "Tips",
-          'icon': Icon(Icons.lightbulb_outline)
+          'icon':_index == 1
+              ? Icon(Icons.lightbulb)
+              : Icon(Icons.lightbulb_outline)
         },
         {
           "index": 2,
           "page": const ProfileScreen(isMe: true),
           "title": "Profile",
-          'icon': Icon(Icons.person_outline)
+          'icon':_index == 2 ? Icon(Icons.person) : Icon(Icons.person_outline)
         },
       ],
       'mentor': [
@@ -112,29 +126,25 @@ class _TabsScreenState extends State<TabsScreen> {
           "index": 0,
           "page": const MentorHomeScreen(),
           "title": "Home",
-          'icon': Icon(Icons.home_filled)
+          'icon':_index == 0 ? Icon(Icons.home_filled) : Icon(Icons.home_outlined)
         },
         {
           "index": 1,
           "page": const TipsScreen(),
           "title": "Tips",
-          'icon': Icon(Icons.lightbulb_outline)
+          'icon': _index == 1
+              ? Icon(Icons.lightbulb)
+              : Icon(Icons.lightbulb_outline)
         },
         {
           "index": 2,
           "page": const ProfileScreen(isMe: true),
           "title": "Profile",
-          'icon': Icon(Icons.person_outline)
+          'icon':_index == 2 ? Icon(Icons.person) : Icon(Icons.person_outline)
         },
       ]
     };
     pages = pagesForTypeUser[context.read<AuthProvider>().userType]!;
-    localNotifyManager.setOnNotificationReceive(onNotificationReceive);
-    localNotifyManager.setOnNotificationClick(onNotificationClick);
-  }
-
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       body: pages[_index]['page'],
       bottomNavigationBar: Theme(
@@ -146,7 +156,7 @@ class _TabsScreenState extends State<TabsScreen> {
             color: Colors.white,
           ),
           selectedItemColor: Colors.white,
-          unselectedItemColor: Constant.primaryColor,
+          unselectedItemColor: Colors.white,
           items: pages
               .map(
                 (e) => BottomNavigationBarItem(

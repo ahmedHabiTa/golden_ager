@@ -190,12 +190,12 @@ class _ContactScreenState extends State<ContactScreen> {
               const SizedBox(
                 height: 10,
               ),
-              if(patient!.mentor != null)
+              if(patient!.mentor.isNotEmpty)
               _customCard(
                 name: patient!.mentor[0].name,
                 phone: patient!.mentor[0].phone,
               ),
-              if(patient!.mentor != null)
+              if(patient!.doctors.isNotEmpty)
               _customCard(
                 name: patient!.doctors[0].name,
                 phone: patient!.doctors[0].phone,

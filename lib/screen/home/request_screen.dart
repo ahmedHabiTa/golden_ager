@@ -165,7 +165,8 @@ class _RequestsItemState extends State<RequestsItem> {
                       fontWeight: FontWeight.bold),
                 ),
               )),
-          ...perview[widget.userPerview]!
+          ...perview[widget.userPerview]!,
+          const SizedBox(height: 10),
         ]));
   }
 }

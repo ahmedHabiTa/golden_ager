@@ -69,24 +69,26 @@ class _NewMedicineScreenState extends State<NewMedicineScreen> {
                   ),
                 ),
                 CustomDropDownFormField(
-                    onChanged: (value) {
-                      dose = value;
-                    },
-                    prefixIcon: Icon(AgeIcon.liquidMedical,
-                        color: Constant.primaryDarkColor),
-                    title: 'Dose',
-                    items: [1, 2, 3, 4]
-                        .map(
-                          (e) => DropdownMenuItem(
-                            child: Center(
-                                child: Text(
-                              '$e time' + (e > 1 ? 's' : ''),
-                              style: Constant.mediumTextStyle,
-                            )),
-                            value: '$e',
-                          ),
-                        )
-                        .toList()),
+                  onChanged: (value) {
+                    dose = value;
+                  },
+                  prefixIcon: Icon(AgeIcon.liquidMedical,
+                      color: Constant.primaryDarkColor),
+                  title: 'Dose',
+                  items: [1, 2, 3, 4]
+                      .map(
+                        (e) => DropdownMenuItem(
+                          child: Center(
+                              child: Text(
+                            '$e time' + (e > 1 ? 's' : ''),
+                            style: Constant.mediumTextStyle,
+                          )),
+                          value: '$e',
+                        ),
+                      )
+                      .toList(),
+                  iconSize: 24,
+                ),
                 DateSelectWidget(
                   startOnChanged: (DateTime value) {
                     startAt = value;
@@ -165,12 +167,14 @@ class ShapeSelectWidget extends StatefulWidget {
   const ShapeSelectWidget({Key? key, required this.onChanged})
       : super(key: key);
   final Function onChanged;
+
   @override
   State<ShapeSelectWidget> createState() => _ShapeSelectWidgetState();
 }
 
 class _ShapeSelectWidgetState extends State<ShapeSelectWidget> {
   int index = 1;
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -213,6 +217,7 @@ class ColorSelectWidget extends StatefulWidget {
   const ColorSelectWidget({Key? key, required this.onChanged})
       : super(key: key);
   final Function onChanged;
+
   @override
   State<ColorSelectWidget> createState() => _ColorSelectWidgetState();
 }
@@ -297,6 +302,7 @@ class DateSelectWidget extends StatefulWidget {
   final Function startOnChanged;
 
   final Function endOnChanged;
+
   @override
   State<DateSelectWidget> createState() => _DateSelectWidgetState();
 }

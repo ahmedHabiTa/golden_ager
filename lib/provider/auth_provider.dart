@@ -2,10 +2,13 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:golden_ager/main.dart';
 import 'package:golden_ager/models/medicine.dart';
 import 'package:golden_ager/models/user.dart';
 import 'package:golden_ager/notifications.dart';
 import 'package:golden_ager/provider/requests_provider.dart';
+import 'package:golden_ager/screen/auth/login_screen.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -55,6 +58,31 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
 
   Mentor? get mentor => _mentor;
 
+  Future<Position> _determinePosition(BuildContext context) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      Constant.showToast(
+          message: "Location services are disabled", color: Colors.red);
+    }
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        Constant.showToast(
+            message: "Location permissions are denied", color: Colors.red);
+      }
+    }
+    if (permission == LocationPermission.deniedForever) {
+      Constant.showToast(
+          message:
+              "Location permissions are permanently denied, we cannot get your location",
+          color: Colors.red);
+    }
+    return await Geolocator.getCurrentPosition();
+  }
+
   Future<void> login(
       {required String email,
       required String password,
@@ -64,15 +92,22 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           .signInWithEmailAndPassword(email: email, password: password);
       _firebasecurrentUser = FirebaseAuth.instance.currentUser!;
       final userUUID = _firebasecurrentUser!.uid.toString();
-      FirebaseFirestore.instance
-          .doc("users/$userUUID")
-          .update({"fcm_token": await FirebaseMessaging.instance.getToken()});
+      final location = await _determinePosition(context);
+      final latitude = location.latitude;
+      final longitude = location.longitude;
+      print('latitude is '+latitude.toString() +'longitude is '+ longitude.toString());
+      FirebaseFirestore.instance.doc("users/$userUUID").update({
+        "fcm_token": await FirebaseMessaging.instance.getToken(),
+        'latitude': latitude.toString(),
+        'longitude': longitude.toString(),
+      });
       await getUserData();
 
       await SharedPrefsHelper.saveData(key: 'userUUID', value: userUUID);
       await SharedPrefsHelper.saveData(
           key: 'user_data',
           value: json.encode({'email': email, 'password': password}));
+      Constant.navigateTo(routeName: const TabsScreen(), context: context);
     } on FirebaseAuthException catch (error) {
       Constant.showToast(
         message: error.message.toString(),
@@ -126,12 +161,18 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
   bool get isLoadingTryToLogin => _isLoadingTryToLogin;
 
   Future<void> tryToLogin({required BuildContext context}) async {
-    final data = json.decode(await SharedPrefsHelper.getData(key: 'user_data'));
-    if (data != null) {
-      await login(
-          email: data['email'], password: data['password'], context: context);
-      _isLoadingTryToLogin = false;
-      notifyListeners();
+    final getUserData = await SharedPrefsHelper.getData(key: 'user_data');
+    if (getUserData == null) {
+      await Future.delayed(const Duration(seconds: 2));
+      Constant.navigateToRep(routeName: const LoginScreen(), context: context);
+    } else {
+      final data = json.decode(getUserData);
+      if (data != null) {
+        await login(
+            email: data['email'], password: data['password'], context: context);
+        _isLoadingTryToLogin = false;
+        notifyListeners();
+      }
     }
   }
 
@@ -148,9 +189,10 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
       required String email,
       required String password,
       required String age,
-      required String desc,
+       String? desc,
       required String gender,
       required String userType,
+       List<String>? medicalHistory,
       required BuildContext context,
       String? specialty}) async {
     if (image == null) {
@@ -177,17 +219,23 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
             imageUrl = url;
           });
         });
+        final location = await _determinePosition(context);
+        final latitude = location.latitude;
+        final longitude = location.longitude;
         await FirebaseFirestore.instance.collection('users').doc(userUUID).set({
           "image": imageUrl,
           "uid": userUUID,
           "age": age,
-          "description": desc,
+          "description": desc?? '',
           "email": email,
           "feeling": '',
+          "latitude": latitude.toString(),
+          "longitude": longitude.toString(),
           "gender": gender,
           "name": name,
           "phone": phone,
           'user_type': userType,
+          'medicalHistory': medicalHistory ?? [],
           "fcm_token": await FirebaseMessaging.instance.getToken(),
           "specialty": specialty ?? "",
           "patients": [],
@@ -198,7 +246,8 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           'contacts': [],
           'doctors': []
         });
-        Constant.navigateToRep(routeName: const TabsScreen(), context: context);
+        await getUserData();
+        Constant.navigateToRep(routeName: const RedierctScreen(), context: context);
       } on FirebaseAuthException catch (error) {
         Constant.showToast(
           message: error.message.toString(),
@@ -214,6 +263,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
 
   Future<void> logOut(context) async {
     await FirebaseAuth.instance.signOut();
+    Constant.navigateToRep(routeName: const LoginScreen(), context: context);
     await SharedPrefsHelper.clearData();
     _userType = null;
     _doctor = null;
@@ -259,7 +309,7 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         isDone[DateFormat('yMd').format(day)]!
             .addAll({(hours * j).toString(): false});
         localNotifyManager.scheduleNotification(
-            scheduleTime: DateTime(hours *j));
+            scheduleTime: DateTime(hours * j));
       }
     }
     medicine.isDone = isDone;
@@ -284,7 +334,8 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
       final AppNotification notification = AppNotification(
           senderName: patient!.name,
           senderToken: patient!.mentor[0].fcmToken,
-          body: "Reminder : ${patient!.name} has taken his dose at ${DateFormat('yMd').format(DateTime.now())}",
+          body:
+              "Reminder : ${patient!.name} has taken his dose at ${DateFormat('yMd').format(DateTime.now())}",
           category: "request",
           title: "Request",
           timeStamp: DateTime.now());

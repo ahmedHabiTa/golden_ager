@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_drop_down_form_field.dart';
+import 'package:golden_ager/screen/auth/complete_patient_data_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/common_widget/custom_text.dart';
@@ -25,7 +27,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
   final passwordConfirmController = TextEditingController();
   final ageController = TextEditingController();
-  final descController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   String? userType;
@@ -244,7 +245,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         );
                       }),
-                      iconSize: 0,
+                      iconSize: 25,
                     ),
                     if (userType == 'doctor')
                       Offstage(
@@ -293,20 +294,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                           ),
                         );
                       }),
-                      iconSize: 0,
-                    ),
-                    const SizedBox(height: 10),
-                    CustomFormField(
-                      controller: descController,
-                      onChanged: (value) {
-                        setState(() {
-                          value = descController.text.trim();
-                        });
-                      },
-                      validation: 'description is required',
-                      width: Constant.width(context) * 0.9,
-                      height: 50,
-                      hintText: 'description about you',
+                      iconSize: 24,
                     ),
                     const SizedBox(height: 40),
                     Consumer<AuthProvider>(
@@ -329,18 +317,34 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       color: Colors.red,
                                     );
                                   } else {
-                                    authProvider.signUp(
-                                      name: nameController.text,
-                                      phone: phoneController.text,
-                                      email: emailController.text,
-                                      password: passwordController.text,
-                                      age: ageController.text,
-                                      desc: descController.text,
-                                      gender: gender!,
-                                      userType: userType!,
-                                      specialty: specialty,
-                                      context: context,
-                                    );
+                                    if (userType == 'patient') {
+                                      Constant.navigateTo(
+                                          routeName: CompletePatientDataScreen(
+                                            userType: userType!,
+                                            name: nameController.text.trim(),
+                                            password:
+                                                passwordController.text.trim(),
+                                            email: emailController.text.trim(),
+                                            age: ageController.text.trim(),
+                                            gender: gender!,
+                                            phone: phoneController.text.trim(),
+                                          ),
+                                          context: context);
+                                    } else {
+                                      authProvider.signUp(
+                                        name: nameController.text,
+                                        phone: phoneController.text,
+                                        email: emailController.text,
+                                        password: passwordController.text,
+                                        age: ageController.text,
+                                        desc: '',
+                                        gender: gender!,
+                                        userType: userType!,
+                                        specialty: specialty,
+                                        medicalHistory: [],
+                                        context: context,
+                                      );
+                                    }
                                   }
                                 },
                                 child: const Center(

@@ -33,14 +33,6 @@ class HealthDataContainer extends StatelessWidget {
         "second": "Normal",
         "third": "",
       },
-      {
-        "index": 2,
-        "title": "Blood Pressure",
-        "icon": AgeIcon.blood,
-        "first": '141/90 mmhg',
-        "second": "Normal",
-        "third": "",
-      },
     ];
     return Container(
       width: double.infinity,
@@ -84,7 +76,7 @@ class HealthDataContainer extends StatelessWidget {
                   color: colors[index],
                 );
               },
-              itemCount: 3,
+              itemCount: 2,
             ),
           )
         ],

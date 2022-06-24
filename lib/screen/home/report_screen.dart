@@ -70,6 +70,7 @@ class _ReportScreenState extends State<ReportScreen> {
           print(snapshot.data!.docs.length);
           return Scaffold(
             appBar: AppBar(
+              elevation: 3,
               title: CustomText(
                 text: 'Reports',
                 color: Constant.primaryDarkColor,
@@ -99,7 +100,7 @@ class _ReportScreenState extends State<ReportScreen> {
               padding: Constant.kPaddingListTile,
               height: double.infinity,
               width: double.infinity,
-              color: Constant.primaryColor,
+             // color: Constant.primaryColor,
               child: SingleChildScrollView(
                 child: Column(
                   children: [

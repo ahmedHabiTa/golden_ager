@@ -109,11 +109,15 @@ class TipsDetailsScreen extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 5),
-              CustomText(
-                text: title,
-                color: Constant.primaryDarkColor,
-                fontWeight: FontWeight.w400,
-                fontSize: 20,
+              SizedBox(
+                width: Constant.width(context) * 0.7,
+                child: CustomText(
+                  textAlign: TextAlign.center,
+                  text: title,
+                  color: Constant.primaryDarkColor,
+                  fontWeight: FontWeight.w400,
+                  fontSize: 20,
+                ),
               )
             ],
           ),

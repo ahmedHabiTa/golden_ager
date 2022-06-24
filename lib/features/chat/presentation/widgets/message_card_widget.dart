@@ -27,15 +27,15 @@ class MessageCard extends StatelessWidget {
       constraints: BoxConstraints(maxWidth: Constant.width(context) * .75),
       child: Align(
         alignment: message.idFrom == userId
-            ? Alignment.centerRight
-            : Alignment.centerLeft,
+            ? Alignment.centerLeft
+            : Alignment.centerRight,
         child: Column(
-          crossAxisAlignment: message.idFrom == userId
+          crossAxisAlignment: message.idFrom != userId
               ? CrossAxisAlignment.start
               : CrossAxisAlignment.end,
           children: <Widget>[
             Row(
-              mainAxisAlignment: userId == message.idFrom
+              mainAxisAlignment: userId != message.idFrom
                   ? MainAxisAlignment.start
                   : MainAxisAlignment.end,
               crossAxisAlignment: CrossAxisAlignment.end,

@@ -40,7 +40,6 @@ class _RequestHistoryScreenState extends State<RequestHistoryScreen> {
                       child: LoadingWidget(),
                     );
                   } else {
-                    print(snapshot.data!.docs[0]['status']);
                     final requests = snapshot.data!.docs
                         .map((e) =>
                             Request.fromMap(e.data() as Map<String, dynamic>))

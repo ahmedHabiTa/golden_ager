@@ -166,111 +166,109 @@ class AttatedUserItem extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Row(
+          child: Column(
             // crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(
-                width: Constant.width(context) * 0.55,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GestureDetector(
-                      onTap: () {
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      Constant.navigateTo(
+                          routeName: ProfileScreen(
+                              isMe: false, userId: docor.patients[index].uid),
+                          context: context);
+                    },
+                    child: Container(
+                      height: Constant.height(context) * 0.3,
+                      width: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        image: DecorationImage(
+                          fit: BoxFit.fill,
+                          image: NetworkImage(docor.patients[index].image),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 5),
+                  Column(
+                    children: [
+                      CustomText(
+                        text:
+                            "name: " + docor.patients[index].name.toUpperCase(),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 5),
+                      CustomText(
+                        text: "age: " + docor.patients[index].age,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                      const SizedBox(height: 5),
+                      CustomText(
+                        text: "feeling: " + docor.patients[index].feeling,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 14,
+                        color: Colors.white,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  SizedBox(
+                    width: Constant.width(context) * 0.3,
+                    child: ElevatedButton(
+                      onPressed: () async {
                         Constant.navigateTo(
-                            routeName: ProfileScreen(
-                                isMe: false, userId: docor.patients[index].uid),
+                            routeName: ChatPage(
+                                user1: ChatUser.fromAppUser(docor),
+                                user2: ChatUser.fromAppUser(
+                                    docor.patients[index])),
                             context: context);
                       },
-                      child: Container(
-                        height: Constant.height(context) * 0.3,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                            fit: BoxFit.fill,
-                            image: NetworkImage(docor.patients[index].image),
-                          ),
-                        ),
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.white,
+                      ),
+                      child: CustomText(
+                        text: 'Chat',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17,
+                        color: Constant.primaryColor,
                       ),
                     ),
-                    const SizedBox(height: 5),
-                    CustomText(
-                      text: "name: " + docor.patients[index].name.toUpperCase(),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 5),
-                    CustomText(
-                      text: "age: " + docor.patients[index].age,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
-                    const SizedBox(height: 5),
-                    CustomText(
-                      text: "feeling: " + docor.patients[index].feeling,
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                      color: Colors.white,
-                    ),
-                  ],
-                ),
-              ),
-              Spacer(),
-              SizedBox(
-                width: Constant.width(context) * 0.3,
-                height: Constant.height(context) * 0.3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: Constant.width(context) * 0.3,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Constant.navigateTo(
-                              routeName: ChatPage(
-                                  user1: ChatUser.fromAppUser(docor),
-                                  user2: ChatUser.fromAppUser(
-                                      docor.patients[index])),
-                              context: context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.white,
-                        ),
-                        child: CustomText(
-                          text: 'Chat',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 17,
-                          color: Constant.primaryColor,
-                        ),
+                  ),
+                  SizedBox(
+                    width: Constant.width(context) * 0.3,
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        Constant.navigateTo(
+                            routeName: ReportScreen(
+                              doctorId: docor.uid,
+                              patientId: docor.patients[index].uid,
+                              userType: docor.userType,
+                              patientName: docor.patients[index].name,
+                              doctorName: docor.name,
+                              patientFcm: docor.patients[index].fcmToken,
+                            ),
+                            context: context);
+                      },
+                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      child: CustomText(
+                        text: 'Reports',
+                        fontWeight: FontWeight.w600,
+                        fontSize: 17,
+                        color: Constant.primaryColor,
                       ),
                     ),
-                    SizedBox(
-                      width: Constant.width(context) * 0.3,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Constant.navigateTo(
-                              routeName: ReportScreen(
-                                doctorId: docor.uid,
-                                patientId: docor.patients[index].uid,
-                                userType: docor.userType,
-                                patientName: docor.patients[index].name,
-                                doctorName: docor.name,
-                                patientFcm: docor.patients[index].fcmToken,
-                              ),
-                              context: context);
-                        },
-                        style: ElevatedButton.styleFrom(primary: Colors.white),
-                        child: CustomText(
-                          text: 'Reports',
-                          fontWeight: FontWeight.w600,
-                          fontSize: 17,
-                          color: Constant.primaryColor,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  )
+                ],
               )
             ],
           ),

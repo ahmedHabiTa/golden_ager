@@ -19,6 +19,7 @@ class AppUser {
   final String image;
   final String gender;
   final List<AppNotification> notifications;
+
   AppUser({
     required this.fcmToken,
     required this.uid,
@@ -129,11 +130,15 @@ class AppUser {
 class Patient extends AppUser {
   final String description;
   final String feeling;
+  final String latitude;
+  final String longitude;
+  final List<String> medicalHistory;
   final List<Mentor> mentor;
   final List<Doctor> doctors;
   final List<Report> reports;
   final List<Medicine> medicines;
   final List<Contact> contacts;
+
   Patient({
     required String uid,
     required String name,
@@ -149,6 +154,9 @@ class Patient extends AppUser {
     required this.medicines,
     required this.description,
     required this.feeling,
+    required this.latitude,
+    required this.longitude,
+    required this.medicalHistory,
     required this.mentor,
     required this.doctors,
     required this.reports,
@@ -174,9 +182,12 @@ class Patient extends AppUser {
       String? age,
       String? image,
       String? gender,
+      String? latitude,
+      String? longitude,
       List<AppNotification>? notifications,
       String? description,
       String? feeling,
+      List<String>? medicalHistory,
       List<Mentor>? mentor,
       List<Medicine>? medicine,
       List<Report>? reports,
@@ -194,6 +205,9 @@ class Patient extends AppUser {
         userType: userType ?? this.userType,
         image: image ?? this.image,
         gender: gender ?? this.gender,
+        latitude: latitude ?? this.latitude,
+        longitude: longitude ?? this.longitude,
+        medicalHistory: medicalHistory ?? this.medicalHistory,
         notifications: notifications ?? this.notifications,
         medicines: medicine ?? medicines,
         description: description ?? this.description,
@@ -216,6 +230,9 @@ class Patient extends AppUser {
       'gender': gender,
       'description': description,
       'feeling': feeling,
+      'latitude': latitude,
+      'longitude': longitude,
+      'medicalHistory': medicalHistory,
       'fcm_token': fcmToken
     };
   }
@@ -253,6 +270,12 @@ class Patient extends AppUser {
         age: map['age'] ?? '',
         image: map['image'] ?? '',
         gender: map['gender'] ?? '',
+        latitude: map['latitude'] ?? '',
+        longitude: map['longitude'] ?? '',
+        medicalHistory: map['medicalHistory'] == null ||
+                (map['medicalHistory'] as List).isEmpty
+            ? []
+            : List<String>.from(map['medicalHistory']?.map((x) => x)),
         contacts: map['contacts'] == null || (map['contacts'] as List).isEmpty
             ? []
             : List<Contact>.from(
@@ -313,6 +336,7 @@ class Patient extends AppUser {
 
 class Mentor extends AppUser {
   final List<Patient> patients;
+
   Mentor({
     required String uid,
     required String name,
@@ -425,6 +449,7 @@ class Mentor extends AppUser {
 class Doctor extends AppUser {
   final List<Patient> patients;
   final String specialization;
+
   Doctor({
     required String uid,
     required String name,

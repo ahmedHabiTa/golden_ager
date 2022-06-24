@@ -27,22 +27,6 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
           'Doctors',
           style: Constant.mediumTextStyle,
         ),
-        actions: [
-          GestureDetector(
-            onTap: () {
-              Constant.navigateTo(
-                  routeName: RequestHistoryScreen(
-                    userId: context.read<AuthProvider>().patient!.uid,
-                  ),
-                  context: context);
-            },
-            child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Icon(
-                  Icons.history,
-                )),
-          )
-        ],
       ),
       body: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -66,13 +50,13 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
                     children: [
-                      Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(
-                          'click to connect to send follow up request',
-                          style: Constant.normalTextStyle,
-                        ),
-                      ),
+                      // Align(
+                      //   alignment: AlignmentDirectional.centerStart,
+                      //   child: Text(
+                      //     'click to connect to send follow up request',
+                      //     style: Constant.normalTextStyle,
+                      //   ),
+                      // ),
                       ListView.builder(
                         itemCount: snapshot.data!.docs.length,
                         shrinkWrap: true,
@@ -86,6 +70,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                             child: Column(
                               // crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const SizedBox(height: 5),
                                 Container(
                                   margin: const EdgeInsets.all(4.0),
                                   width: 100,
@@ -100,7 +85,7 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                 ),
                                 const SizedBox(height: 5),
                                 CustomText(
-                                  text: "name: " +
+                                  text: "Name: " +
                                       doctors[index]
                                           .name
                                           .toString()
@@ -116,9 +101,10 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                   fontSize: 17,
                                   color: Colors.white,
                                 ),
+                                const SizedBox(height: 5),
                                 CustomText(
                                   text:
-                                      "number of patient on the app right now " +
+                                      "Followers: " +
                                           doctors[index]
                                               .patients
                                               .length
@@ -182,7 +168,8 @@ class _DoctorListScreenState extends State<DoctorListScreen> {
                                         return ConnectButton(
                                             doctor: doctors[index]);
                                       }
-                                    })
+                                    }),
+                                const SizedBox(height: 10),
                               ],
                             ),
                           );
