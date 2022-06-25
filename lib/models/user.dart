@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:golden_ager/models/helth_data.dart';
 
 import 'contact.dart';
 import 'medicine.dart';
@@ -138,7 +139,7 @@ class Patient extends AppUser {
   final List<Report> reports;
   final List<Medicine> medicines;
   final List<Contact> contacts;
-
+  final HealthData? healthData;
   Patient({
     required String uid,
     required String name,
@@ -157,6 +158,7 @@ class Patient extends AppUser {
     required this.latitude,
     required this.longitude,
     required this.medicalHistory,
+    this.healthData,
     required this.mentor,
     required this.doctors,
     required this.reports,
@@ -193,8 +195,10 @@ class Patient extends AppUser {
       List<Report>? reports,
       List<Doctor>? doctors,
       String? fcmToken,
+      HealthData? healthData,
       List<Contact>? contacts}) {
     return Patient(
+        healthData: healthData ?? this.healthData,
         contacts: contacts ?? this.contacts,
         fcmToken: fcmToken ?? this.fcmToken,
         age: age ?? this.age,
@@ -229,6 +233,7 @@ class Patient extends AppUser {
       'image': image,
       'gender': gender,
       'description': description,
+      'health_data': healthData?.toMap(),
       'feeling': feeling,
       'latitude': latitude,
       'longitude': longitude,
@@ -250,6 +255,7 @@ class Patient extends AppUser {
       'gender': gender,
       'description': description,
       'feeling': feeling,
+      'health_data': healthData?.toMap(),
       'contacts': contacts.map((e) => e.toMap()).toList(),
       'mentor': mentor.map((e) => e.toMap()).toList(),
       'notifications': notifications.map((e) => e.toMap()).toList(),
@@ -272,6 +278,9 @@ class Patient extends AppUser {
         gender: map['gender'] ?? '',
         latitude: map['latitude'] ?? '',
         longitude: map['longitude'] ?? '',
+        healthData: map['health_data'] == null
+            ? null
+            : HealthData.fromMap(map['health_data']),
         medicalHistory: map['medicalHistory'] == null ||
                 (map['medicalHistory'] as List).isEmpty
             ? []

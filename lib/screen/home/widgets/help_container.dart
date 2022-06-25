@@ -32,7 +32,7 @@ class HelpContainer extends StatelessWidget {
                 const CustomText(
                   text: 'Family Contacts',
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w400,
                 ),
               ],
@@ -63,7 +63,7 @@ class HelpContainer extends StatelessWidget {
                 const CustomText(
                   text: 'Emergency call',
                   color: Colors.white,
-                  fontSize: 18,
+                  fontSize: 16,
                   fontWeight: FontWeight.w400,
                 ),
               ],

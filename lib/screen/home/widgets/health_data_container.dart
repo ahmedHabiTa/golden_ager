@@ -1,39 +1,72 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_wide_container.dart';
 import 'package:golden_ager/core/constant/age_icon_icons.dart';
+import 'package:golden_ager/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 import '../../../core/common_widget/custom_text.dart';
 import '../../../core/constant/Constant.dart';
+import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 
-class HealthDataContainer extends StatelessWidget {
+import 'SelectBondedDevicePage.dart';
+
+class HealthDataContainer extends StatefulWidget {
   const HealthDataContainer({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    List<Color> colors = [
-      Colors.red,
-      Constant.primaryColor,
-      const Color(0xFFEA8877),
-    ];
+  State<HealthDataContainer> createState() => _HealthDataContainerState();
+}
 
-    List<Map<String, dynamic>> texts = [
-      {
-        "index": 0,
-        "title": "Heart Rate",
-        "icon": Icons.heart_broken,
-        "first": '87 bpm',
-        "second": "Lowest 72 bpm",
-        "third": "Highest 120 bpm",
-      },
-      {
-        "index": 1,
-        "title": "Body Temp",
-        "icon": AgeIcon.lightbulb,
-        "first": '37 C',
-        "second": "Normal",
-        "third": "",
-      },
-    ];
+class _HealthDataContainerState extends State<HealthDataContainer> {
+  Future<void> _startChat(BluetoothDevice server) async {
+    try {
+      connection = await BluetoothConnection.toAddress(server.address);
+      if (connection != null) {
+        setState(() {
+          isConnecting = connection!.isConnected;
+        });
+        connection!.input!.listen(_onDataReceived);
+      }
+    } catch (error) {
+      isConnecting = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    connection?.dispose();
+    super.dispose();
+  }
+
+  List<Color> colors = [
+    Colors.red,
+    Constant.primaryColor,
+  ];
+  List<Map<String, dynamic>> texts = [
+    {
+      "index": 0,
+      "title": "Heart Rate",
+      "icon": Icons.heart_broken,
+      "first": '87 bpm',
+      "second": "Lowest 72 bpm",
+      "third": "Highest 120 bpm",
+    },
+    {
+      "index": 1,
+      "title": "Body Temp",
+      "icon": AgeIcon.temperature,
+      "first": '37 C',
+      "second": "Normal",
+      "third": "",
+    },
+  ];
+  BluetoothDevice? selectedDevice;
+  @override
+  Widget build(BuildContext context) {
+    final HealthData = context.watch<AuthProvider>().patient!.healthData;
     return Container(
       width: double.infinity,
       height: Constant.height(context) * 0.6,
@@ -43,7 +76,7 @@ class HealthDataContainer extends StatelessWidget {
         children: [
           const SizedBox(height: 10),
           Row(
-            children: const [
+            children: [
               SizedBox(width: 15),
               CustomText(
                 text: 'Health Data',
@@ -52,10 +85,38 @@ class HealthDataContainer extends StatelessWidget {
                 fontWeight: FontWeight.w400,
               ),
               Spacer(),
-              Icon(
-                Icons.arrow_forward_ios_outlined,
-                color: Constant.primaryDarkColor,
-                size: 25,
+              if (isConnecting)
+                TextButton(
+                    onPressed: () {
+                      _sendMessage("S");
+                    },
+                    child: Text(
+                      "Refresh",
+                      style: Constant.normalTextStyle,
+                    )),
+              GestureDetector(
+                onTap: () async {
+                  selectedDevice = await Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return const SelectBondedDevicePage(
+                            checkAvailability: false);
+                      },
+                    ),
+                  );
+                  if (selectedDevice != null) {
+                    _startChat(selectedDevice!);
+                  } else {
+                    print('Connect -> no device selected');
+                  }
+
+                  setState(() {});
+                },
+                child: Icon(
+                  Icons.arrow_forward_ios_outlined,
+                  color: Constant.primaryDarkColor,
+                  size: 25,
+                ),
               ),
               SizedBox(width: 15),
             ],
@@ -63,20 +124,32 @@ class HealthDataContainer extends StatelessWidget {
           const SizedBox(height: 10),
           SizedBox(
             height: Constant.height(context) * 0.4,
-            child: ListView.builder(
+            child: ListView(
               scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) {
-                return _customContainer(
+              children: [
+                _customContainer(
                   context: context,
-                  icon: texts[index]['icon'],
-                  title: texts[index]['title'],
-                  firstText: texts[index]['first'],
-                  secondText: texts[index]['second'],
-                  thirdText: texts[index]['third'],
-                  color: colors[index],
-                );
-              },
-              itemCount: 2,
+                  icon: texts[0]['icon'],
+                  title: texts[0]['title'],
+                  firstText: HealthData!.heartData.last + " bpm",
+                  secondText: "Lowest " +
+                      (HealthData.heartData.lowest == "l"
+                          ? "0"
+                          : HealthData.heartData.lowest) +
+                      " bpm",
+                  thirdText: "Highest " + HealthData.heartData.highest + " bpm",
+                  color: colors[0],
+                ),
+                _customContainer(
+                  context: context,
+                  icon: texts[1]['icon'],
+                  title: texts[1]['title'],
+                  firstText: HealthData.tempData.temp.trim() + " C",
+                  secondText: HealthData.tempData.status,
+                  thirdText: "",
+                  color: colors[1],
+                )
+              ],
             ),
           )
         ],
@@ -96,7 +169,7 @@ class HealthDataContainer extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 8.0),
       child: CustomWideContainer(
-        width: Constant.width(context) * 0.5,
+        width: Constant.width(context) * 0.7,
         height: Constant.height(context),
         radius: 20.0,
         child: Padding(
@@ -105,6 +178,7 @@ class HealthDataContainer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const SizedBox(height: 8),
               Row(
                 children: [
                   icon != null
@@ -156,4 +230,60 @@ class HealthDataContainer extends StatelessWidget {
       ),
     );
   }
+
+  final String _messageBuffer = '';
+  bool isConnecting = false;
+  bool get isConnected => (connection?.isConnected ?? false);
+  void _onDataReceived(Uint8List data) {
+    // Allocate buffer for parsed data
+    int backspacesCounter = 0;
+    for (var byte in data) {
+      if (byte == 8 || byte == 127) {
+        backspacesCounter++;
+      }
+    }
+    Uint8List buffer = Uint8List(data.length - backspacesCounter);
+    int bufferIndex = buffer.length;
+    // Apply backspace control character
+    backspacesCounter = 0;
+    for (int i = data.length - 1; i >= 0; i--) {
+      if (data[i] == 8 || data[i] == 127) {
+        backspacesCounter++;
+      } else {
+        if (backspacesCounter > 0) {
+          backspacesCounter--;
+        } else {
+          buffer[--bufferIndex] = data[i];
+        }
+      }
+    }
+
+    // Create message if there is new line character
+    String dataString = String.fromCharCodes(buffer);
+    if (dataString.contains("-")) {
+      context.read<AuthProvider>().updateHelthData(dataString);
+    }
+    print(dataString);
+  }
+
+  BluetoothConnection? connection;
+  static const clientID = 0;
+  void _sendMessage(String text) async {
+    text = text.trim();
+    if (text.isNotEmpty) {
+      try {
+        connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
+        await connection!.output.allSent;
+      } catch (e) {
+        // Ignore error, but notify state
+      }
+    }
+  }
+}
+
+class _Message {
+  int whom;
+  String text;
+
+  _Message(this.whom, this.text);
 }

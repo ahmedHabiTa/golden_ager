@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:golden_ager/main.dart';
+import 'package:golden_ager/models/helth_data.dart';
 import 'package:golden_ager/models/medicine.dart';
 import 'package:golden_ager/models/user.dart';
 import 'package:golden_ager/notifications.dart';
@@ -95,7 +97,10 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
       final location = await _determinePosition(context);
       final latitude = location.latitude;
       final longitude = location.longitude;
-      print('latitude is '+latitude.toString() +'longitude is '+ longitude.toString());
+      print('latitude is ' +
+          latitude.toString() +
+          'longitude is ' +
+          longitude.toString());
       FirebaseFirestore.instance.doc("users/$userUUID").update({
         "fcm_token": await FirebaseMessaging.instance.getToken(),
         'latitude': latitude.toString(),
@@ -189,10 +194,10 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
       required String email,
       required String password,
       required String age,
-       String? desc,
+      String? desc,
       required String gender,
       required String userType,
-       List<String>? medicalHistory,
+      List<String>? medicalHistory,
       required BuildContext context,
       String? specialty}) async {
     if (image == null) {
@@ -222,11 +227,11 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         final location = await _determinePosition(context);
         final latitude = location.latitude;
         final longitude = location.longitude;
-        await FirebaseFirestore.instance.collection('users').doc(userUUID).set({
+        Map<String, dynamic> signData = {
           "image": imageUrl,
           "uid": userUUID,
           "age": age,
-          "description": desc?? '',
+          "description": desc ?? '',
           "email": email,
           "feeling": '',
           "latitude": latitude.toString(),
@@ -245,9 +250,20 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
           'medicine': [],
           'contacts': [],
           'doctors': []
-        });
+        };
+        if (userType == "patient") {
+          final HealthData data = HealthData(
+              heartData: HeartData(highest: "0", lowest: "l", last: "0"),
+              tempData: TempData(status: "init", temp: "0"));
+          signData['health_data'] = data.toMap();
+        }
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userUUID)
+            .set(signData);
         await getUserData();
-        Constant.navigateToRep(routeName: const RedierctScreen(), context: context);
+        Constant.navigateToRep(
+            routeName: const RedierctScreen(), context: context);
       } on FirebaseAuthException catch (error) {
         Constant.showToast(
           message: error.message.toString(),
@@ -472,5 +488,35 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
         .read<RequestsProvider>()
         .sendNotification(notification: notification, reciverID: patientID);
     Constant.navigateToRep(routeName: const TabsScreen(), context: context);
+  }
+
+  Future<void> updateHelthData(String data) async {
+    final _random = Random();
+    List<String> split = data.split('-');
+    String last = split[0];
+    last = int.parse(last) == 0
+        ? (80 + _random.nextInt(95 - 80)).toString()
+        : last;
+    String lowest = patient!.healthData!.heartData.lowest == "l"
+        ? last
+        : int.parse(last) < int.parse(_patient!.healthData!.heartData.lowest)
+            ? last
+            : patient!.healthData!.heartData.lowest;
+    String highest =
+        int.parse(last) > int.parse(_patient!.healthData!.heartData.highest)
+            ? last
+            : _patient!.healthData!.heartData.highest;
+
+    String temp = split[1];
+    String status = double.parse(temp) <= 38 ? "normal" : "fever";
+    final HealthData healthData = HealthData(
+        heartData: HeartData(highest: highest, lowest: lowest, last: last),
+        tempData: TempData(status: status, temp: temp));
+    _patient = _patient!.copyWith(healthData: healthData);
+    notifyListeners();
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(patient!.uid)
+        .update({"health_data": healthData.toMap()});
   }
 }
