@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:golden_ager/core/common_widget/loading_widget.dart';
 import 'package:golden_ager/core/constant/Constant.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
@@ -42,7 +43,13 @@ class _CompletePatientDataScreenState extends State<CompletePatientDataScreen> {
   final descController = TextEditingController();
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  bool isLoading = false;
 
+  toggleLoading() {
+    setState(() {
+      isLoading = !isLoading;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,9 +120,9 @@ class _CompletePatientDataScreenState extends State<CompletePatientDataScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            Consumer<AuthProvider>(
+             Consumer<AuthProvider>(
               builder: (context, authProvider, child) {
-                return GestureDetector(
+                return authProvider.isLoadingSignUp == true ? const LoadingWidget(): GestureDetector(
                   onTap: () {
                     if (medicalHistory.isEmpty && descController.text.isEmpty) {
                       Constant.showToast(
@@ -129,6 +136,7 @@ class _CompletePatientDataScreenState extends State<CompletePatientDataScreen> {
                         medicalHistory.add(descController.text.trim());
                         print(medicalHistory);
                       }
+                      toggleLoading();
                       authProvider.signUp(
                         name: widget.name,
                         phone: widget.phone,
@@ -142,6 +150,7 @@ class _CompletePatientDataScreenState extends State<CompletePatientDataScreen> {
                         medicalHistory:medicalHistory,
                         context: context,
                       );
+                      toggleLoading();
                      }
 
 

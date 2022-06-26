@@ -33,7 +33,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? gender;
   String? specialty;
   List<String> userTypes = [
-    'patient',
+    'Ager',
     'mentor',
     'doctor',
   ];
@@ -42,7 +42,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'female',
   ];
   List<String> specialties = [
-    'surgery specialty',
+    'Alzheimer specialty',
     'orthopedic specialty',
   ];
 
@@ -91,6 +91,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                 .pickImage(
                                                     imageSource:
                                                         ImageSource.camera);
+                                            Navigator.pop(context);
                                           },
                                           child: CustomText(
                                             text: 'Camera',
@@ -104,6 +105,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                 .pickImage(
                                                     imageSource:
                                                         ImageSource.gallery);
+                                            Navigator.pop(context);
                                           },
                                           child: CustomText(
                                             text: 'Gallery',
@@ -232,6 +234,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         setState(() {
                           userType = value;
                         });
+                        if(userType == 'Ager'){
+                          setState(() {
+                            userType = 'patient';
+                          });
+                        }
                         print(userType);
                       },
                       items: List.generate(userTypes.length, (index) {

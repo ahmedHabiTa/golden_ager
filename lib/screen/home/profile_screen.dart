@@ -175,7 +175,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     text: snapshot.data!['feeling']),
                               _customFixedText(text: 'Type :'),
                               _customDynamicText(
-                                  text: snapshot.data!['user_type']),
+                                  text: snapshot.data!['user_type'] == 'patient' ? 'Ager':snapshot.data!['user_type'] ),
                               _customFixedText(text: 'Age :'),
                               _customDynamicText(text: snapshot.data!['age']),
                             ],

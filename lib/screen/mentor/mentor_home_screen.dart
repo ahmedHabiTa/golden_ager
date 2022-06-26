@@ -31,7 +31,7 @@ class _MentorHomeScreenState extends State<MentorHomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Patient', style: Constant.semieBoldTextStyle),
+        title: Text('Your Ager', style: Constant.semieBoldTextStyle),
         foregroundColor: Color(0xffEFF1F3),
         actions: [
           GestureDetector(
@@ -91,7 +91,7 @@ class MentorPatientWidget extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        "You don't have patient till now",
+                        "You don't have Agers till now",
                         style: Constant.mediumTextStyle
                             .copyWith(color: Colors.white),
                       ),
@@ -272,7 +272,7 @@ class _MentorAddPatientWidgetState extends State<MentorAddPatientWidget> {
                   Padding(
                     padding: const EdgeInsets.all(16.0),
                     child:
-                        Text('Add Patient', style: Constant.semieBoldTextStyle),
+                        Text('Add Ager', style: Constant.semieBoldTextStyle),
                   ),
                   Row(
                     children: [
