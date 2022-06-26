@@ -24,6 +24,7 @@ class _HealthDataContainerState extends State<HealthDataContainer> {
   Future<void> _startChat(BluetoothDevice server) async {
     try {
       connection = await BluetoothConnection.toAddress(server.address);
+
       if (connection != null) {
         setState(() {
           isConnecting = connection!.isConnected;
@@ -32,6 +33,7 @@ class _HealthDataContainerState extends State<HealthDataContainer> {
       }
     } catch (error) {
       isConnecting = false;
+      setState(() {});
     }
   }
 
@@ -50,23 +52,17 @@ class _HealthDataContainerState extends State<HealthDataContainer> {
       "index": 0,
       "title": "Heart Rate",
       "icon": Icons.heart_broken,
-      "first": '87 bpm',
-      "second": "Lowest 72 bpm",
-      "third": "Highest 120 bpm",
     },
     {
       "index": 1,
       "title": "Body Temp",
       "icon": AgeIcon.temperature,
-      "first": '37 C',
-      "second": "Normal",
-      "third": "",
     },
   ];
   BluetoothDevice? selectedDevice;
   @override
   Widget build(BuildContext context) {
-    final HealthData = context.watch<AuthProvider>().patient!.healthData;
+    final healthData = context.watch<AuthProvider>().patient!.healthData;
     return Container(
       width: double.infinity,
       height: Constant.height(context) * 0.6,
@@ -85,7 +81,7 @@ class _HealthDataContainerState extends State<HealthDataContainer> {
                 fontWeight: FontWeight.w400,
               ),
               Spacer(),
-              if (isConnecting)
+              if (isConnected)
                 TextButton(
                     onPressed: () {
                       _sendMessage("S");
@@ -131,21 +127,21 @@ class _HealthDataContainerState extends State<HealthDataContainer> {
                   context: context,
                   icon: texts[0]['icon'],
                   title: texts[0]['title'],
-                  firstText: HealthData!.heartData.last + " bpm",
+                  firstText: healthData!.heartData.last + " bpm",
                   secondText: "Lowest " +
-                      (HealthData.heartData.lowest == "l"
+                      (healthData.heartData.lowest == "l"
                           ? "0"
-                          : HealthData.heartData.lowest) +
+                          : healthData.heartData.lowest) +
                       " bpm",
-                  thirdText: "Highest " + HealthData.heartData.highest + " bpm",
+                  thirdText: "Highest " + healthData.heartData.highest + " bpm",
                   color: colors[0],
                 ),
                 _customContainer(
                   context: context,
                   icon: texts[1]['icon'],
                   title: texts[1]['title'],
-                  firstText: HealthData.tempData.temp.trim() + " C",
-                  secondText: HealthData.tempData.status,
+                  firstText: healthData.tempData.temp.trim() + " C",
+                  secondText: healthData.tempData.status,
                   thirdText: "",
                   color: colors[1],
                 )

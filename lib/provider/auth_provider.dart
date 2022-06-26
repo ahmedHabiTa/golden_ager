@@ -496,7 +496,13 @@ class AuthProvider extends ChangeNotifier implements ReassembleHandler {
     String last = split[0];
     last = int.parse(last) == 0
         ? (80 + _random.nextInt(95 - 80)).toString()
-        : last;
+        : int.parse(last) > 140
+            ? (int.parse(last) - 60).toString()
+            : int.parse(last) > 120
+                ? (int.parse(last) - 40).toString()
+                : int.parse(last) > 105
+                    ? (int.parse(last) - 20).toString()
+                    : last;
     String lowest = patient!.healthData!.heartData.lowest == "l"
         ? last
         : int.parse(last) < int.parse(_patient!.healthData!.heartData.lowest)
