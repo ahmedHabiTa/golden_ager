@@ -66,8 +66,7 @@ class HomeScreen extends StatelessWidget {
                     alignment: Alignment.center,
                     child: CustomText(
                       text:
-                      'Hello, ${snapshot.data!['name'].toString().split(
-                          ' ')[0]} ! ',
+                          'Hello, ${snapshot.data!['name'].toString().split(' ')[0]} ! ',
                       color: const Color(0xFF0d2137),
                       fontSize: 34,
                       fontWeight: FontWeight.bold,

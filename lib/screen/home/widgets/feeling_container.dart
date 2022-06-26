@@ -52,7 +52,7 @@ class FeelingsContainer extends StatelessWidget {
                         CustomText(
                           text: 'Check in',
                           color: Colors.white,
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.w400,
                         ),
                         Spacer(),
@@ -78,7 +78,7 @@ class FeelingsContainer extends StatelessWidget {
             ),
           ],
         ),
-        height: Constant.height(context) * 0.4,
+        height: Constant.height(context) * 0.45,
         width: Constant.width(context),
         radius: 15.0,
         containerColor: Constant.primaryColor,

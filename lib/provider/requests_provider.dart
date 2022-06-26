@@ -3,10 +3,8 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/models/user.dart';
-import 'package:golden_ager/provider/auth_provider.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import '../core/error/exceptions.dart';
 import '../models/notification.dart';
 import '../models/request.dart';
@@ -182,8 +180,7 @@ class RequestsProvider extends ChangeNotifier {
       // chnage request Status for the patient
       FirebaseFirestore.instance
           .doc("users/${request.patient.uid}/requests/${request.mentor!.uid}")
-          .update({"status": status}).then((value)async{
-
+          .update({"status": status}).then((value) async {
         print('hhhhhhhhhhhhhhh');
         final AppNotification notification = AppNotification(
             senderName: request.patient.name,
