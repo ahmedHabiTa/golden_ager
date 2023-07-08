@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
-import 'package:rxdart/rxdart.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:rxdart/rxdart.dart';
 
 class LocalNotifyManager {
   FlutterLocalNotificationsPlugin? flutterLocalNotificationsPlugin;
@@ -30,7 +31,7 @@ class LocalNotifyManager {
 
   initializePlatform() {
     var initSettingAndroid = AndroidInitializationSettings('logo');
-    var initSettingIOS = IOSInitializationSettings(
+    var initSettingIOS = DarwinInitializationSettings(
       requestSoundPermission: true,
       requestBadgePermission: true,
       requestAlertPermission: true,
@@ -52,7 +53,7 @@ class LocalNotifyManager {
 
   setOnNotificationClick(Function onNotificationClick) async {
     await flutterLocalNotificationsPlugin!.initialize(initSetting,
-        onSelectNotification: (String? payload) {
+        onDidReceiveNotificationResponse: (payload) {
       onNotificationClick(payload);
     });
   }
@@ -68,7 +69,7 @@ class LocalNotifyManager {
       priority: Priority.high,
       playSound: true,
     );
-    var iosChannel = IOSNotificationDetails();
+    var iosChannel = DarwinNotificationDetails();
     var platformChannel =
         NotificationDetails(android: androidChannel, iOS: iosChannel);
     await flutterLocalNotificationsPlugin!.periodicallyShow(
@@ -93,11 +94,11 @@ class LocalNotifyManager {
       priority: Priority.high,
       playSound: true,
     );
-    var iosChannel = IOSNotificationDetails();
+    var iosChannel = DarwinNotificationDetails();
     var platformChannel =
         NotificationDetails(android: androidChannel, iOS: iosChannel);
-    await flutterLocalNotificationsPlugin!.schedule(
-        1, 'title', 'Don\'t forget to take your dose', scheduleTime, platformChannel,
+    await flutterLocalNotificationsPlugin!.schedule(1, 'title',
+        'Don\'t forget to take your dose', scheduleTime, platformChannel,
         payload: 'medicine_screen');
   }
 
@@ -112,7 +113,7 @@ class LocalNotifyManager {
       priority: Priority.high,
       playSound: true,
     );
-    var iosChannel = IOSNotificationDetails();
+    var iosChannel = DarwinNotificationDetails();
     var platformChannel =
         NotificationDetails(android: androidChannel, iOS: iosChannel);
     await flutterLocalNotificationsPlugin!
@@ -128,7 +129,7 @@ class LocalNotifyManager {
       priority: Priority.high,
       playSound: true,
     );
-    var iosChannel = IOSNotificationDetails();
+    var iosChannel = DarwinNotificationDetails();
     var platformChannel =
         NotificationDetails(android: androidChannel, iOS: iosChannel);
     await flutterLocalNotificationsPlugin!.showWeeklyAtDayAndTime(

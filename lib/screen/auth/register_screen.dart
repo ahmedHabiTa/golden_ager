@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_drop_down_form_field.dart';
 import 'package:golden_ager/screen/auth/complete_patient_data_screen.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../core/common_widget/custom_text.dart';
@@ -33,7 +32,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   String? gender;
   String? specialty;
   List<String> userTypes = [
-    'Ager',
+    'Autistic',
     'mentor',
     'doctor',
   ];
@@ -42,8 +41,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
     'female',
   ];
   List<String> specialties = [
-    'Alzheimer specialty',
-    'orthopedic specialty',
+    'Child psychiatrist',
+    'Neurologist',
+    'Pediatrician',
+    'Communication specialist',
+    'Psychologist',
+    'Special education specialist',
+    'Special education specialist',
   ];
 
   @override
@@ -234,7 +238,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         setState(() {
                           userType = value;
                         });
-                        if(userType == 'Ager'){
+                        if (userType == 'Autistic') {
                           setState(() {
                             userType = 'patient';
                           });
@@ -314,6 +318,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                 width: 130,
                                 color: Constant.primaryDarkColor,
                                 onTap: () async {
+                                  if (authProvider.image == null) {
+                                    Constant.showToast(
+                                      message: 'Please select a profile image',
+                                      color: Colors.red,
+                                    );
+                                    return;
+                                  }
                                   if (!formKey.currentState!.validate()) {
                                     return;
                                   } else if (passwordConfirmController.text

@@ -1,4 +1,4 @@
-import 'package:badges/badges.dart';
+import 'package:badges/badges.dart' as badge;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/models/user.dart';
@@ -9,8 +9,8 @@ import '../../core/constant/constant.dart';
 import '../../models/request.dart';
 import '../../provider/auth_provider.dart';
 import '../home/request_history_screen.dart';
-import 'request_doctor/patient_doctors.dart';
 import 'patient_mentor_widget.dart';
+import 'request_doctor/patient_doctors.dart';
 
 class PatientMentorsScreen extends StatefulWidget {
   const PatientMentorsScreen({Key? key}) : super(key: key);
@@ -43,10 +43,10 @@ class _PatientMentorsScreenState extends State<PatientMentorsScreen> {
                     final List<Request> requests = sh.data!.docs
                         .map((e) => Request.fromMap(e.data()))
                         .toList();
-                    return Badge(
+                    return badge.Badge(
                       position: requests.isEmpty
                           ? null
-                          : BadgePosition.topEnd(top: 2, end: 2),
+                          : badge.BadgePosition.topEnd(top: 2, end: 2),
                       badgeContent: requests.isNotEmpty
                           ? Text(
                               requests.length.toString(),

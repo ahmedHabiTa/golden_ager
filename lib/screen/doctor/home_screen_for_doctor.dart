@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart' as badge;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:golden_ager/core/common_widget/custom_text.dart';
@@ -5,7 +6,6 @@ import 'package:golden_ager/core/constant/constant.dart';
 import 'package:golden_ager/models/request.dart';
 import 'package:golden_ager/provider/auth_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:badges/badges.dart';
 
 import '../../features/chat/domain/entities/order_user.dart';
 import '../../features/chat/presentation/pages/chat_page.dart';
@@ -52,10 +52,10 @@ class _HomeScreenForDoctorState extends State<HomeScreenForDoctor> {
                   final List<Request> requests = sh.data!.docs
                       .map((e) => Request.fromMap(e.data()))
                       .toList();
-                  return Badge(
+                  return badge.Badge(
                     position: requests.isEmpty
                         ? null
-                        : BadgePosition.topEnd(top: 2, end: 2),
+                        : badge.BadgePosition.topEnd(top: 2, end: 2),
                     badgeContent: requests.isNotEmpty
                         ? Text(
                             requests.length.toString(),
@@ -234,7 +234,7 @@ class AttatedUserItem extends StatelessWidget {
                             context: context);
                       },
                       style: ElevatedButton.styleFrom(
-                        primary: Colors.white,
+                        backgroundColor: Colors.white,
                       ),
                       child: CustomText(
                         text: 'Chat',
@@ -259,7 +259,8 @@ class AttatedUserItem extends StatelessWidget {
                             ),
                             context: context);
                       },
-                      style: ElevatedButton.styleFrom(primary: Colors.white),
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white),
                       child: CustomText(
                         text: 'Reports',
                         fontWeight: FontWeight.w600,

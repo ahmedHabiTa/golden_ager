@@ -124,7 +124,7 @@ class _CompletePatientDataScreenState extends State<CompletePatientDataScreen> {
               builder: (context, authProvider, child) {
                 return authProvider.isLoadingSignUp == true ? const LoadingWidget(): GestureDetector(
                   onTap: () {
-                    if (medicalHistory.isEmpty && descController.text.isEmpty) {
+                    if (medicalHistory.isEmpty || descController.text.isEmpty) {
                       Constant.showToast(
                           message:
                               'please choose an option or Write about your medical history',

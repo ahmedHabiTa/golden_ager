@@ -41,7 +41,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),
                 );
-              } else if (snapshot.hasError) {
+              }
+              else if (snapshot.hasError) {
                 return const Center(
                   child: CustomText(
                     text: 'Error happen',
@@ -49,7 +50,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     fontSize: 30,
                   ),
                 );
-              } else if (!snapshot.hasData) {
+              }
+              else if (!snapshot.hasData) {
                 return const Padding(
                   padding: EdgeInsets.only(top: 80.0),
                   child: LoadingWidget(),

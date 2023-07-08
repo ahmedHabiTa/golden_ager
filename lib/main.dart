@@ -11,13 +11,13 @@ import 'package:golden_ager/provider/requests_provider.dart';
 import 'package:golden_ager/screen/auth/login_screen.dart';
 import 'package:golden_ager/screen/notifications_screen.dart';
 import 'package:provider/provider.dart';
+
 import 'core/constant/cutome_page_transition.dart';
+import 'core/util/shared_prefs_helper.dart';
 import 'features/chat/domain/entities/order_user.dart';
 import 'features/chat/presentation/pages/chat_page.dart';
 import 'features/injection/injection_container.dart' as di;
 import 'features/injection/injection_container.dart';
-import 'core/util/shared_prefs_helper.dart';
-import 'provider/auth_provider.dart';
 import 'provider/home_provider.dart';
 import 'screen/home/splash_screen.dart';
 import 'screen/home/tabs_screen.dart';
@@ -26,8 +26,8 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   RemoteNotification? notification = message.notification;
   AndroidNotification? android = message.notification?.android;
   var initialzationSettingsAndroid = AndroidInitializationSettings('logo');
-  final IOSInitializationSettings initializationSettingsIOS =
-      IOSInitializationSettings();
+  final DarwinInitializationSettings initializationSettingsIOS =
+      DarwinInitializationSettings();
   var initializationSettings = InitializationSettings(
       android: initialzationSettingsAndroid, iOS: initializationSettingsIOS);
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -39,7 +39,7 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
         notification.title,
         notification.body,
         NotificationDetails(
-          iOS: const IOSNotificationDetails(
+          iOS: const DarwinNotificationDetails(
             presentAlert: true,
             presentBadge: true,
             presentSound: true,
@@ -132,30 +132,30 @@ class _RedierctScreenState extends State<RedierctScreen> {
   void initState() {
     super.initState();
     var initialzationSettingsAndroid = AndroidInitializationSettings('logo');
-    final IOSInitializationSettings initializationSettingsIOS =
-        IOSInitializationSettings();
+    final DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings();
     var initializationSettings = InitializationSettings(
         android: initialzationSettingsAndroid, iOS: initializationSettingsIOS);
     flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onSelectNotification: (payload) async {
-        final message = jsonDecode(payload!);
-        if (message['category'] == "chat") {
-          await Future.delayed(Duration.zero).then((value) async {
-            await Constant.navigateTo(
-                context: context,
-                routeName: ChatPage(
-                    user1:
-                        ChatUser.fromMap(jsonDecode(message["reciver_user"])),
-                    user2:
-                        ChatUser.fromMap(jsonDecode(message["sender_user"]))));
-          });
-        } else if (message['category'] != "chat") {
-          await Future.delayed(Duration.zero).then((value) async {
-            await Constant.navigateTo(
-                context: context, routeName: const NotificationScreen());
-          });
-        }
+      onDidReceiveNotificationResponse: (payload) async {
+        // final message = jsonDecode(payload);
+        // if (message['category'] == "chat") {
+        //   await Future.delayed(Duration.zero).then((value) async {
+        //     await Constant.navigateTo(
+        //         context: context,
+        //         routeName: ChatPage(
+        //             user1:
+        //                 ChatUser.fromMap(jsonDecode(message["reciver_user"])),
+        //             user2:
+        //                 ChatUser.fromMap(jsonDecode(message["sender_user"]))));
+        //   });
+        // } else if (message['category'] != "chat") {
+        //   await Future.delayed(Duration.zero).then((value) async {
+        //     await Constant.navigateTo(
+        //         context: context, routeName: const NotificationScreen());
+        //   });
+        // }
       },
     );
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
